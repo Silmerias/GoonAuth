@@ -2,14 +2,13 @@
 @section('content')
 <div class="row">
   <div class="col-md-12">
-    <p>Welcome to the {{ Config::get('goonauth.title') }} Auth! To get started, login using your forum account below. If you're already registered and you're here then you probably know what you need to do. Authenticating your account here will give you access to all guild forums and viewing and editing privileges on the wiki.</p>
-    <p>Currently we're only accepting recruits that have been SA members for <strong>at least 90 days</strong>. If you want an exception to this policy... too bad.</p>
+    <p>Welcome to the auth landing page! We are so very excited that you believe we care about having you! To get started, login using your forum account below. If you're already registered and you're here then you probably know what you need to do.</p>
   </div>
 </div>
 
 <form class="form-signin" role="form" action="{{ URL::to('login') }}" method="post">
-  <h2 class="form-signin-heading">Login using {{ Config::get('goonauth.title') }} forum account</h2>
-  <p>If you don't have an {{ Config::get('goonauth.title') }} forum account, {{ HTML::link(Config::get('goonauth.forumUrl'), "click here") }} to create one.</p>
+  <h2 class="form-signin-heading">Login using your forum account</h2>
+  <p>If you don't have an account yet, {{ HTML::link(Config::get('goonauth.forumUrl'), "click here") }} to start your auth process.</p>
   @if (Session::has('banned'))
     <div class="alert alert-danger">You have been banned</div>
   @endif
@@ -18,8 +17,10 @@
     {{ Session::get('error') }}
     </div>
   @endif
+  @if (false)
   <input type="text" name="username" class="form-control" placeholder="Email address/Username" required="" autofocus="">
   <input type="password" name="password" class="form-control" placeholder="Password" required="">
   <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+  @endif
 </form>
 @stop

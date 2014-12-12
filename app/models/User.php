@@ -1,30 +1,28 @@
 <?php
 
 class User extends Eloquent {
-	public $timestamps = false;
-	public $table = "auth";
-	
-	public function characters() {
-		return $this->hasMany('Character', 'auth_id');
+	protected $table = "User";
+	protected $primaryKey = "UID";
+	protected $timestamps = false;
+
+
+	public function userstatus() {
+		return $this->hasOne('UserStatus', 'USID', 'USID');
 	}
 
-	public function sponsors() {
-		return $this->belongsToMany('User', 'sponsors', 'auth_id', 'sponsor_id');
+	public function sponsor() {
+		return $this->hasOne('User', 'UID', 'USponsorID');
 	}
 
-	public function sponsoree() {
-		return $this->belongsToMany('User', 'sponsors', 'sponsor_id', 'auth_id');
+	public function sponsoring() {
+		return $this->hasMany('User', 'USponsorID', 'UID');
 	}
 
-	public function notes() {
-		return $this->hasMany('Note', 'auth_id');
+	public function affilategroup() {
+		return $this->hasOne('Group', 'GRID', 'UAffiliateGroup');
 	}
 
-	public function scopeAuthed($query) {
-        return $query->where('sa_username', '!=', '')->where('linked_at', '!=', '');
-    }
-
-    public function scopeSponsored($query) {
-    	return $query->where('is_sponsored', '1');
-    }
+	public function scopeSponsored($query) {
+		return $query->whereNotNull('USponsorID');
+	}
 }
