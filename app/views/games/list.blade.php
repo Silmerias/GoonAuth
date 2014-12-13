@@ -1,6 +1,6 @@
 @extends('layouts.main')
 @section('content')
-<a class="label label-info" href="{{ URL::to('games') }}">Back to Home</a>
+<a class="label label-info" href="{{ URL::to('/') }}">Back to Home</a>
 
 <div class="row">
 	<div class="col-md-12">

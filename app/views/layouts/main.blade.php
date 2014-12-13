@@ -41,7 +41,7 @@
               <li{{ Request::is('/') || Request::is('home') ? ' class="active"' : '' }}><a href="{{ URL::to('/') }}">Home</a></li>
               <li{{ Request::is('games') || Request::is('games/*') ? ' class="active"' : '' }}><a href="{{ URL::to('games') }}">Join Game</a></li>
               @if (!Session::get('auth')->USponsoredID)
-                <li{{ Request::is('sponsor') || Request::is('sponsor/*') ? ' class="active"' : '' }}><a href="{{ URL::to('sponsors') }}">Sponsor</a></li>
+                <li{{ Request::is('sponsor') || Request::is('sponsor/*') ? ' class="active"' : '' }}><a href="{{ URL::to('sponsor') }}">Sponsor</a></li>
               @endif
             @endif
           </ul>

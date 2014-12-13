@@ -10,7 +10,6 @@ class SponsorController extends BaseController
 		$auth = Session::get('auth');
 
 		$include = array('auth' => $auth);
-
 		return View::make('sponsor.list', $include);
 	}
 
@@ -19,7 +18,6 @@ class SponsorController extends BaseController
 		$auth = Session::get('auth');
 
 		$include = array('auth' => $auth);
-
 		return View::make('sponsor.add', $include);
 	}
 
