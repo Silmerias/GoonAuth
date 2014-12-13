@@ -11,11 +11,19 @@ class DatabaseSeeder extends Seeder {
 	{
 		Eloquent::unguard();
 
+		$this->call('NoteTypeSeeder');
 		$this->call('UserStatusSeeder');
+		$this->call('RoleSeeder');
+		$this->call('GroupSeeder');
+
+		$this->call('UserSeeder');
+
+		$this->call('GameSeeder');
 
 		if (App::environment('local'))
 		{
-			$this->call('UserSeeder');
+			$this->call('NoteSeeder');
+			$this->call('GameUserSeeder');
 		}
 	}
 

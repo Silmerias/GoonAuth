@@ -13,4 +13,8 @@ class Group extends Eloquent {
 	public function notes() {
 		return $this->belongsToMany('Note', 'GroupHasNote', 'GRID', 'NID');
 	}
+
+	public function members() {
+		return $this->hasMany('User', 'UGroup');
+	}
 }

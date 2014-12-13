@@ -17,4 +17,8 @@ class Game extends Eloquent {
 	public function notes() {
 		return $this->belongsToMany('Note', 'GameHasNote', 'GID', 'NID');
 	}
+
+	public function organizations() {
+		return $this->belongsToMany('GameOrganization', 'GameHasGameOrganization', 'GID', 'GOID');
+	}
 }

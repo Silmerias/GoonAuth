@@ -23,6 +23,7 @@ class CreateBaseTables extends Migration {
 			$t->text("UEmail")->unique();	// User E-Mail.
 			$t->text("UGoonID")->unique();	// User Goon ID.
 
+			$t->integer("UGroup")->unsigned();	// Group the user belongs to
 			$t->text("ULDAPLogin")->nullable();	// LDAP login
 
 			$t->integer("USAUserID")->nullable();		// SA user ID
@@ -33,7 +34,6 @@ class CreateBaseTables extends Migration {
 			$t->integer("USACachedPostCount")->nullable();	// Cached SA post count
 
 			$t->integer("USponsorID")->unsigned()->nullable();	// Sponsor
-			$t->integer("UAffiliateGroup")->nullable();			// Affiliated group
 		});
 
 		// UserStatus
@@ -51,7 +51,8 @@ class CreateBaseTables extends Migration {
 			$t->integer("NTID")->unsigned();	// Note Type ID
 			$t->integer("UID")->unsigned();		// User ID
 
-			$t->integer("NCreatedByUID")->unsigned();	// User who created the note
+			$t->integer("NCreatedByUID")
+				->unsigned()->nullable();	// User who created the note
 
 			$t->text("NNote");	// The note
 		});
@@ -91,7 +92,6 @@ class CreateBaseTables extends Migration {
 			$t->integer("GROwnerID")
 				->unsigned()->nullable();	// Group owner
 
-			$t->text("GRAbbr");	// Group abbreviation
 			$t->text("GRName");	// Group name
 		});
 
@@ -109,14 +109,16 @@ class CreateBaseTables extends Migration {
 		Schema::create("GroupAdmin", function($t) {
 			$t->increments("GRAID");	// Group Admin ID
 
-			$t->integer("UID")->unsigned();	// User ID
-			$t->integer("RID")->unsigned();	// Role ID
+			$t->integer("GRID")->unsigned();	// Group ID
+			$t->integer("UID")->unsigned();		// User ID
+			$t->integer("RID")->unsigned();		// Role ID
 		});
 
 		// GameAdmin
 		Schema::create("GameAdmin", function($t) {
 			$t->increments("GAID");		// Game Admin ID
 
+			$t->integer("GID")->unsigned();	// Game ID
 			$t->integer("UID")->unsigned();	// User ID
 			$t->integer("RID")->unsigned();	// Role ID
 		});
@@ -164,6 +166,14 @@ class CreateBaseTables extends Migration {
 			$t->text("GOName");	// Organization name
 		});
 
+		// GameHasGameOrganization
+		Schema::create("GameHasGameOrganization", function($t) {
+			$t->increments("GHGOID");	// Game Has Game Organization ID
+
+			$t->integer("GID")->unsigned();		// Game ID
+			$t->integer("GOID")->unsigned();	// Game Organization ID
+		});
+
 		// GameOrganizationHasGameUser
 		Schema::create("GameOrganizationHasGameUser", function($t) {
 			$t->increments("GOHGUID");	// Game Organization Has Game User ID
@@ -185,7 +195,7 @@ class CreateBaseTables extends Migration {
 				->references("UID")->on("User")
 				->onDelete("restrict");
 
-			$t->foreign("UAffiliateGroup", "FK_User_Group")
+			$t->foreign("UGroup", "FK_User_Group")
 				->references("GRID")->on("Group")
 				->onDelete("restrict");
 		});
@@ -232,6 +242,10 @@ class CreateBaseTables extends Migration {
 
 		// GroupAdmin
 		Schema::table("GroupAdmin", function($t) {
+			$t->foreign("GRID", "FK_GroupAdmin_Group")
+				->references("GRID")->on("Group")
+				->onDelete("cascade");
+
 			$t->foreign("UID", "FK_GroupAdmin_User")
 				->references("UID")->on("User")
 				->onDelete("cascade");
@@ -243,6 +257,10 @@ class CreateBaseTables extends Migration {
 
 		// GameAdmin
 		Schema::table("GameAdmin", function($t) {
+			$t->foreign("GID", "FK_GameAdmin_Game")
+				->references("GID")->on("Game")
+				->onDelete("cascade");
+
 			$t->foreign("UID", "FK_GameAdmin_User")
 				->references("UID")->on("User")
 				->onDelete("cascade");
@@ -296,6 +314,17 @@ class CreateBaseTables extends Migration {
 				->onDelete("set null");
 		});
 
+		// GameHasGameOrganization
+		Schema::table("GameHasGameOrganization", function($t) {
+			$t->foreign("GID", "FK_GameHasGameOrganization_Game")
+				->references("GID")->on("Game")
+				->onDelete("cascade");
+
+			$t->foreign("GOID", "FK_GameHasGameOrganization_GameOrganization")
+				->references("GOID")->on("GameOrganization")
+				->onDelete("cascade");
+		});
+
 		// GameOrganizationHasGameUser
 		Schema::table("GameOrganizationHasGameUser", function($t) {
 			$t->foreign("GOID", "FK_GameOrganizationHasGameUser_GameOrganization")
@@ -336,10 +365,12 @@ class CreateBaseTables extends Migration {
 			$t->dropForeign("FK_Game_User");
 		});
 		Schema::table("GroupAdmin", function($t) {
+			$t->dropForeign("FK_GroupAdmin_Group");
 			$t->dropForeign("FK_GroupAdmin_User");
 			$t->dropForeign("FK_GroupAdmin_Role");
 		});
 		Schema::table("GameAdmin", function($t) {
+			$t->dropForeign("FK_GameAdmin_Game");
 			$t->dropForeign("FK_GameAdmin_User");
 			$t->dropForeign("FK_GameAdmin_Role");
 		});
@@ -358,6 +389,10 @@ class CreateBaseTables extends Migration {
 		});
 		Schema::table("GameOrganization", function($t) {
 			$t->dropForeign("FK_GameOrganization_User");
+		});
+		Schema::table("GameHasGameOrganization", function($t) {
+			$t->dropForeign("FK_GameHasGameOrganization_Game");
+			$t->dropForeign("FK_GameHasGameOrganization_GameOrganization");
 		});
 		Schema::table("GameOrganizationHasGameUser", function($t) {
 			$t->dropForeign("FK_GameOrganizationHasGameUser_GameOrganization");
@@ -379,6 +414,7 @@ class CreateBaseTables extends Migration {
 		Schema::drop("GameHasNote");
 		Schema::drop("GameUser");
 		Schema::drop("GameOrganization");
+		Schema::drop("GameHasGameOrganization");
 		Schema::drop("GameOrganizationHasGameUser");
 	}
 

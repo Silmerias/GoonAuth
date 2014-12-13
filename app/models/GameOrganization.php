@@ -13,4 +13,8 @@ class GameOrganization extends Eloquent {
 	public function gameusers() {
 		return $this->belongsToMany('GameUser', 'GameOrganizationHasGameUser', 'GOID', 'GUID');
 	}
+
+	public function games() {
+		return $this->belongsToMany('Game', 'GameHasGameOrganization', 'GOID', 'GID');
+	}
 }

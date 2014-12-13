@@ -6,6 +6,10 @@ class GroupAdmin extends Eloquent {
 	public $timestamps = false;
 
 
+	public function group() {
+		return $this->belongsTo('Group', 'GRID');
+	}
+
 	public function user() {
 		return $this->belongsTo('User', 'UID');
 	}

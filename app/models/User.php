@@ -14,8 +14,8 @@ class User extends Eloquent {
 		return $this->belongsTo('User', 'USponsorID');
 	}
 
-	public function affilategroup() {
-		return $this->belongsTo('Group', 'UAffiliateGroup');
+	public function group() {
+		return $this->belongsTo('Group', 'UGroup');
 	}
 
 	public function notes() {
@@ -39,11 +39,11 @@ class User extends Eloquent {
 	}
 
 	public function grouproles() {
-		return $this->belongsToMany('Role', 'GroupAdmin', 'UID', 'RID');
+		return $this->belongsToMany('Role', 'GroupAdmin', 'UID', 'RID')->withPivot('GRID');
 	}
 
 	public function gameroles() {
-		return $this->belongsToMany('Role', 'GameAdmin', 'UID', 'RID');
+		return $this->belongsToMany('Role', 'GameAdmin', 'UID', 'RID')->withPivot('GID');
 	}
 
 	public function gameusers() {
