@@ -3,14 +3,14 @@
 class GroupHasNote extends Eloquent {
 	protected $table = "GroupHasNote";
 	protected $primaryKey = "GRHNID";
-	protected $timestamps = false;
+	public $timestamps = false;
 
 
 	public function group() {
-		return $this->hasOne('Group', 'GRID', 'GRID');
+		return $this->belongsTo('Group', 'GRID');
 	}
 
 	public function note() {
-		return $this->hasOne('Note', 'NID', 'NID');
+		return $this->belongsTo('Note', 'NID');
 	}
 }

@@ -3,14 +3,14 @@
 class GameHasNote extends Eloquent {
 	protected $table = "GameHasNote";
 	protected $primaryKey = "GHNID";
-	protected $timestamps = false;
+	public $timestamps = false;
 
 
 	public function group() {
-		return $this->hasOne('Game', 'GID', 'GID');
+		return $this->belongsTo('Game', 'GID');
 	}
 
 	public function note() {
-		return $this->hasOne('Note', 'NID', 'NID');
+		return $this->belongsTo('Note', 'NID');
 	}
 }

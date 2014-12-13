@@ -3,10 +3,14 @@
 class GameOrganization extends Eloquent {
 	protected $table = "GameOrganization";
 	protected $primaryKey = "GOID";
-	protected $timestamps = false;
+	public $timestamps = false;
 
 
 	public function owner() {
-		return $this->hasOne('User', 'UID', 'GOOwnerID');
+		return $this->belongsTo('User', 'GOOwnerID');
+	}
+
+	public function gameusers() {
+		return $this->belongsToMany('GameUser', 'GameOrganizationHasGameUser', 'GOID', 'GUID');
 	}
 }

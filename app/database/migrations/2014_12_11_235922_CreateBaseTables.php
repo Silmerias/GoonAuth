@@ -18,7 +18,10 @@ class CreateBaseTables extends Migration {
 
 			$t->integer("USID")->unsigned();	// User Status ID
 
-			//"UIPAddress" inet,
+			$t->binary("UIPAddress")->nullable();	// User IP Address
+
+			$t->text("UEmail")->unique();	// User E-Mail.
+			$t->text("UGoonID")->unique();	// User Goon ID.
 
 			$t->text("ULDAPLogin")->nullable();	// LDAP login
 
@@ -37,7 +40,8 @@ class CreateBaseTables extends Migration {
 		Schema::create("UserStatus", function($t) {
 			$t->increments("USID");	// User Status ID
 
-			$t->text("USStatus");	// Status text
+			$t->string("USCode", 4);	// Status Code
+			$t->text("USStatus");		// Status text
 		});
 
 		// Note
@@ -179,6 +183,10 @@ class CreateBaseTables extends Migration {
 
 			$t->foreign("USponsorID", "FK_User_Sponsor")
 				->references("UID")->on("User")
+				->onDelete("restrict");
+
+			$t->foreign("UAffiliateGroup", "FK_User_Group")
+				->references("GRID")->on("Group")
 				->onDelete("restrict");
 		});
 

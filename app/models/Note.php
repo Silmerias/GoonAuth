@@ -3,18 +3,26 @@
 class Note extends Eloquent {
 	protected $table = "Note";
 	protected $primaryKey = "NID";
-	protected $timestamps = false;
+	public $timestamps = false;
 
+
+	public function notetype() {
+		return $this->belongsTo('NoteType', 'NTID');
+	}
 
 	public function user() {
-		return $this->belongsTo('User', 'UID', 'UID');
+		return $this->belongsTo('User', 'UID');
 	}
 
 	public function createdby() {
-		return $this->belongsTo('User', 'UID', 'NCreatedByUID');
+		return $this->belongsTo('User', 'NCreatedByUID');
 	}
 
-	public function notetype() {
-		return $this->hasOne('NoteType', 'NTID', 'NTID');
+	public function groups() {
+		return $this->belongsToMany('Group', 'GroupHasNote', 'NID', 'GRID');
+	}
+
+	public function games() {
+		return $this->belongsToMany('Game', 'GameHasNote', 'NID', 'GID');
 	}
 }

@@ -3,10 +3,14 @@
 class Group extends Eloquent {
 	protected $table = "Group";
 	protected $primaryKey = "GRID";
-	protected $timestamps = false;
+	public $timestamps = false;
 
 
 	public function owner() {
-		return $this->hasOne('User', 'UID', 'GROwnerID');
+		return $this->belongsTo('User', 'GROwnerID');
+	}
+
+	public function notes() {
+		return $this->belongsToMany('Note', 'GroupHasNote', 'GRID', 'NID');
 	}
 }

@@ -46,6 +46,7 @@ Route::filter('auth', function()
 	}
 });
 
+/*
 Route::filter('linked', function()
 {
 	if (!Session::has('auth') || (empty(Session::get('auth')->sa_username) && !Session::get('auth')->is_sponsored)) return Redirect::to('/');
@@ -54,6 +55,7 @@ Route::filter('linked', function()
 Route::filter('goon', function() {
 	if (!Session::has('auth') || empty(Session::get('auth')->sa_username)) return Redirect::to('/');
 });
+*/
 
 Route::filter('admin', function() {
 	if (!Session::has('auth') || !Session::get('auth')->is_admin) return Redirect::to('/');

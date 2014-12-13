@@ -11,7 +11,12 @@ class DatabaseSeeder extends Seeder {
 	{
 		Eloquent::unguard();
 
-		// $this->call('UserTableSeeder');
+		$this->call('UserStatusSeeder');
+
+		if (App::environment('local'))
+		{
+			$this->call('UserSeeder');
+		}
 	}
 
 }

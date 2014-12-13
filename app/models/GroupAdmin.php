@@ -3,14 +3,14 @@
 class GroupAdmin extends Eloquent {
 	protected $table = "GroupAdmin";
 	protected $primaryKey = "GRAID";
-	protected $timestamps = false;
+	public $timestamps = false;
 
 
 	public function user() {
-		return $this->hasOne('User', 'UID', 'UID');
+		return $this->belongsTo('User', 'UID');
 	}
 
 	public function role() {
-		return $this->hasOne('Role', 'RID', 'RID');
+		return $this->belongsTo('Role', 'RID');
 	}
 }

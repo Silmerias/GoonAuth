@@ -3,10 +3,31 @@
 class UserStatus extends Eloquent {
 	protected $table = "UserStatus";
 	protected $primaryKey = "USID";
-	protected $timestamps = false;
+	public $timestamps = false;
 
 
-	public function user() {
-		return $this->belongsTo('User', 'USID', 'USID');
+	public function users() {
+		return $this->hasMany('User', 'USID');
+	}
+
+	public function scopeActive($query) {
+		return $query->where('USCode', 'ACTI');
+	}
+
+	public function scopeInactive($query) {
+		return $query->where('USCode', '<>', 'ACTI')
+			>where('USCode', '<>', 'VACA');
+	}
+
+	public function scopePending($query) {
+		return $query->where('USCode', 'PEND');
+	}
+
+	public function scopeVacation($query) {
+		return $query->where('USCode', 'VACA');
+	}
+
+	public function scopeBanned($query) {
+		return $query->where('USCode', 'BAN');
 	}
 }

@@ -11,6 +11,9 @@
 |
 */
 
+Route::controller('register', 'RegisterController');
+
+
 Route::get('/', array('before' => 'auth', 'uses' => 'UserController@showHome'));
 Route::get('login', function() {
 	return View::make('user.login');

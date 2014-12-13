@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>{{ Config::get('goonauth.title') }}</title>
+    <title>Auth Landing</title>
     {{ HTML::style('assets/css/bootstrap.min.css') }}
     {{ HTML::style('assets/css/auth.css') }}
     {{ HTML::script('assets/js/jquery-1.9.0.min.js') }}
@@ -56,10 +56,10 @@
                   <li><a href="{{ URL::to('logout') }}">Logout</a></li>
                 </ul>
               </li>
-              <li><a href="{{ Config::get('goonauth.forumUrl') }}">{{ Config::get('goonauth.title') }}</a></li>
+              <li><a href="{{ Config::get('goonauth.forumUrl') }}">Forum</a></li>
             @else
               <li><a href="{{ URL::to('login') }}">Login</a></li>
-              <li><a href="{{ Config::get('goonauth.forumUrl') }}">{{ Config::get('goonauth.title') }}</a></li>
+              <li><a href="{{ Config::get('goonauth.forumUrl') }}">Forum</a></li>
             @endif
           </ul>
         </div><!--/.nav-collapse -->

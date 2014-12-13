@@ -6,7 +6,8 @@
 	"require": {
 		"laravel/framework": "4.1.*",
 		"guzzle/guzzle": "~3.7",
-		"doctrine/dbal": "~2.3"
+		"doctrine/dbal": "~2.3",
+		"guzzlehttp/guzzle": "~5.0"
 	},
 	"autoload": {
 		"classmap": [

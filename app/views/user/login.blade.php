@@ -8,7 +8,7 @@
 
 <form class="form-signin" role="form" action="{{ URL::to('login') }}" method="post">
   <h2 class="form-signin-heading">Login using your forum account</h2>
-  <p>If you don't have an account yet, {{ HTML::link(Config::get('goonauth.forumUrl'), "click here") }} to start your auth process.</p>
+  <p>If you don't have an account yet, {{ HTML::link(URL::to('register'), "click here") }} to start your auth process.</p>
   @if (Session::has('banned'))
     <div class="alert alert-danger">You have been banned</div>
   @endif
