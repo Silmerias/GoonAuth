@@ -131,6 +131,7 @@ class RegisterController extends BaseController
 				$user->USACachedName = $sa_name;
 				$user->USACachedPostCount = $sa_postcount;
 				$user->USACacheDate = Carbon::now();
+				$user->UGroup = Group::where('GRName', 'Something Awful')->first()->GRID;
 				$user->save();
 
 				return View::make('register.complete');

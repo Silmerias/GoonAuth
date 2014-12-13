@@ -3,73 +3,52 @@
 return array(
 
 	/**
-	 * Site title. Shows up in navbar and page titles.
-	 */
-	'title' => 'AA Goons',
-
-	/**
-	 * Prefix applied to the front of unique ids used for authenticating SA accounts
-	 */
-	'codePrefix' => 'aagoons',
-
-	/**
 	 * Your SA bbuserid cookie value. Required to auth accounts.
 	 */
-	'bbuserid' => '',
+	'bbuserid' => '125337',
 
 	/**
 	 * Your SA bbpassword cookie value. Required to auth accounts.
 	 */
-	'bbpassword' => '',
+	'bbpassword' => 'f819107c3275d0278db4a6a068407f00',
 
 	/**
-	 * URL to your Xenforo api.php
+	 * Administrator account
 	 */
-	'apiUrl' => '',
+	'adminAccount' => 'ipboard.ldap.account',
 
 	/**
 	 * URL to your forums
 	 */
-	'forumUrl' => '',
+	'forumUrl' => 'http://forums.goonrathi.com/',
 
 	/**
-	 * Xenforo API key
+	 * LDAP settings
 	 */
-	'apiKey' => '',
+	'ldapHost' => 'localhost',
+	'ldapPort' => 389,
+	'ldapUser' => 'ldap_user',
+	'ldapPassword' => 'ldap_password',
+	'ldapDN' => 'ou=users,dc=mydomain,dc=com',
 
 	/**
-	 * Xenforo usergroup for authed goons
+	 * LDAP entry configuration
 	 */
-	'authId' => 5,
+	
 
 	/**
-	 * Xenforo usergroup for sponsored goons
+	 * Forum usergroup for authed goons
 	 */
-	'sponsorId' => 6,
+	'authId' => 1,
 
 	/**
-	 * Xenforo usergroup for users who are not authed (Used for auth banning)
+	 * Forum usergroup for FLJK
 	 */
-	'unauthedId' => 2,
+	'fljkId' => 2,
 
 	/**
-	 * Number of characters an authed goon can have. This includes the main.
+	 * Forum usergroup for WoL
 	 */
-	'characters' => 3,
-
-	/**
-	 * Number of characters a sponsored player can have.
-	 */
-	'sponsored' => 1,
-
-	/**
-	 * Number of players an authed goon can sponsor
-	 */
-	'sponsors' => 2,
-
-	/**
-	 * Super Admin IDs (These users can grant other users admin)
-	 */
-	'superAdmins' => array(1,2),
+	'wolId' => 3,
 
 );

@@ -54,6 +54,15 @@ Route::filter('admin', function() {
 	*/
 });
 
+Route::filter('sponsor', function() {
+	if (!Session::has('auth') || empty(Session::get('auth')->USAUserID))
+		return Redirect::to('/');
+
+	if (!empty(Session::get('auth')->USponsorID))
+		return Redirect::to('/');
+});
+
+
 /*
 |--------------------------------------------------------------------------
 | Guest Filter

@@ -102,7 +102,9 @@ class CreateBaseTables extends Migration {
 			$t->integer("GOwnerID")
 				->unsigned()->nullable();	// Game owner
 
+			$t->text("GAbbr");	// Game abbreviation
 			$t->text("GName");	// Game name
+			$t->text("GProfileURL");	// Game profile URL
 		});
 
 		// GroupAdmin
