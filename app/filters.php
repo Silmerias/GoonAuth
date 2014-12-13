@@ -14,7 +14,7 @@
 App::before(function($request)
 {
 	if (Session::has('authenticated')) {
-		$auth = User::where('xf_id', Session::get('xenforoId'))->first();
+		$auth = User::find(Session::get('userid'));
 		Session::put('auth', $auth);
 	}
 });
@@ -38,27 +38,20 @@ App::after(function($request, $response)
 
 Route::filter('auth', function()
 {
-	if (!Session::has('authenticated')) return Redirect::to('login');
+	if (!Session::has('authenticated'))
+		return Redirect::to('login');
 
-	if (Session::get('auth')->is_banned) {
+	if (Session::get('auth')->userstatus()->banned()->count()) {
 		Session::flush();
 		return Redirect::to('login')->with('banned', 1);
 	}
 });
 
-/*
-Route::filter('linked', function()
-{
-	if (!Session::has('auth') || (empty(Session::get('auth')->sa_username) && !Session::get('auth')->is_sponsored)) return Redirect::to('/');
-});
-
-Route::filter('goon', function() {
-	if (!Session::has('auth') || empty(Session::get('auth')->sa_username)) return Redirect::to('/');
-});
-*/
-
 Route::filter('admin', function() {
-	if (!Session::has('auth') || !Session::get('auth')->is_admin) return Redirect::to('/');
+	/*
+	if (!Session::has('auth') || !Session::get('auth')->is_admin)
+		return Redirect::to('/');
+	*/
 });
 
 /*

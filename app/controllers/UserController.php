@@ -12,14 +12,9 @@ class UserController extends BaseController
 	public function showHome()
 	{
 		$auth = Session::get('auth');
-		if (empty($auth->sa_username) && empty($auth->is_sponsored)) {
-			return View::make('user.unlinked');
-		}
 
 		$include = array('auth' => $auth);
-
-		return View::make('user.linked', $include);
-
+		return View::make('user.home', $include);
 	}
 
 	public function showLink()
@@ -158,79 +153,100 @@ class UserController extends BaseController
 
 	public function doLogin()
 	{
-		$client = new Client(Config::get('goonauth.apiUrl'), array(
-	        'request.options' => array(
-	            'query' => array(
-	                'action' => 'authenticate',
-	                'username' => Input::get('username'),
-	                'password' => Input::get('password'),
-	            ),
-	        ),
-	    ));
-	    $request = $client->get();
+		$valid = $this->LDAPPasswordCheck(Input::get('goonid'), Input::get('password'));
+		if ($valid === false)
+			return Redirect::back()->with('error', 'Invalid username/password.');
 
-	    try {
-	        $response = $request->send();
-	        $json = $response->json();
+		$user = User::where('UGoonID', Input::get('goonid'))->first();
+		if (!isset($user))
+			return Redirect::back()->with('error', 'This user is not in our system.');
 
-	        Session::put('authUsername', Input::get('username'));
-	        Session::put('authHash', $json['hash']);
-	    } catch (ClientErrorResponseException $ex) {
-	        $json = $ex->getResponse()->json();
+		Session::put('authenticated', true);
+		Session::put('userid', $user->UID);
+		Session::put('displayUsername', Input::get('goonid'));
 
-	        if ($json['error'] === 4) {
-	            Session::flash('error', 'Invalid username. Did you register on the forums first?');
-	        } else if ($json['error'] === 5) {
-	            Session::flash('error', 'Invalid Username / Password. Please try again.');
-	        } else {
-	            Session::flash('error', 'Unknown error occurred. Please try again.');
-	        }
+		return Redirect::to('/');
+	}
 
-	        return Redirect::back();
-	    }
 
-	    $client = new Client(Config::get('goonauth.apiUrl'), array(
-	        'request.options' => array(
-	            'query' => array(
-	                'action' => 'getUser',
-	                'hash' => Config::get('goonauth.apiKey'),
-	                'value' => Input::get('username'),
-	            ),
-	        ),
-	    ));
+	private function LDAPExecute( $func )
+	{
+		$ldaphost = Config::get('goonauth.ldapHost');
+		$ldapport = Config::get('goonauth.ldapPort');
 
-	    $request = $client->get();
+		// Connect to our LDAP server.
+		$ldap = ldap_connect($ldaphost, $ldapport);
+		if (!$ldap)
+		{
+			error_log("[ldapsync] Could not connect to $ldaphost");
+			return;
+		}
 
-	    try {
-	        $response = $request->send();
-	        $json = $response->json();
+		// Set options.
+		ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
+		ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 
-	        if (!isset($json['user_state']) || $json['user_state'] !== 'valid') {
-	            Session::flash('error', 'You must verify your email address before you sign in.');
+		// Grab some settings.
+		$ldapuser = Config::get('goonauth.ldapUser');
+		$ldappass = Config::get('goonauth.ldapPassword');
 
-	            return Redirect::back();
-	        }
+		// If nothing was entered, use NULL so we do an anonymous bind.
+		if (strlen($ldapuser) === 0)
+			$ldapuser = NULL;
+		else $ldapuser = "cn=" . $ldapuser . "," . Config::get('goonauth.ldapDN');;
+		if (strlen($ldappass) === 0)
+			$ldappass = NULL;
 
-	        Session::put('authenticated', true);
-	        Session::put('xenforoId', $json['user_id']);
-	        Session::put('displayUsername', $json['username']);
-	    } catch (ClientErrorResponseException $ex) {
-	        Session::flash('error', 'Unknown error occurred. Please try again.');
+		// Attempt to bind now.
+		if (ldap_bind($ldap, $ldapuser, $ldappass))
+		{
+			// Execute our function.
+			$func($ldap);
+		}
+		else
+		{
+			error_log("[ldapsync] Failed to bind to $ldaphost : $ldapport with user $ldapuser");
+		}
 
-	        return Redirect::back();
-	    }
+		ldap_close($ldap);
+	}
 
-	    $auth = User::where('xf_id', $json['user_id'])->first();
+	private function LDAPPasswordCheck($username, $password)
+	{
+		return true;
+		
+		if (!isset($username) || !isset($password) || strlen($password) == 0)
+			return false;
 
-	    if (empty($auth) || !$auth->xf_username) {
-	    	if (empty($auth)) {
-	    		$auth = new User();
-	    	}
-	    	$auth->xf_id = $json['user_id'];
-	    	$auth->xf_username = $json['username'];
-	    	$auth->save();
-	    }
+		$ldaphost = Config::get('goonauth.ldapHost');
+		$ldapport = Config::get('goonauth.ldapPort');
 
-	    return Redirect::to('/');
+		// Connect to our LDAP server.
+		$ldap = ldap_connect($ldaphost, $ldapport);
+		if (!$ldap)
+		{
+			error_log("[ldapsync] Could not connect to $ldaphost");
+			return false;
+		}
+
+		// Set options.
+		ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
+		ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+
+		// Grab some settings.
+		$ldapuser = "cn=" . $username . "," . Config::get('goonauth.ldapDN');
+		$ldappass = $password;
+
+		// Attempt to bind now.
+		$ret = false;
+		try
+		{
+			if (ldap_bind($ldap, $ldapuser, $ldappass))
+				$ret = true;
+		}
+		catch (Exception $e) {}
+
+		ldap_close($ldap);
+		return $ret;
 	}
 }

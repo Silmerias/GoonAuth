@@ -38,10 +38,10 @@
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             @if (Session::has('authenticated'))
-              <li{{ Request::is('/') || Request::is('link') ? ' class="active"' : '' }}><a href="{{ URL::to('/') }}">Link Account</a></li>
-              <li{{ Request::is('characters') || Request::is('character/*') ? ' class="active"' : '' }}><a href="{{ URL::to('characters') }}">Add Characters</a></li>
-              @if (!Session::get('auth')->is_sponsored)
-                <li{{ Request::is('sponsors') || Request::is('sponsor/*') ? ' class="active"' : '' }}><a href="{{ URL::to('sponsors') }}">Sponsors</a></li>
+              <li{{ Request::is('/') || Request::is('home') ? ' class="active"' : '' }}><a href="{{ URL::to('/') }}">Home</a></li>
+              <li{{ Request::is('games') || Request::is('games/*') ? ' class="active"' : '' }}><a href="{{ URL::to('games') }}">Join Game</a></li>
+              @if (!Session::get('auth')->USponsoredID)
+                <li{{ Request::is('sponsor') || Request::is('sponsor/*') ? ' class="active"' : '' }}><a href="{{ URL::to('sponsors') }}">Sponsor</a></li>
               @endif
             @endif
           </ul>
@@ -75,7 +75,8 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12 footer">
-        GoonAuth v{{ AUTH_VERSION }} - Created by {{ HTML::link('https://github.com/sct', 'sct', array('target' => '_blank')) }} - {{ HTML::link('https://github.com/sct/GoonAuth', 'GitHub', array('target' => '_blank')) }}
+        GoonAuth originally created by {{ HTML::link('https://github.com/sct', 'sct', array('target' => '_blank')) }} - {{ HTML::link('https://github.com/sct/GoonAuth', 'GitHub', array('target' => '_blank')) }}<br>
+        v{{ AUTH_VERSION }} - Created by {{ HTML::link('https://github.com/LoneBoco', 'Nalin', array('target' => '_blank')) }} - {{ HTML::link('https://github.com/LoneBoco/GoonAuth', 'GitHub', array('target' => '_blank')) }}
         </div>
       </div>
     </div>
