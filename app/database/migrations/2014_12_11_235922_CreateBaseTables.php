@@ -75,6 +75,7 @@ class CreateBaseTables extends Migration {
 			$t->boolean("RPermRemove")->default(false);	// Remove permission
 			$t->boolean("RPermModify")->default(false);	// Modify permission
 			$t->boolean("RPermAuth")->default(false);	// Auth permission
+			$t->boolean("RPermRead")->default(false);	// Read permission
 		});
 
 		// RoleSeesNoteType

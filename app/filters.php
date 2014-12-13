@@ -41,6 +41,9 @@ Route::filter('auth', function()
 	if (!Session::has('authenticated'))
 		return Redirect::to('login');
 
+	if (empty(Session::has('auth')))
+		return Redirect::to('login');
+
 	if (Session::get('auth')->userstatus()->banned()->count()) {
 		Session::flush();
 		return Redirect::to('login')->with('banned', 1);

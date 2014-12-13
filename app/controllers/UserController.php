@@ -28,6 +28,15 @@ class UserController extends BaseController
 		return Redirect::to('/');
 	}
 
+	public function showUser($id)
+	{
+		$auth = Session::get('auth');
+		$user = User::find($id);
+
+		$include = array('auth' => $auth, 'user' => $user);
+		return View::make('user.stats', $include);
+	}
+
 
 	private function LDAPExecute( $func )
 	{

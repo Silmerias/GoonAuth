@@ -15,7 +15,8 @@ class GameUserSeeder extends Seeder {
 			'GID' => $mwo->GID,
 			'UID' => $admin->UID,
 			'USID' => $active->USID,
-			'GUUserID' => 123
+			'GUUserID' => 123,
+			'GUCachedName' => 'Test Kerensky'
 		));
 
 		$user->gameorganizations()->attach($wol);

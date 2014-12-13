@@ -12,9 +12,9 @@
         <thead>
             <th>Sponsor Name</th>
         </thead>
-        @foreach ($auth->sponsors as $sponsor)
+        @foreach ($auth->sponsoring()->get() as $sponsor)
         <tr>
-            <td>{{ $sponsor->xf_username }}</td>
+            <td>{{ $sponsor->UGoonID }}</td>
         </tr>
         @endforeach
     </table>

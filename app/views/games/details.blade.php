@@ -3,6 +3,10 @@
 <!-- default, info, warning, danger, success -->
 <a class="label label-info" href="{{ URL::to('games') }}">Back to Games</a>
 
+@if ($auth->gameroles()->where('GID', $game->GID)->count() != 0)
+<p style="margin-top: 20px"><a class="btn btn-danger" href="{{ URL::to(Request::path().'/auth') }}">Authorize Members</a></p>
+@endif
+
 <h1>Character List</h1>
 <div class="row">
 	<div class="col-md-12">
@@ -25,9 +29,9 @@
 		<tr>
 			<?php $status = $character->userstatus()->first() ?>
 			@if (strcmp($status->USCode, 'ACTI') == 0)
-				<td><span class="label label-primary">{{ $status->USStatus }}</td>
+				<td><span class="label label-primary">{{ $status->USStatus }}</span></td>
 			@else
-				<td><span class="label label-default">{{ $status->USStatus }}</td>
+				<td><span class="label label-default">{{ $status->USStatus }}</span></td>
 			@endif
 			<td>{{ $character->GUCachedName }}</td>
 		</tr>

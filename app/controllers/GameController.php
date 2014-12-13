@@ -201,67 +201,37 @@ class GameController extends BaseController
 		return View::make('games.complete');
 	}
 
-
-	public function showAddForm()
+	public function showAuth($abbr)
 	{
 		$auth = Session::get('auth');
+		$game = Game::where('GAbbr', $abbr)->first();
+		if (empty($game))
+			return Redirect::to('games');
 
-		$include = array('auth' => $auth);
-		return View::make('character.add', $include);
+		$include = array('auth' => $auth, 'game' => $game);
+		return View::make('games.auth', $include);
 	}
 
-	public function doAddCharacter()
+	public function doAuth($abbr, $guid)
 	{
-		$auth = Session::get('auth');
+		$action = Input::get('action');
+		$gameuser = GameUser::find($guid);
 
-		if ((!empty($auth->sa_username) && $auth->characters->count() >= Config::get('goonauth.characters')) ||
-			($auth->is_sponsored && $auth->characters->count() >= Config::get('goonauth.sponsored'))) {
-			Session::flash('error', 'You have exceeded your character limit.');
-			return Redirect::back();
+		if (strcasecmp($action, "approve") == 0)
+		{
+			$active = UserStatus::where('USCode', 'ACTI')->first();
+			$gameuser->USID = $active->USID;
+			$gameuser->save();
+		}
+		else
+		{
+			$rejected = UserStatus::where('USCode', 'REJE')->first();
+			$gameuser->USID = $rejected->USID;
+			$gameuser->save();
 		}
 
-		$character = new Character();
-		$character->auth_id = $auth->id;
-		$character->name = Input::get('name');
-
-		if ($auth->characters->count() == 0) {
-			$character->is_main = true;
-		}
-		$character->save();
-
-		return Redirect::to('characters');
-	}
-
-	public function doSetMain(Character $character)
-	{
-		$auth = Session::get('auth');
-
-		if ($auth->id != $character->auth_id) {
-			App::abort(500, "Error processing request!");
-		}
-
-		$current = Character::where('auth_id', $auth->id)->where('is_main', true)->first();
-		$current->is_main = false;
-		$current->save();
-
-		$character->is_main = true;
-		$character->save();
-
-		return Redirect::back();
-	}
-
-	public function doDelete(Character $character)
-	{
-		$auth = Session::get('auth');
-
-		if ($auth->id != $character->auth_id) {
-			App::abort(500, "Error processing request!");
-		}
-
-		if (!$character->locked) {
-			$character->delete();
-		}
-
-		return Redirect::back();
+		return Response::json(array(
+			'success' => true
+		));
 	}
 }

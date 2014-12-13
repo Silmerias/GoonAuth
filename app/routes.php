@@ -15,6 +15,9 @@ Route::controller('register', 'RegisterController');
 
 Route::get('/', array('before' => 'auth', 'uses' => 'UserController@showHome'));
 Route::get('login', function() {
+	if (empty(Session::get('auth')))
+		Session::flush();
+
 	return View::make('user.login');
 });
 Route::post('login', 'UserController@doLogin');
@@ -28,6 +31,10 @@ Route::group(array('before' => 'auth'), function() {
 	Route::get('games/{abbr}', 'GameController@showGame');
 	Route::get('games/{abbr}/join', 'GameController@showJoinGame');
 	Route::post('games/{abbr}/join/link', 'GameController@doLink');
+	Route::get('games/{abbr}/auth', 'GameController@showAuth');
+	Route::post('games/{abbr}/auth/{guid}', 'GameController@doAuth');
+
+	Route::get('user/{id}', 'UserController@showUser');
 
 	Route::group(array('before' => 'sponsor'), function() {
 		Route::get('sponsor', 'SponsorController@showSponsors');

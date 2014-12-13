@@ -39,7 +39,7 @@
           <ul class="nav navbar-nav">
             @if (Session::has('authenticated'))
               <li{{ Request::is('/') || Request::is('home') ? ' class="active"' : '' }}><a href="{{ URL::to('/') }}">Home</a></li>
-              <li{{ Request::is('games') || Request::is('games/*') ? ' class="active"' : '' }}><a href="{{ URL::to('games') }}">Join Game</a></li>
+              <li{{ Request::is('games') || Request::is('games/*') ? ' class="active"' : '' }}><a href="{{ URL::to('games') }}">Games</a></li>
               @if (!Session::get('auth')->USponsoredID)
                 <li{{ Request::is('sponsor') || Request::is('sponsor/*') ? ' class="active"' : '' }}><a href="{{ URL::to('sponsor') }}">Sponsor</a></li>
               @endif
