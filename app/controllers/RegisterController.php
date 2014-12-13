@@ -23,22 +23,36 @@ class RegisterController extends BaseController
 		return View::make('register.affiliate');
 	}
 
+	public function postCheckGoon()
+	{
+		$count = $count = User::join('UserStatus', 'UserStatus.USID', '=', 'User.USID')
+			->where('UGoonID', Input::get('goonid'))
+			->where('USCode', '<>', 'REJE')
+			->count();
+
+		return Response::json(array(
+			'valid' => ($count === 0 ? 'true' : 'false')
+		));
+	}
+
 	public function postGoon()
 	{
-		$count = User::where('UGoonID', Input::get('goonid'))
-			->orWhere('UEmail', Input::get('email'))
+		$count = User::join('UserStatus', 'UserStatus.USID', '=', 'User.USID')
+			->where('UGoonID', Input::get('goonid'))
+			->where('USCode', '<>', 'REJE')
 			->count();
 
 		if ($count !== 0)
-		{
-			Session::flash('error', 'That username or email has been taken.');
-			return Redirect::back();
-		}
+			return Redirect::back()->with('error', 'That Goon ID has been taken.');
+
+		$count = User::where('UEmail', Input::get('email'))->count();
+		if ($count !== 0)
+			return Redirect::back()->with('error', 'That email has been taken.');
 
 		Session::put('register-goonid', Input::get('goonid'));
 		Session::put('register-email', Input::get('email'));
 
-		$token = uniqid('FART_');
+		$token = uniqid('FART-');
 		Session::put('token', $token);
 
 		return View::make('register.link', array('token' => $token));
@@ -52,16 +66,10 @@ class RegisterController extends BaseController
 		$sa_name = Input::get('sa_username');
 
 		if (!isset($goonid) || !isset($email) || !isset($token))
-		{
-			Session::flash('error', 'An unknown error has occured.');
-			return Redirect::to('register');
-		}
+			return Redirect::to('register')->with('error', 'An unknown error has occured.');
 
 		if (!isset($sa_name))
-		{
-			Session::flash('error', 'You must enter your SA Username.');
-			return Redirect::back();
-		}
+			return Redirect::back()->with('error', 'You must enter your SA Username.');
 
 		$cookieJar = new ArrayCookieJar();
 
@@ -130,14 +138,12 @@ class RegisterController extends BaseController
 			else
 			{
 				// Session::flash('error', 'Could not find token in profile or you have not been a member for at least 90 days.');
-				Session::flash('error', 'Could not find the token in your profile.');
-				return Redirect::back();
+				return Redirect::back()->with('error', 'Could not find the token in your profile.');
 			}
 		}
 		catch (ClientErrorResponseException $ex)
 		{
-			Session::flash('error', 'An unknown error has occured. Please try again.');
-			return Redirect::back();
+			return Redirect::back()->with('error', 'An unknown error has occured. Please try again.');
 		}
 		return Redirect::back();
 	}
