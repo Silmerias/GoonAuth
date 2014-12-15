@@ -15,7 +15,9 @@ class UserSeeder extends Seeder {
 			'UEmail' => 'example@example.com',
 			'UGoonID' => Config::get('goonauth.adminAccount'),
 			'UGroup' => $sa->GRID,
-			'ULDAPLogin' => Config::get('goonauth.adminAccount')
+			'ULDAPLogin' => Config::get('goonauth.adminAccount'),
+			'USACachedName' => '<Admin Account>',
+			'USAUserID' => 0
 		));
 
 		$user->ownedgroups()->save($sa);

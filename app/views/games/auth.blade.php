@@ -4,7 +4,7 @@
 <?php $pending = UserStatus::pending()->first() ?>
 
 <!-- default, info, warning, danger, success -->
-<a class="label label-info" href="{{ URL::to('games/'.$game->GAbbr) }}">Back to {{ $game->GName }}</a>
+<a class="label label-info" href="{{ URL::to('games/'.$game->GAbbr) }}">Back to {{ e($game->GName) }}</a>
 
 <h1>Users Pending</h1>
 <div class="row">
@@ -18,20 +18,20 @@
 	
 	@else
 
-	<p>The following characters are <span class="label label-default">{{ $pending->USStatus }}</span>:</p>
+	<p>The following characters are <span class="label label-default">{{ e($pending->USStatus) }}</span>:</p>
 
 	<table class="table">
 		<thead>
 			<th style="width: 150px;">Goon ID</th>
 			<th>Character Name</th>
-			<th style="width: 100px;">Reg Date</th>
-			<th style="width: 50px;">Post Count</th>
-			<th style="width: 150px;">Actions</th>
+			<th style="width: 175px;">Reg Date</th>
+			<th style="width: 125px;">Post Count</th>
+			<th style="width: 100px;">Actions</th>
 		</thead>
 		@foreach ($query->get() as $gameuser)
 		<tr id="GUID_{{ $gameuser->GUID }}">
-			<td><a href="{{ URL::to('user/'.$gameuser->user()->first()->UID) }}">{{ $gameuser->user()->first()->UGoonID }}</a></td>
-			<td><a href="{{ GameController::buildGameProfile($game, $gameuser) }}">{{ $gameuser->GUCachedName }}</a></td>
+			<td><a href="{{ URL::to('user/'.$gameuser->user()->first()->UID) }}">{{ e($gameuser->user->UGoonID) }}</a></td>
+			<td><a href="{{ GameController::buildGameProfile($game, $gameuser) }}">{{ e($gameuser->GUCachedName) }}</a></td>
 			<td>{{ $gameuser->GURegDate }}</td>
 			<td>{{ $gameuser->GUCachedPostCount }}</td>
 			<td>

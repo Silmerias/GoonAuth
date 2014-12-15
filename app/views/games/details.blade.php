@@ -29,11 +29,11 @@
 		<tr>
 			<?php $status = $character->userstatus()->first() ?>
 			@if (strcmp($status->USCode, 'ACTI') == 0)
-				<td><span class="label label-primary">{{ $status->USStatus }}</span></td>
+				<td><span class="label label-primary">{{ e($status->USStatus) }}</span></td>
 			@else
-				<td><span class="label label-default">{{ $status->USStatus }}</span></td>
+				<td><span class="label label-default">{{ e($status->USStatus) }}</span></td>
 			@endif
-			<td>{{ $character->GUCachedName }}</td>
+			<td>{{ e($character->GUCachedName) }}</td>
 		</tr>
 		@endforeach
 	</table>

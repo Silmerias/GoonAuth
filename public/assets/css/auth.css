@@ -58,7 +58,7 @@ body {
 
 .not-authed i,
 .authed i {
-  font-size: 300px;
+  font-size: 12em;
 }
 
 .not-authed h2,

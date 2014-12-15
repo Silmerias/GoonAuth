@@ -57,11 +57,32 @@ Route::filter('admin', function() {
 	*/
 });
 
-Route::filter('sponsor', function() {
-	if (!Session::has('auth') || empty(Session::get('auth')->USAUserID))
+Route::filter('groupadmin', function($route) {
+	$auth = Session::get('auth');
+	$grid = $route->getParameter('grid');
+	if (!isset($grid))
 		return Redirect::to('/');
 
-	if (!empty(Session::get('auth')->USponsorID))
+	if ($auth->grouproles()->where('GRID', $grid)->count() == 0)
+		return Redirect::to('/');
+});
+
+Route::filter('gameadmin', function($route) {
+	$auth = Session::get('auth');
+	$abbr = $route->getParameter('abbr');
+	if (!isset($abbr))
+		return Redirect::to('games');
+
+	$game = Game::where('GAbbr', $abbr)->first();
+	if ($auth->gameroles()->where('GID', $game->GID)->count() == 0)
+		return Redirect::to('games/'.$abbr);
+});
+
+Route::filter('sponsor', function() {
+	if (!Session::has('auth') || is_null(Session::get('auth')->USAUserID))
+		return Redirect::to('/');
+
+	if (!is_null(Session::get('auth')->USponsorID))
 		return Redirect::to('/');
 });
 

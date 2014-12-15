@@ -10,7 +10,7 @@ class User extends Eloquent {
 		return $this->belongsTo('UserStatus', 'USID');
 	}
 
-	public function sponsoring() {
+	public function sponsor() {
 		return $this->belongsTo('User', 'USponsorID');
 	}
 
@@ -22,8 +22,8 @@ class User extends Eloquent {
 		return $this->hasMany('Note', 'UID');
 	}
 
-	public function sponsor() {
-		return $this->hasOne('User', 'UID', 'USponsorID');
+	public function sponsoring() {
+		return $this->hasMany('User', 'USponsorID');
 	}
 
 	public function ownedgroups() {
@@ -44,6 +44,10 @@ class User extends Eloquent {
 
 	public function gameroles() {
 		return $this->belongsToMany('Role', 'GameAdmin', 'UID', 'RID')->withPivot('GID');
+	}
+
+	public function games() {
+		return $this->hasManyThrough('Game', 'GameUser', 'UID', 'GID');
 	}
 
 	public function gameusers() {

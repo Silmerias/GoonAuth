@@ -27,14 +27,22 @@ Route::get('logout', function() {
 });
 
 Route::group(array('before' => 'auth'), function() {
+	Route::get('user/{id}', 'UserController@showUser');
+
 	Route::get('games', 'GameController@showGames');
 	Route::get('games/{abbr}', 'GameController@showGame');
 	Route::get('games/{abbr}/join', 'GameController@showJoinGame');
 	Route::post('games/{abbr}/join/link', 'GameController@doLink');
-	Route::get('games/{abbr}/auth', 'GameController@showAuth');
-	Route::post('games/{abbr}/auth/{guid}', 'GameController@doAuth');
 
-	Route::get('user/{id}', 'UserController@showUser');
+	Route::group(array('before' => 'auth|groupadmin'), function() {
+		Route::get('group/{grid}/auth', 'GroupController@showAuth');
+		Route::post('group/{grid}/auth/{uid}', 'GroupController@doAuth');
+	});
+
+	Route::group(array('before' => 'auth|gameadmin'), function() {
+		Route::get('games/{abbr}/auth', 'GameController@showAuth');
+		Route::post('games/{abbr}/auth/{guid}', 'GameController@doAuth');
+	});
 
 	Route::group(array('before' => 'sponsor'), function() {
 		Route::get('sponsor', 'SponsorController@showSponsors');

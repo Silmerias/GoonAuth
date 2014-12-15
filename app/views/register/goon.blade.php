@@ -8,7 +8,8 @@
 
 <form class="form-register" role="form" action="{{ URL::action('RegisterController@postGoon') }}" method="post">
   <h2 class="form-register-heading">Are you being sponsored?</h2>
-  <p>{{ HTML::link(URL::to('register/goon-sponsored'), "Click here") }} to access the sponsor form.</p>
+  <!-- <p>{{ HTML::link(URL::to('register/goon-sponsored'), "Click here") }} to access the sponsor form.</p> -->
+  <p>The sponsor form is not yet completed. Very sorry about that.</p>
 
   <h2 class="form-register-heading">Fill out the following</h2>
   <p>Your Goon ID is your login name. Your Display Name can be changed later, but remember that your Goon ID is always visible.</p>
