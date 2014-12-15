@@ -25,17 +25,17 @@ return array(
 	/**
 	 * LDAP settings
 	 */
+	'disableLDAP' => false,
 	'ldapHost' => 'localhost',
 	'ldapPort' => 389,
 	'ldapUser' => 'ldap_user',
 	'ldapPassword' => 'ldap_password',
-	'ldapDN' => 'ou=users,dc=mydomain,dc=com',
-	'ldapGroupDN' => 'ou=groups,dc=mydomain,dc=com',
 
 	/**
 	 * LDAP entry configuration
 	 */
-	
+	'ldapDN' => 'ou=users,dc=mydomain,dc=com',
+	'ldapGroupDN' => 'ou=groups,dc=mydomain,dc=com',	
 
 	/**
 	 * Forum usergroup for authed goons

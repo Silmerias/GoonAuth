@@ -15,11 +15,17 @@ class UserController extends BaseController
 	{
 		$valid = $this->LDAPPasswordCheck(Input::get('goonid'), Input::get('password'));
 		if ($valid === false)
-			return Redirect::back()->with('error', 'Invalid username/password.');
+		{
+			Session::flash('error', 'Invalid username/password.');
+			return View::make('user.login');
+		}
 
 		$user = User::where('UGoonID', Input::get('goonid'))->first();
 		if (!isset($user))
-			return Redirect::back()->with('error', 'This user is not in our system.');
+		{
+			Session::flash('error', 'This user is not in our system.');
+			return View::make('user.login');
+		}
 
 		Session::put('authenticated', true);
 		Session::put('userid', $user->UID);
@@ -40,6 +46,9 @@ class UserController extends BaseController
 
 	private function LDAPExecute( $func )
 	{
+		if (Config::get('goonauth.disableLDAP'))
+			return;
+
 		$ldaphost = Config::get('goonauth.ldapHost');
 		$ldapport = Config::get('goonauth.ldapPort');
 
@@ -47,7 +56,7 @@ class UserController extends BaseController
 		$ldap = ldap_connect($ldaphost, $ldapport);
 		if (!$ldap)
 		{
-			error_log("[ldapsync] Could not connect to $ldaphost");
+			error_log("[ldap] Could not connect to $ldaphost");
 			return;
 		}
 
@@ -74,7 +83,7 @@ class UserController extends BaseController
 		}
 		else
 		{
-			error_log("[ldapsync] Failed to bind to $ldaphost : $ldapport with user $ldapuser");
+			error_log("[ldap] Failed to bind to $ldaphost : $ldapport with user $ldapuser");
 		}
 
 		ldap_close($ldap);
@@ -82,7 +91,8 @@ class UserController extends BaseController
 
 	private function LDAPPasswordCheck($username, $password)
 	{
-		return true;
+		if (Config::get('goonauth.disableLDAP'))
+			return true;
 
 		if (!isset($username) || !isset($password) || strlen($password) == 0)
 			return false;
@@ -94,7 +104,7 @@ class UserController extends BaseController
 		$ldap = ldap_connect($ldaphost, $ldapport);
 		if (!$ldap)
 		{
-			error_log("[ldapsync] Could not connect to $ldaphost");
+			error_log("[ldap] Could not connect to $ldaphost");
 			return false;
 		}
 

@@ -60,7 +60,7 @@ class GroupController extends BaseController
 				// Add the user!
 				$userdn = "cn=" . $user->UGoonID . "," . Config::get('goonauth.ldapDN');
 				if (!ldap_add($ldap, $userdn, $info))
-					error_log("[ldap] Failed to create user $info['cn']");
+					error_log("[ldap] Failed to create user {$info['cn']}");
 
 				// Add the user to the forums LDAP group.
 				$forumdn = "cn=ForumMembers" . "," . Config::get('goonauth.ldapGroupDN');
@@ -112,6 +112,9 @@ class GroupController extends BaseController
 
 	private function LDAPExecute( $func )
 	{
+		if (Config::get('goonauth.disableLDAP'))
+			return;
+
 		$ldaphost = Config::get('goonauth.ldapHost');
 		$ldapport = Config::get('goonauth.ldapPort');
 
@@ -119,7 +122,7 @@ class GroupController extends BaseController
 		$ldap = ldap_connect($ldaphost, $ldapport);
 		if (!$ldap)
 		{
-			error_log("[ldapsync] Could not connect to $ldaphost");
+			error_log("[ldap] Could not connect to $ldaphost");
 			return;
 		}
 
@@ -146,7 +149,7 @@ class GroupController extends BaseController
 		}
 		else
 		{
-			error_log("[ldapsync] Failed to bind to $ldaphost : $ldapport with user $ldapuser");
+			error_log("[ldap] Failed to bind to $ldaphost : $ldapport with user $ldapuser");
 		}
 
 		ldap_close($ldap);

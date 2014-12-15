@@ -276,6 +276,9 @@ class GameController extends BaseController
 
 	private function LDAPExecute( $func )
 	{
+		if (Config::get('goonauth.disableLDAP'))
+			return;
+
 		$ldaphost = Config::get('goonauth.ldapHost');
 		$ldapport = Config::get('goonauth.ldapPort');
 
@@ -283,7 +286,7 @@ class GameController extends BaseController
 		$ldap = ldap_connect($ldaphost, $ldapport);
 		if (!$ldap)
 		{
-			error_log("[ldapsync] Could not connect to $ldaphost");
+			error_log("[ldap] Could not connect to $ldaphost");
 			return;
 		}
 
@@ -310,7 +313,7 @@ class GameController extends BaseController
 		}
 		else
 		{
-			error_log("[ldapsync] Failed to bind to $ldaphost : $ldapport with user $ldapuser");
+			error_log("[ldap] Failed to bind to $ldaphost : $ldapport with user $ldapuser");
 		}
 
 		ldap_close($ldap);
