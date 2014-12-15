@@ -62,7 +62,7 @@ class UserController extends BaseController
 		// If nothing was entered, use NULL so we do an anonymous bind.
 		if (strlen($ldapuser) === 0)
 			$ldapuser = NULL;
-		else $ldapuser = "cn=" . $ldapuser . "," . Config::get('goonauth.ldapDN');;
+		else $ldapuser = "cn=" . $ldapuser . "," . Config::get('goonauth.ldapDN');
 		if (strlen($ldappass) === 0)
 			$ldappass = NULL;
 

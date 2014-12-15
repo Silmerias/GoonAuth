@@ -224,23 +224,95 @@ class GameController extends BaseController
 	public function doAuth($abbr, $guid)
 	{
 		$action = Input::get('action');
+		$game = Game::where('GAbbr', $abbr)->first();
 		$gameuser = GameUser::find($guid);
+		$user = User::find($gameuser->UID);
 
 		if (strcasecmp($action, "approve") == 0)
 		{
 			$active = UserStatus::where('USCode', 'ACTI')->first();
 			$gameuser->USID = $active->USID;
 			$gameuser->save();
+
+			$this->LDAPExecute(function($ldap) {
+				// Add the user to the game's LDAP group.
+				$userdn = "cn=" . $user->UGoonID . "," . Config::get('goonauth.ldapDN');
+				$forumdn = "cn=" . $game->GLDAPGroup . "," . Config::get('goonauth.ldapGroupDN');
+				if (!ldap_mod_add($ldap, $forumdn, array('members' => $userdn)))
+					error_log("[ldap] Failed to add user to game group.");
+			});
+
+			// Assemble the data required for the e-mail.
+			$maildata = array_add($maildata, 'goonid', $user->UGoonID);
+			$maildata = array_add($maildata, 'game', $game->GName);
+
+			// Send out the onboarding e-mail.
+			Mail::send('emails.game.register.approve', $maildata, function($msg) {
+				$msg->subject('Your ' . $game->GName . ' game membership request was approved!');
+				$msg->to($user->UEmail);
+			});
 		}
 		else
 		{
 			$rejected = UserStatus::where('USCode', 'REJE')->first();
 			$gameuser->USID = $rejected->USID;
 			$gameuser->save();
+
+			$maildata = array_add($maildata, 'game', $game->GName);
+			$maildata = array_add($maildata, 'reason', 'You suck');
+
+			// Send out the rejection e-mail.
+			Mail::send('emails.game.register.deny', $maildata, function($msg) {
+				$msg->subject('Your ' . $game->GName . ' game membership request was DENIED!');
+				$msg->to($user->UEmail);
+			});
 		}
 
 		return Response::json(array(
 			'success' => true
 		));
+	}
+
+
+	private function LDAPExecute( $func )
+	{
+		$ldaphost = Config::get('goonauth.ldapHost');
+		$ldapport = Config::get('goonauth.ldapPort');
+
+		// Connect to our LDAP server.
+		$ldap = ldap_connect($ldaphost, $ldapport);
+		if (!$ldap)
+		{
+			error_log("[ldapsync] Could not connect to $ldaphost");
+			return;
+		}
+
+		// Set options.
+		ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
+		ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+
+		// Grab some settings.
+		$ldapuser = Config::get('goonauth.ldapUser');
+		$ldappass = Config::get('goonauth.ldapPassword');
+
+		// If nothing was entered, use NULL so we do an anonymous bind.
+		if (strlen($ldapuser) === 0)
+			$ldapuser = NULL;
+		else $ldapuser = "cn=" . $ldapuser . "," . Config::get('goonauth.ldapDN');
+		if (strlen($ldappass) === 0)
+			$ldappass = NULL;
+
+		// Attempt to bind now.
+		if (ldap_bind($ldap, $ldapuser, $ldappass))
+		{
+			// Execute our function.
+			$func($ldap);
+		}
+		else
+		{
+			error_log("[ldapsync] Failed to bind to $ldaphost : $ldapport with user $ldapuser");
+		}
+
+		ldap_close($ldap);
 	}
 }

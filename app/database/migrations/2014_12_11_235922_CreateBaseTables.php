@@ -94,6 +94,8 @@ class CreateBaseTables extends Migration {
 				->unsigned()->nullable();	// Group owner
 
 			$t->text("GRName");	// Group name
+
+			$t->text("GRLDAPGroup")->nullable();	// LDAP group for the group.
 		});
 
 		// Game
@@ -107,6 +109,8 @@ class CreateBaseTables extends Migration {
 			$t->text("GName");	// Game name
 			$t->text("GEditProfileURL");	// Game edit profile URL
 			$t->text("GProfileURL");		// Game profile URL
+
+			$t->text("GLDAPGroup")->nullable();	// LDAP group for the game.
 		});
 
 		// GroupAdmin
@@ -168,6 +172,8 @@ class CreateBaseTables extends Migration {
 
 			$t->text("GOAbbr");	// Organization abbreviation
 			$t->text("GOName");	// Organization name
+
+			$t->text("GOLDAPGroup")->nullable();	// LDAP group for the game organization.
 		});
 
 		// GameHasGameOrganization
