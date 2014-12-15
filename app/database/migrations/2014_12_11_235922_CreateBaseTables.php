@@ -105,7 +105,8 @@ class CreateBaseTables extends Migration {
 
 			$t->text("GAbbr");	// Game abbreviation
 			$t->text("GName");	// Game name
-			$t->text("GProfileURL");	// Game profile URL
+			$t->text("GEditProfileURL");	// Game edit profile URL
+			$t->text("GProfileURL");		// Game profile URL
 		});
 
 		// GroupAdmin

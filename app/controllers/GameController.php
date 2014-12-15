@@ -131,6 +131,15 @@ class GameController extends BaseController
 		return $ret;
 	}
 
+	public static function buildGameProfile($game, $gameuser)
+	{
+		if (strcasecmp($game->GAbbr, "mwo") == 0)
+			return sprintf($game->GProfileURL, $gameuser->GUUserID, strtolower(str_replace(' ', '-', $gameuser->GUCachedName)));
+
+		if (strcasecmp($game->GAbbr, "sc") == 0)
+			return sprintf($game->GProfileURL, $gameuser->GUCachedName);
+	}
+
 	public function showGames()
 	{
 		$auth = Session::get('auth');

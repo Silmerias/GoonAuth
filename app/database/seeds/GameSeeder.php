@@ -13,14 +13,16 @@ class GameSeeder extends Seeder {
 			'GOwnerID' => $admin->UID,
 			'GAbbr' => 'sc',
 			'GName' => 'Star Citizen',
-			'GProfileURL' => 'https://robertsspaceindustries.com/account/profile'
+			'GEditProfileURL' => 'https://robertsspaceindustries.com/account/profile',
+			'GProfileURL' => 'https://robertsspaceindustries.com/citizens/%s'
 		));
 
 		$mwo = Game::create(array(
 			'GOwnerID' => $admin->UID,
 			'GAbbr' => 'mwo',
 			'GName' => 'MechWarrior Online',
-			'GProfileURL' => 'http://mwomercs.com/forums/index.php?app=core&module=usercp&tab=core'
+			'GEditProfileURL' => 'http://mwomercs.com/forums/index.php?app=core&module=usercp&tab=core',
+			'GProfileURL' => 'http://mwomercs.com/forums/user/%d-%s'
 		));
 
 		$fljk = GameOrganization::create(array(
