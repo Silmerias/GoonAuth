@@ -199,7 +199,6 @@ class GameController extends BaseController
 		$user = new GameUser;
 		$user->GID = $game->GID;
 		$user->UID = $auth->UID;
-		$user->USID = UserStatus::pending()->first()->USID;
 		$user->GUUserID = $ret['userid'];
 		$user->GURegDate = $ret['regdate'];
 		$user->GUCacheDate = Carbon::now();
@@ -212,12 +211,41 @@ class GameController extends BaseController
 
 	public function showGameOrg($abbr, $org)
 	{
-		return Redirect::to('/');
+		$auth = Session::get('auth');
+		$game = Game::where('GAbbr', $abbr)->first();
+		$org = GameOrg::where('GOAbbr', $org)->first();
+		if (empty($game) || empty($org))
+			return Redirect::to('games');
+
+		$include = array('auth' => $auth, 'game' => $game, 'org' => $org);
+		return View::make('org.details', $include);
 	}
 
-	public function doGameOrg($abbr, $org)
+	public function showGameOrgJoin($abbr, $org)
 	{
-		return Redirect::to('/');
+		$auth = Session::get('auth');
+		$game = Game::where('GAbbr', $abbr)->first();
+		$org = GameOrg::where('GOAbbr', $org)->first();
+		if (empty($game) || empty($org))
+			return Redirect::to('games');
+
+		$include = array('auth' => $auth, 'game' => $game, 'org' => $org);
+		return View::make('org.join', $include);
+	}
+
+	public function doGameOrgJoin($abbr, $org)
+	{
+		$auth = Session::get('auth');
+		$game = Game::where('GAbbr', $abbr)->first();
+		$org = GameOrg::where('GOAbbr', $org)->first();
+		$gameuser = GameUser::find(Input::get('character'));
+		if (empty($org) || empty($gameuser))
+			return Redirect::to('games/'.$game->GAbbr.'/'.$org->GOAbbr);
+
+		$pending = UserStatus::where('USCode', 'PEND')->first();
+		$gameuser->gameorgs()->attach($org, array('USID' => $pending->USID));
+
+		return Redirect::to('games/'.$game->GAbbr.'/'.$org->GOAbbr);
 	}
 
 	public function showAuth($abbr)

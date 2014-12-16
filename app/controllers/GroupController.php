@@ -82,6 +82,8 @@ class GroupController extends BaseController
 				}
 			});
 
+			// Create note.
+
 			// Connect to IPB to create the forum entry.
 			file_get_contents("https://forums.goonrathi.com/index.php?app=core&module=global&section=login&do=process&auth_key=880ea6a14ea49e853634fbdc5015a024&ips_username={$user->UGoonID}&ips_password={$password}");
 

@@ -35,7 +35,8 @@ Route::group(array('before' => 'auth'), function() {
 	Route::post('games/{abbr}/link', 'GameController@doGameLink');
 
 	Route::get('games/{abbr}/{org}', 'GameController@showGameOrg');
-	Route::post('games/{abbr}/{org}', 'GameController@doGameOrg');
+	Route::get('games/{abbr}/{org}/join', 'GameController@showGameOrgJoin');
+	Route::post('games/{abbr}/{org}/join', 'GameController@doGameOrgJoin');
 
 	Route::group(array('before' => 'auth|groupadmin', 'prefix' => 'auth'), function() {
 		Route::get('group/{grid}', 'GroupController@showAuth');

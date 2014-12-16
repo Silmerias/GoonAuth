@@ -10,5 +10,10 @@ class NoteTypeSeeder extends Seeder {
 			'NTName' => 'System',
 			'NTColor' => '#FFFFCC'
 		));
+
+		NoteType::create(array(
+			'NTName' => 'Registration',
+			'NTColor' => '#FFFFCC'
+		));
 	}
 }
