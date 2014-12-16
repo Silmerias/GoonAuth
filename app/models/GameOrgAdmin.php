@@ -1,13 +1,13 @@
 <?php
 
-class GameAdmin extends Eloquent {
-	protected $table = "GameAdmin";
-	protected $primaryKey = "GAID";
+class GameOrgAdmin extends Eloquent {
+	protected $table = "GameOrgAdmin";
+	protected $primaryKey = "GOAID";
 	public $timestamps = false;
 
 
-	public function game() {
-		return $this->belongsTo('Game', 'GID');
+	public function gameorg() {
+		return $this->belongsTo('GameOrg', 'GOID');
 	}
 
 	public function user() {

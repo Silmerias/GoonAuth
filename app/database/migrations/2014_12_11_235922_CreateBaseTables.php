@@ -20,8 +20,8 @@ class CreateBaseTables extends Migration {
 
 			$t->binary("UIPAddress")->nullable();	// User IP Address
 
-			$t->text("UEmail")->unique();	// User E-Mail.
-			$t->text("UGoonID")->unique();	// User Goon ID.
+			$t->string("UEmail", 100)->unique();	// User E-Mail.
+			$t->string("UGoonID", 100)->unique();	// User Goon ID.
 
 			$t->integer("UGroup")->unsigned();	// Group the user belongs to
 			$t->text("ULDAPLogin")->nullable();	// LDAP login
@@ -98,21 +98,6 @@ class CreateBaseTables extends Migration {
 			$t->text("GRLDAPGroup")->nullable();	// LDAP group for the group.
 		});
 
-		// Game
-		Schema::create("Game", function($t) {
-			$t->increments("GID");	// Game ID
-
-			$t->integer("GOwnerID")
-				->unsigned()->nullable();	// Game owner
-
-			$t->text("GAbbr");	// Game abbreviation
-			$t->text("GName");	// Game name
-			$t->text("GEditProfileURL");	// Game edit profile URL
-			$t->text("GProfileURL");		// Game profile URL
-
-			$t->text("GLDAPGroup")->nullable();	// LDAP group for the game.
-		});
-
 		// GroupAdmin
 		Schema::create("GroupAdmin", function($t) {
 			$t->increments("GRAID");	// Group Admin ID
@@ -122,13 +107,71 @@ class CreateBaseTables extends Migration {
 			$t->integer("RID")->unsigned();		// Role ID
 		});
 
-		// GameAdmin
-		Schema::create("GameAdmin", function($t) {
-			$t->increments("GAID");		// Game Admin ID
+		// Game
+		Schema::create("Game", function($t) {
+			$t->increments("GID");	// Game ID
 
-			$t->integer("GID")->unsigned();	// Game ID
-			$t->integer("UID")->unsigned();	// User ID
-			$t->integer("RID")->unsigned();	// Role ID
+			$t->text("GAbbr");	// Game abbreviation
+			$t->text("GName");	// Game name
+			$t->text("GEditProfileURL");	// Game edit profile URL
+			$t->text("GProfileURL");		// Game profile URL
+
+			$t->text("GLDAPGroup")->nullable();	// LDAP group for the game.
+		});
+
+		// GameOrg
+		Schema::create("GameOrg", function($t) {
+			$t->increments("GOID");	// Game Org ID
+
+			$t->integer("GOOwnerID")
+				->unsigned()->nullable();	// Org owner
+
+			$t->text("GOAbbr");	// Org abbreviation
+			$t->text("GOName");	// Org name
+
+			$t->text("GOLDAPGroup")->nullable();	// LDAP group for the game org.
+		});
+
+		// GameUser
+		Schema::create("GameUser", function($t) {
+			$t->increments("GUID");	// Game User ID
+
+			$t->integer("GID")->unsigned();		// Game ID
+			$t->integer("UID")->unsigned();		// User ID
+
+			$t->integer("GUUserID");				// User's Game ID
+			$t->timestamp("GURegDate")->nullable();	// User's Game Reg Date
+
+			$t->timestamp("GUCacheDate")->nullable();		// Date the game info was cached
+			$t->text("GUCachedName")->nullable();			// Cached name
+			$t->integer("GUCachedPostCount")->nullable();	// Cached post count
+		});
+
+		// GameHasGameOrg
+		Schema::create("GameHasGameOrg", function($t) {
+			$t->increments("GHGOID");	// Game Has Game Org ID
+
+			$t->integer("GID")->unsigned();		// Game ID
+			$t->integer("GOID")->unsigned();	// Game Org ID
+		});
+
+		// GameOrgHasGameUser
+		Schema::create("GameOrgHasGameUser", function($t) {
+			$t->increments("GOHGUID");	// Game Org Has Game User ID
+
+			$t->integer("USID")->unsigned();	// User Status ID
+
+			$t->integer("GOID")->unsigned();	// Game Org ID
+			$t->integer("GUID")->unsigned();	// Game User ID
+		});
+
+		// GameOrgAdmin
+		Schema::create("GameOrgAdmin", function($t) {
+			$t->increments("GOAID");	// Game Admin ID
+
+			$t->integer("GOID")->unsigned();	// Game Org ID
+			$t->integer("UID")->unsigned();		// User ID
+			$t->integer("RID")->unsigned();		// Role ID
 		});
 
 		// GroupHasNote
@@ -139,57 +182,12 @@ class CreateBaseTables extends Migration {
 			$t->integer("NID")->unsigned();		// Note ID
 		});
 
-		// GameHasNote
-		Schema::create("GameHasNote", function($t) {
-			$t->increments("GHNID");	// Game Has Note ID
+		// GameOrgHasNote
+		Schema::create("GameOrgHasNote", function($t) {
+			$t->increments("GOHNID");	// Game Org Has Note ID
 
-			$t->integer("GID")->unsigned();		// Game ID
+			$t->integer("GOID")->unsigned();	// Game Org ID
 			$t->integer("NID")->unsigned();		// Note ID
-		});
-
-		// GameUser
-		Schema::create("GameUser", function($t) {
-			$t->increments("GUID");	// Game User ID
-
-			$t->integer("GID")->unsigned();		// Game ID
-			$t->integer("UID")->unsigned();		// User ID
-			$t->integer("USID")->unsigned();	// User Status ID
-
-			$t->integer("GUUserID");				// User's Game ID
-			$t->timestamp("GURegDate")->nullable();	// User's Game Reg Date
-
-			$t->timestamp("GUCacheDate")->nullable();		// Date the game info was cached
-			$t->text("GUCachedName")->nullable();			// Cached name
-			$t->integer("GUCachedPostCount")->nullable();	// Cached post count
-		});
-
-		// GameOrganization
-		Schema::create("GameOrganization", function($t) {
-			$t->increments("GOID");	// Game Organization ID
-
-			$t->integer("GOOwnerID")
-				->unsigned()->nullable();	// Organization owner
-
-			$t->text("GOAbbr");	// Organization abbreviation
-			$t->text("GOName");	// Organization name
-
-			$t->text("GOLDAPGroup")->nullable();	// LDAP group for the game organization.
-		});
-
-		// GameHasGameOrganization
-		Schema::create("GameHasGameOrganization", function($t) {
-			$t->increments("GHGOID");	// Game Has Game Organization ID
-
-			$t->integer("GID")->unsigned();		// Game ID
-			$t->integer("GOID")->unsigned();	// Game Organization ID
-		});
-
-		// GameOrganizationHasGameUser
-		Schema::create("GameOrganizationHasGameUser", function($t) {
-			$t->increments("GOHGUID");	// Game Organization Has Game User ID
-
-			$t->integer("GOID")->unsigned();	// Game Organization ID
-			$t->integer("GUID")->unsigned();	// Game User ID
 		});
 
 
@@ -243,13 +241,6 @@ class CreateBaseTables extends Migration {
 				->onDelete("set null");
 		});
 
-		// Game
-		Schema::table("Game", function($t) {
-			$t->foreign("GOwnerID", "FK_Game_User")
-				->references("UID")->on("User")
-				->onDelete("set null");
-		});
-
 		// GroupAdmin
 		Schema::table("GroupAdmin", function($t) {
 			$t->foreign("GRID", "FK_GroupAdmin_Group")
@@ -265,17 +256,61 @@ class CreateBaseTables extends Migration {
 				->onDelete("cascade");
 		});
 
-		// GameAdmin
-		Schema::table("GameAdmin", function($t) {
-			$t->foreign("GID", "FK_GameAdmin_Game")
+		// GameOrg
+		Schema::table("GameOrg", function($t) {
+			$t->foreign("GOOwnerID", "FK_GameOrg_User")
+				->references("UID")->on("User")
+				->onDelete("set null");
+		});
+
+		// GameUser
+		Schema::table("GameUser", function($t) {
+			$t->foreign("GID", "FK_GameUser_Game")
 				->references("GID")->on("Game")
 				->onDelete("cascade");
 
-			$t->foreign("UID", "FK_GameAdmin_User")
+			$t->foreign("UID", "FK_GameUser_User")
+				->references("UID")->on("User")
+				->onDelete("cascade");
+		});
+
+		// GameHasGameOrg
+		Schema::table("GameHasGameOrg", function($t) {
+			$t->foreign("GID", "FK_GameHasGameOrg_Game")
+				->references("GID")->on("Game")
+				->onDelete("cascade");
+
+			$t->foreign("GOID", "FK_GameHasGameOrg_GameOrg")
+				->references("GOID")->on("GameOrg")
+				->onDelete("cascade");
+		});
+
+		// GameOrgHasGameUser
+		Schema::table("GameOrgHasGameUser", function($t) {
+			$t->foreign("USID", "FK_GameOrgHasGameUser_UserStatus")
+				->references("USID")->on("UserStatus")
+				->onDelete("set null");
+
+			$t->foreign("GOID", "FK_GameOrgHasGameUser_GameOrg")
+				->references("GOID")->on("GameOrg")
+				->onDelete("cascade");
+
+			$t->foreign("GUID", "FK_GameOrgHasGameUser_GameUser")
+				->references("GUID")->on("GameUser")
+				->onDelete("cascade");
+		});
+
+		// GameOrgAdmin
+		Schema::table("GameOrgAdmin", function($t) {
+			$t->foreign("GOID", "FK_GameOrgAdmin_GameOrg")
+				->references("GOID")->on("GameOrg")
+				->onDelete("cascade");
+
+			$t->foreign("UID", "FK_GameOrgAdmin_User")
 				->references("UID")->on("User")
 				->onDelete("cascade");
 
-			$t->foreign("RID", "FK_GameAdmin_Role")
+			$t->foreign("RID", "FK_GameOrgAdmin_Role")
 				->references("RID")->on("Role")
 				->onDelete("cascade");
 		});
@@ -291,58 +326,14 @@ class CreateBaseTables extends Migration {
 				->onDelete("cascade");
 		});
 
-		// GameHasNote
-		Schema::table("GameHasNote", function($t) {
-			$t->foreign("GID", "FK_GameHasNote_Game")
-				->references("GID")->on("Game")
+		// GameOrgHasNote
+		Schema::table("GameOrgHasNote", function($t) {
+			$t->foreign("GOID", "FK_GameOrgHasNote_GameOrg")
+				->references("GOID")->on("GameOrg")
 				->onDelete("cascade");
 
-			$t->foreign("NID", "FK_GameHasNote_Note")
+			$t->foreign("NID", "FK_GameOrgHasNote_Note")
 				->references("NID")->on("Note")
-				->onDelete("cascade");
-		});
-
-		// GameUser
-		Schema::table("GameUser", function($t) {
-			$t->foreign("GID", "FK_GameUser_Game")
-				->references("GID")->on("Game")
-				->onDelete("cascade");
-
-			$t->foreign("UID", "FK_GameUser_User")
-				->references("UID")->on("User")
-				->onDelete("cascade");
-
-			$t->foreign("USID", "FK_GameUser_UserStatus")
-				->references("USID")->on("UserStatus")
-				->onDelete("set null");
-		});
-
-		// GameOrganization
-		Schema::table("GameOrganization", function($t) {
-			$t->foreign("GOOwnerID", "FK_GameOrganization_User")
-				->references("UID")->on("User")
-				->onDelete("set null");
-		});
-
-		// GameHasGameOrganization
-		Schema::table("GameHasGameOrganization", function($t) {
-			$t->foreign("GID", "FK_GameHasGameOrganization_Game")
-				->references("GID")->on("Game")
-				->onDelete("cascade");
-
-			$t->foreign("GOID", "FK_GameHasGameOrganization_GameOrganization")
-				->references("GOID")->on("GameOrganization")
-				->onDelete("cascade");
-		});
-
-		// GameOrganizationHasGameUser
-		Schema::table("GameOrganizationHasGameUser", function($t) {
-			$t->foreign("GOID", "FK_GameOrganizationHasGameUser_GameOrganization")
-				->references("GOID")->on("GameOrganization")
-				->onDelete("cascade");
-
-			$t->foreign("GUID", "FK_GameOrganizationHasGameUser_GameUser")
-				->references("GUID")->on("GameUser")
 				->onDelete("cascade");
 		});
 	}
@@ -371,42 +362,39 @@ class CreateBaseTables extends Migration {
 		Schema::table("Group", function($t) {
 			$t->dropForeign("FK_Group_User");
 		});
-		Schema::table("Game", function($t) {
-			$t->dropForeign("FK_Game_User");
-		});
 		Schema::table("GroupAdmin", function($t) {
 			$t->dropForeign("FK_GroupAdmin_Group");
 			$t->dropForeign("FK_GroupAdmin_User");
 			$t->dropForeign("FK_GroupAdmin_Role");
 		});
-		Schema::table("GameAdmin", function($t) {
-			$t->dropForeign("FK_GameAdmin_Game");
-			$t->dropForeign("FK_GameAdmin_User");
-			$t->dropForeign("FK_GameAdmin_Role");
+		Schema::table("GameOrg", function($t) {
+			$t->dropForeign("FK_GameOrg_User");
+		});
+		Schema::table("GameUser", function($t) {
+			$t->dropForeign("FK_GameUser_Game");
+			$t->dropForeign("FK_GameUser_User");
+		});
+		Schema::table("GameHasGameOrg", function($t) {
+			$t->dropForeign("FK_GameHasGameOrg_Game");
+			$t->dropForeign("FK_GameHasGameOrg_GameOrg");
+		});
+		Schema::table("GameOrgHasGameUser", function($t) {
+			$t->dropForeign("FK_GameOrgHasGameUser_UserStatus");
+			$t->dropForeign("FK_GameOrgHasGameUser_GameOrg");
+			$t->dropForeign("FK_GameOrgHasGameUser_GameUser");
+		});
+		Schema::table("GameOrgAdmin", function($t) {
+			$t->dropForeign("FK_GameOrgAdmin_GameOrg");
+			$t->dropForeign("FK_GameOrgAdmin_User");
+			$t->dropForeign("FK_GameOrgAdmin_Role");
 		});
 		Schema::table("GroupHasNote", function($t) {
 			$t->dropForeign("FK_GroupHasNote_Group");
 			$t->dropForeign("FK_GroupHasNote_Note");
 		});
-		Schema::table("GameHasNote", function($t) {
-			$t->dropForeign("FK_GameHasNote_Game");
-			$t->dropForeign("FK_GameHasNote_Note");
-		});
-		Schema::table("GameUser", function($t) {
-			$t->dropForeign("FK_GameUser_Game");
-			$t->dropForeign("FK_GameUser_User");
-			$t->dropForeign("FK_GameUser_UserStatus");
-		});
-		Schema::table("GameOrganization", function($t) {
-			$t->dropForeign("FK_GameOrganization_User");
-		});
-		Schema::table("GameHasGameOrganization", function($t) {
-			$t->dropForeign("FK_GameHasGameOrganization_Game");
-			$t->dropForeign("FK_GameHasGameOrganization_GameOrganization");
-		});
-		Schema::table("GameOrganizationHasGameUser", function($t) {
-			$t->dropForeign("FK_GameOrganizationHasGameUser_GameOrganization");
-			$t->dropForeign("FK_GameOrganizationHasGameUser_GameUser");
+		Schema::table("GameOrgHasNote", function($t) {
+			$t->dropForeign("FK_GameOrgHasNote_GameOrg");
+			$t->dropForeign("FK_GameOrgHasNote_Note");
 		});
 
 		// Drop the tables.
@@ -417,15 +405,15 @@ class CreateBaseTables extends Migration {
 		Schema::drop("Role");
 		Schema::drop("RoleSeesNoteType");
 		Schema::drop("Group");
-		Schema::drop("Game");
 		Schema::drop("GroupAdmin");
-		Schema::drop("GameAdmin");
-		Schema::drop("GroupHasNote");
-		Schema::drop("GameHasNote");
+		Schema::drop("Game");
+		Schema::drop("GameOrg");
 		Schema::drop("GameUser");
-		Schema::drop("GameOrganization");
-		Schema::drop("GameHasGameOrganization");
-		Schema::drop("GameOrganizationHasGameUser");
+		Schema::drop("GameHasGameOrg");
+		Schema::drop("GameOrgHasGameUser");
+		Schema::drop("GameOrgAdmin");
+		Schema::drop("GroupHasNote");
+		Schema::drop("GameOrgHasNote");
 	}
 
 }

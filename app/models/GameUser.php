@@ -14,11 +14,8 @@ class GameUser extends Eloquent {
 		return $this->belongsTo('User', 'UID');
 	}
 
-	public function userstatus() {
-		return $this->belongsTo('UserStatus', 'USID');
-	}
-
-	public function gameorganizations() {
-		return $this->belongsToMany('GameOrganization', 'GameOrganizationHasGameUser', 'GUID', 'GOID');
+	public function gameorgs() {
+		return $this->belongsToMany('GameOrg', 'GameOrgHasGameUser', 'GUID', 'GOID')
+			->withPivot('USID');
 	}
 }

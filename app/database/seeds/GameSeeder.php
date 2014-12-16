@@ -10,41 +10,39 @@ class GameSeeder extends Seeder {
 		$roll = Role::where('RName', 'Admin')->first();
 
 		$sc = Game::create(array(
-			'GOwnerID' => $admin->UID,
 			'GAbbr' => 'sc',
 			'GName' => 'Star Citizen',
-			'GLDAPGroup' => 'FLJK',	// SC
+			'GLDAPGroup' => null,	// SC
 			'GEditProfileURL' => 'https://robertsspaceindustries.com/account/profile',
 			'GProfileURL' => 'https://robertsspaceindustries.com/citizens/%s'
 		));
 
 		$mwo = Game::create(array(
-			'GOwnerID' => $admin->UID,
 			'GAbbr' => 'mwo',
 			'GName' => 'MechWarrior Online',
-			'GLDAPGroup' => 'WOL',	// MWO
+			'GLDAPGroup' => null,	// MWO
 			'GEditProfileURL' => 'http://mwomercs.com/forums/index.php?app=core&module=usercp&tab=core',
 			'GProfileURL' => 'http://mwomercs.com/forums/user/%d-%s'
 		));
 
-		$fljk = GameOrganization::create(array(
+		$fljk = GameOrg::create(array(
 			'GOOwnerID' => $admin->UID,
 			'GOAbbr' => 'FLJK',
 			'GOName' => 'Goonrathi',
 			'GOLDAPGroup' => 'FLJK'
 		));
 
-		$wol = GameOrganization::create(array(
+		$wol = GameOrg::create(array(
 			'GOOwnerID' => $admin->UID,
 			'GOAbbr' => 'WoL',
 			'GOName' => 'Word of Lowtax',
 			'GOLDAPGroup' => 'WOL'
 		));
 
-		$sc->organizations()->attach($sc->GID);
-		$mwo->organizations()->attach($mwo->GID);
+		$sc->orgs()->attach($sc->GID);
+		$mwo->orgs()->attach($mwo->GID);
 
-		$admin->gameroles()->attach($roll, array('GID' => $sc->GID));
-		$admin->gameroles()->attach($roll, array('GID' => $mwo->GID));
+		$admin->gameorgroles()->attach($roll, array('GOID' => $sc->GID));
+		$admin->gameorgroles()->attach($roll, array('GOID' => $mwo->GID));
 	}
 }

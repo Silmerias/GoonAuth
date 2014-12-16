@@ -24,11 +24,17 @@ class GroupController extends BaseController
 		return View::make('group.auth', $include);
 	}
 
-	public function doAuth($grid, $uid)
+	public function doAuth($grid)
 	{
 		$action = Input::get('action');
+		$uid = Input::get('id');
 		$group = Group::find($grid);
 		$user = User::find($uid);
+
+		// Test for valid user.
+		if (empty($user))
+			return Response::json(array('success' => false));
+
 		$maildata = array();
 
 		if (strcasecmp($action, "approve") == 0)

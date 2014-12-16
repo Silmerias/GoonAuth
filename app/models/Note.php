@@ -22,7 +22,7 @@ class Note extends Eloquent {
 		return $this->belongsToMany('Group', 'GroupHasNote', 'NID', 'GRID');
 	}
 
-	public function games() {
-		return $this->belongsToMany('Game', 'GameHasNote', 'NID', 'GID');
+	public function gameorgs() {
+		return $this->belongsToMany('Game', 'GameOrgHasNote', 'NID', 'GOID');
 	}
 }

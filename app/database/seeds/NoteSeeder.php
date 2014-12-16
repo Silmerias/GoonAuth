@@ -9,7 +9,7 @@ class NoteSeeder extends Seeder {
 		$roll = Role::where('RName', 'Admin')->first();
 		$system = NoteType::where('NTName', 'System')->first();
 		$sa = Group::first();
-		$sc = Game::where('GName', 'Star Citizen')->first();
+		$fljk = GameOrg::where('GOAbbr', 'FLJK')->first();
 		$admin = User::where('UGoonID', Config::get('goonauth.adminAccount'))->first();
 
 		$n_created = Note::create(array(
@@ -27,6 +27,6 @@ class NoteSeeder extends Seeder {
 		));
 
 		$sa->notes()->attach($n_created);
-		$sc->notes()->attach($n_owner);
+		$fljk->notes()->attach($n_owner);
 	}
 }

@@ -15,7 +15,7 @@
 	@if ($query->count() == 0)
 
 	<p>There are no users pending verification.</p>
-	
+
 	@else
 
 	<p>The following characters are <span class="label label-default">{{ e($pending->USStatus) }}</span>:</p>
@@ -52,10 +52,10 @@
 function approve(id)
 {
 	$.ajax({
-		url: "{{ URL::to(Request::path()) }}"+'/'+id,
+		url: "{{ URL::to(Request::path()) }}",
 		type: "post",
 		dataType: "json",
-		data: { action: 'approve' }
+		data: { action: 'approve', id: id }
 	}).done(function(ret) {
 		if (ret.success == true)
 		{
@@ -72,10 +72,10 @@ function approve(id)
 function deny(id)
 {
 	$.ajax({
-		url: "{{ URL::to(Request::path()) }}"+'/'+id,
+		url: "{{ URL::to(Request::path()) }}",
 		type: "post",
 		dataType: "json",
-		data: { action: 'deny' }
+		data: { action: 'deny', id: id }
 	}).done(function(ret) {
 		if (ret.success == true)
 		{

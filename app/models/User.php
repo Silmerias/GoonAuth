@@ -30,20 +30,16 @@ class User extends Eloquent {
 		return $this->hasMany('Group', 'GROwnerID');
 	}
 
-	public function ownedgames() {
-		return $this->hasMany('Game', 'GOwnerID');
-	}
-
-	public function ownedgameorganizations() {
-		return $this->hasMany('GameOrganization', 'GOOwnerID');
+	public function ownedgameorgs() {
+		return $this->hasMany('GameOrg', 'GOOwnerID');
 	}
 
 	public function grouproles() {
 		return $this->belongsToMany('Role', 'GroupAdmin', 'UID', 'RID')->withPivot('GRID');
 	}
 
-	public function gameroles() {
-		return $this->belongsToMany('Role', 'GameAdmin', 'UID', 'RID')->withPivot('GID');
+	public function gameorgroles() {
+		return $this->belongsToMany('Role', 'GameOrgAdmin', 'UID', 'RID')->withPivot('GOID');
 	}
 
 	public function games() {

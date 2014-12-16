@@ -14,7 +14,7 @@ class Role extends Eloquent {
 		return $this->belongsToMany('User', 'GroupAdmin', 'RID', 'UID');
 	}
 
-	public function gameusers() {
-		return $this->belongsToMany('User', 'GameAdmin', 'RID', 'UID');
+	public function gameorgusers() {
+		return $this->belongsToMany('User', 'GameOrgAdmin', 'RID', 'UID');
 	}
 }

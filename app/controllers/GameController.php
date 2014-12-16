@@ -159,7 +159,7 @@ class GameController extends BaseController
 		return View::make('games.details', $include);
 	}
 
-	public function showJoinGame($abbr)
+	public function showGameLink($abbr)
 	{
 		$auth = Session::get('auth');
 		$game = Game::where('GAbbr', $abbr)->first();
@@ -170,10 +170,10 @@ class GameController extends BaseController
 		Session::put('token', $token);
 
 		$include = array('auth' => $auth, 'game' => $game, 'token' => $token);
-		return View::make('games.join', $include);
+		return View::make('games.link', $include);
 	}
 
-	public function doLink($abbr)
+	public function doGameLink($abbr)
 	{
 		$auth = Session::get('auth');
 		$game = Game::where('GAbbr', $abbr)->first();
@@ -210,6 +210,16 @@ class GameController extends BaseController
 		return View::make('games.complete');
 	}
 
+	public function showGameOrg($abbr, $org)
+	{
+		return Redirect::to('/');
+	}
+
+	public function doGameOrg($abbr, $org)
+	{
+		return Redirect::to('/');
+	}
+
 	public function showAuth($abbr)
 	{
 		$auth = Session::get('auth');
@@ -221,9 +231,10 @@ class GameController extends BaseController
 		return View::make('games.auth', $include);
 	}
 
-	public function doAuth($abbr, $guid)
+	public function doAuth($abbr)
 	{
 		$action = Input::get('action');
+		$guid = Input::get('id');
 		$game = Game::where('GAbbr', $abbr)->first();
 		$gameuser = GameUser::find($guid);
 		$user = User::find($gameuser->UID);

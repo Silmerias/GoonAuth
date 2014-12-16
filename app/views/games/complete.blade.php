@@ -7,8 +7,8 @@
 </div>
 
 <div class="register">
-	<h2 class="register-heading">Your application has been submitted</h2>
-	<p>You will get an e-mail when your application has been accepted or rejected.</p>
+	<h2 class="register-heading">Your character has been linked.</h2>
+	<p>You can now put in a membership application with any applicable groups for this game.</p>
 	<a class="btn btn-lg btn-primary btn-block" href="{{ URL::to('games') }}">Back to Games</a>
 </div>
 @stop

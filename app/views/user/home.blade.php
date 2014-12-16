@@ -2,7 +2,7 @@
 @section('content')
 
 @if ($auth->grouproles()->count() != 0)
-<p style="margin-top: 20px"><a class="btn btn-danger" href="{{ URL::to('group/'.$auth->group->GRID.'/auth') }}">Authorize Group Members</a></p>
+<p style="margin-top: 20px"><a class="btn btn-danger" href="{{ URL::to('auth/group/'.$auth->group->GRID) }}">Authorize Group Members</a></p>
 @endif
 
 <div class="row">
@@ -22,8 +22,8 @@
 
 			<p>You are a member of the <strong>{{ $auth->group->GRName }}</strong> group.</p>
 			<p>You have <strong>{{ $auth->gameusers->count() }}</strong> registered game users in <strong>{{ $auth->games->count() }}</strong> games.</p>
-			@if ($auth->ownedgroups->count() != 0 || $auth->ownedgames->count() != 0)
-				<p>You own <strong>{{ $auth->ownedgroups->count() }}</strong> groups and <strong>{{ $auth->ownedgames->count() }}</strong> games.</p>
+			@if ($auth->ownedgroups->count() != 0 || $auth->ownedgameorgss->count() != 0)
+				<p>You own <strong>{{ $auth->ownedgroups->count() }}</strong> groups and <strong>{{ $auth->ownedgameorgs->count() }}</strong> game organizations.</p>
 			@endif
 
 			<a href="{{ URL::to('games') }}" class="btn btn-lg btn-success">Join/Manage Game</a>

@@ -31,17 +31,20 @@ Route::group(array('before' => 'auth'), function() {
 
 	Route::get('games', 'GameController@showGames');
 	Route::get('games/{abbr}', 'GameController@showGame');
-	Route::get('games/{abbr}/join', 'GameController@showJoinGame');
-	Route::post('games/{abbr}/join/link', 'GameController@doLink');
+	Route::get('games/{abbr}/link', 'GameController@showGameLink');
+	Route::post('games/{abbr}/link', 'GameController@doGameLink');
 
-	Route::group(array('before' => 'auth|groupadmin'), function() {
-		Route::get('group/{grid}/auth', 'GroupController@showAuth');
-		Route::post('group/{grid}/auth/{uid}', 'GroupController@doAuth');
+	Route::get('games/{abbr}/{org}', 'GameController@showGameOrg');
+	Route::post('games/{abbr}/{org}', 'GameController@doGameOrg');
+
+	Route::group(array('before' => 'auth|groupadmin', 'prefix' => 'auth'), function() {
+		Route::get('group/{grid}', 'GroupController@showAuth');
+		Route::post('group/{grid}', 'GroupController@doAuth');
 	});
 
-	Route::group(array('before' => 'auth|gameadmin'), function() {
-		Route::get('games/{abbr}/auth', 'GameController@showAuth');
-		Route::post('games/{abbr}/auth/{guid}', 'GameController@doAuth');
+	Route::group(array('before' => 'auth|gameadmin', 'prefix' => 'auth'), function() {
+		Route::get('games/{abbr}', 'GameController@showAuth');
+		Route::post('games/{abbr}', 'GameController@doAuth');
 	});
 
 	Route::group(array('before' => 'sponsor'), function() {
