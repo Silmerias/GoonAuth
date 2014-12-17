@@ -222,6 +222,18 @@ class GameController extends BaseController
 		return View::make('org.details', $include);
 	}
 
+	public function showGameOrgMembers($abbr, $org)
+	{
+		$auth = Session::get('auth');
+		$game = Game::where('GAbbr', $abbr)->first();
+		$org = GameOrg::where('GOAbbr', $org)->first();
+		if (empty($game) || empty($org))
+			return Redirect::to('games');
+
+		$include = array('auth' => $auth, 'game' => $game, 'org' => $org);
+		return View::make('org.viewmembers', $include);
+	}
+
 	public function showGameOrgJoin($abbr, $org)
 	{
 		$auth = Session::get('auth');

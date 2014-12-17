@@ -19,6 +19,10 @@
 <p style="margin-top: 20px"><a class="btn btn-danger" href="{{ URL::to('auth/'.Request::path()) }}">Authorize Members</a></p>
 @endif
 
+@if ($auth->gameorgroles()->where('GOID', $org->GOID)->count() != 0)
+<p style="margin-top: 20px"><a class="btn btn-success" href="{{ URL::to(Request::path().'/view') }}">View Members</a></p>
+@endif
+
 <h1>{{ e($org->GOName) }} Character List</h1>
 <div class="row">
 	<div class="col-md-12">
