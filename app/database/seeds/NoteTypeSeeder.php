@@ -7,12 +7,20 @@ class NoteTypeSeeder extends Seeder {
 		DB::table('NoteType')->delete();
 
 		NoteType::create(array(
+			'NTCode' => 'SYS',
 			'NTName' => 'System',
 			'NTColor' => '#FFFFCC'
 		));
 
 		NoteType::create(array(
+			'NTCode' => 'REG',
 			'NTName' => 'Registration',
+			'NTColor' => '#FFFFCC'
+		));
+
+		NoteType::create(array(
+			'NTCode' => 'AUTH',
+			'NTName' => 'Authorization',
 			'NTColor' => '#FFFFCC'
 		));
 	}

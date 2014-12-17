@@ -77,6 +77,20 @@
 
 	@endif
 
+	@if (isset($notes) && !empty($notes))
+
+	<h4>Notes:</h4>
+
+	@foreach ($notes as $note)
+		<div class="note" style="background-color: {{ $note->NTColor }}">
+			<p class="note-header"><span class="note-type">{{ e($note->NTName) }}</span> - {{ e($note->UGoonID) }}</p>
+			<p class="note-comment">{{ e($note->NNote) }}</p>
+			<p class="note-footer">By {{ e(is_null($note->CreatedGoonID) ? 'System' : $note->CreatedGoonID) }} - {{ with(new Carbon($note->NTimestamp))->toDateTimeString() }}</p>
+		</div>
+	@endforeach
+
+	@endif
+
 	</div>
 </div>
 @stop

@@ -70,12 +70,13 @@ Route::filter('groupadmin', function($route) {
 Route::filter('gameadmin', function($route) {
 	$auth = Session::get('auth');
 	$abbr = $route->getParameter('abbr');
-	if (!isset($abbr))
+	$org = $route->getParameter('org');
+	if (!isset($abbr) || !isset($org))
 		return Redirect::to('games');
 
-	$game = Game::where('GAbbr', $abbr)->first();
-	if ($auth->gameroles()->where('GID', $game->GID)->count() == 0)
-		return Redirect::to('games/'.$abbr);
+	$gameorg = GameOrg::where('GOAbbr', $org)->first();
+	if ($auth->gameorgroles()->where('GOID', $gameorg->GOID)->count() == 0)
+		return Redirect::to('games/'.$abbr.'/'.$org);
 });
 
 Route::filter('sponsor', function() {

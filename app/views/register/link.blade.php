@@ -17,7 +17,8 @@
 		</div>
 		@endif
 		<input type="text" name="sa_username" class="form-control" placeholder="Something Awful Username" required="" autofocus="">
-		<button class="btn btn-lg btn-primary btn-block" type="submit">Next</button>
+		<textarea name="comment" class="form-control" placeholder="Comment (optional)"></textarea>
+		<button class="btn btn-lg btn-primary btn-block" type="submit">Verify</button>
 	</div>
 </form>
 @stop

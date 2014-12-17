@@ -3,22 +3,21 @@
 
 <?php $pending = UserStatus::pending()->first() ?>
 
-<!-- default, info, warning, danger, success -->
-<a class="label label-info" href="{{ URL::to('games/'.$game->GAbbr) }}">Back to {{ e($game->GName) }}</a>
+<a class="label label-info" href="{{ URL::to('games/'.$game->GAbbr.'/'.$org->GOAbbr) }}">Back to {{ e($org->GOName) }}</a>
 
 <h1>Users Pending</h1>
 <div class="row">
 	<div class="col-md-12">
 
-	<?php $query = $game->gameusers()->where('USID', $pending->USID) ?>
+	<?php $query = $org->gameusers()->where('GameOrgHasGameUser.USID', $pending->USID) ?>
 
 	@if ($query->count() == 0)
 
-	<p>There are no users pending verification.</p>
+	<p>There are no members pending verification.</p>
 
 	@else
 
-	<p>The following characters are <span class="label label-default">{{ e($pending->USStatus) }}</span>:</p>
+	<p>The following members are <span class="label label-default">{{ e($pending->USStatus) }}</span>:</p>
 
 	<table class="table">
 		<thead>
@@ -29,8 +28,8 @@
 			<th style="width: 100px;">Actions</th>
 		</thead>
 		@foreach ($query->get() as $gameuser)
-		<tr id="GUID_{{ $gameuser->GUID }}">
-			<td><a href="{{ URL::to('user/'.$gameuser->user()->first()->UID) }}">{{ e($gameuser->user->UGoonID) }}</a></td>
+		<tr id="ID_{{ $gameuser->GUID }}">
+			<td><a href="{{ URL::to('user/'.$gameuser->user->UID) }}">{{ e($gameuser->user->UGoonID) }}</a></td>
 			<td><a href="{{ GameController::buildGameProfile($game, $gameuser) }}">{{ e($gameuser->GUCachedName) }}</a></td>
 			<td>{{ $gameuser->GURegDate }}</td>
 			<td>{{ $gameuser->GUCachedPostCount }}</td>
@@ -59,7 +58,7 @@ function approve(id)
 	}).done(function(ret) {
 		if (ret.success == true)
 		{
-			$('#GUID_'+id)
+			$('#ID_'+id)
 				.closest('tr')
 				.children('td')
 				.wrapInner('<div class="td-slider" />')
@@ -79,7 +78,7 @@ function deny(id)
 	}).done(function(ret) {
 		if (ret.success == true)
 		{
-			$('#GUID_'+id)
+			$('#ID_'+id)
 				.closest('tr')
 				.children('td')
 				.wrapInner('<div class="td-slider" />')

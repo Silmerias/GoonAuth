@@ -19,7 +19,7 @@
 
 	@else
 
-	<p>The following members are <span class="label label-default">{{ $pending->USStatus }}</span>:</p>
+	<p>The following members are <span class="label label-default">{{ e($pending->USStatus) }}</span>:</p>
 
 	<table class="table">
 		<thead>

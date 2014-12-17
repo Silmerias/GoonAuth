@@ -23,6 +23,6 @@ class Note extends Eloquent {
 	}
 
 	public function gameorgs() {
-		return $this->belongsToMany('Game', 'GameOrgHasNote', 'NID', 'GOID');
+		return $this->belongsToMany('GameOrg', 'GameOrgHasNote', 'NID', 'GOID');
 	}
 }

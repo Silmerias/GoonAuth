@@ -13,9 +13,12 @@ class RoleSeeder extends Seeder {
 			'RPermAdd' => true,
 			'RPermRemove' => true,
 			'RPermModify' => true,
-			'RPermAuth' => true
+			'RPermAuth' => true,
+			'RPermRead' => true
 		));
 
-		$role->notetypes()->attach($nt);
+		// Admin role gets all notes.
+		foreach (NoteType::get() as $note)
+			$role->notetypes()->attach($note);
 	}
 }

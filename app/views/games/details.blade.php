@@ -29,7 +29,7 @@
 	@if ($auth->gameusers()->where('GID', $game->GID)->count() == 0)
 
 	<h4>You are currently not a part of this game.</p>
-	<p><a href="{{ URL::to(Request::path().'/link') }}" class="btn btn-success">Link Character</a></p>
+	<p style="margin-top: 30px"><a href="{{ URL::to(Request::path().'/link') }}" class="btn btn-success">Link Character</a></p>
 
 	@else
 

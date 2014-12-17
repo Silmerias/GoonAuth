@@ -29,6 +29,7 @@ foreach ($auth->gameusers()->where('GID', $game->GID)->get() as $character)
 				<option value="{{ $i }}">{{ e($v) }}</option>
 			@endforeach
 			</select>
+			<textarea name="comment" class="form-control" placeholder="Comment (optional)"></textarea>
 			<button class="btn btn-lg btn-primary btn-block" type="submit">Join</button>
 		@endif
 	</div>

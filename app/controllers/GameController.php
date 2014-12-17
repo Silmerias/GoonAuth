@@ -206,7 +206,8 @@ class GameController extends BaseController
 		$user->GUCachedPostCount = $ret['postcount'];
 		$user->save();
 
-		return View::make('games.complete');
+		$include = array('auth' => $auth, 'game' => $game);
+		return View::make('games.complete', $include);
 	}
 
 	public function showGameOrg($abbr, $org)
@@ -239,72 +240,128 @@ class GameController extends BaseController
 		$game = Game::where('GAbbr', $abbr)->first();
 		$org = GameOrg::where('GOAbbr', $org)->first();
 		$gameuser = GameUser::find(Input::get('character'));
-		if (empty($org) || empty($gameuser))
+		if (empty($game) || empty($org) || empty($gameuser))
 			return Redirect::to('games/'.$game->GAbbr.'/'.$org->GOAbbr);
 
 		$pending = UserStatus::where('USCode', 'PEND')->first();
 		$gameuser->gameorgs()->attach($org, array('USID' => $pending->USID));
 
+		// Create a note if a registration comment was specified.
+		$comment = Input::get('comment');
+		if (isset($comment) && !empty($comment) && strlen($comment) != 0)
+		{
+			$reg = NoteType::where('NTCode', 'REG')->first();
+			if (!empty($reg))
+			{
+				$note = new Note;
+				$note->NTID = $reg->NTID;
+				$note->UID = $gameuser->user->UID;
+				$note->NNote = $org->GOName.' registration comment: '.$comment;
+				$note->save();
+
+				$org->notes()->attach($note);
+			}
+		}
+
 		return Redirect::to('games/'.$game->GAbbr.'/'.$org->GOAbbr);
 	}
 
-	public function showAuth($abbr)
+	public function showAuth($abbr, $org)
 	{
 		$auth = Session::get('auth');
 		$game = Game::where('GAbbr', $abbr)->first();
-		if (empty($game))
+		$org = GameOrg::where('GOAbbr', $org)->first();
+		if (empty($game) || empty($org))
 			return Redirect::to('games');
 
-		$include = array('auth' => $auth, 'game' => $game);
-		return View::make('games.auth', $include);
+		$include = array('auth' => $auth, 'game' => $game, 'org' => $org);
+		return View::make('org.auth', $include);
 	}
 
-	public function doAuth($abbr)
+	public function doAuth($abbr, $org)
 	{
 		$action = Input::get('action');
-		$guid = Input::get('id');
 		$game = Game::where('GAbbr', $abbr)->first();
-		$gameuser = GameUser::find($guid);
+		$org = GameOrg::where('GOAbbr', $org)->first();
+		$gameuser = GameUser::find(Input::get('id'));
 		$user = User::find($gameuser->UID);
 
 		if (strcasecmp($action, "approve") == 0)
 		{
 			$active = UserStatus::where('USCode', 'ACTI')->first();
-			$gameuser->USID = $active->USID;
-			$gameuser->save();
+			$gameuser->gameorgs()->updateExistingPivot($org->GOID,
+				array('USID' => $active->USID), false);
 
 			$this->LDAPExecute(function($ldap) {
-				// Add the user to the game's LDAP group.
+				// Add the user to the organizations's LDAP group.
 				$userdn = "cn=" . $user->UGoonID . "," . Config::get('goonauth.ldapDN');
-				$forumdn = "cn=" . $game->GLDAPGroup . "," . Config::get('goonauth.ldapGroupDN');
+				$forumdn = "cn=" . $org->GOLDAPGroup . "," . Config::get('goonauth.ldapGroupDN');
 				if (!ldap_mod_add($ldap, $forumdn, array('members' => $userdn)))
-					error_log("[ldap] Failed to add user to game group.");
+					error_log("[ldap] Failed to add user to organization group.");
 			});
 
+			// Create note about the authorization.
+			$ntauth = NoteType::where('NTCode', 'AUTH')->first();
+			if (!empty($ntauth))
+			{
+				$auth = Session::get('auth');
+
+				$note = new Note;
+				$note->NTID = $ntauth->NTID;
+				$note->UID = $gameuser->user->UID;
+				$note->NNote = "User authorized to join organization ".$org->GOName.".";
+				$note->NCreatedByUID = $auth->UID;
+				$note->save();
+
+				$org->notes()->attach($note);
+			}
+
 			// Assemble the data required for the e-mail.
+			$maildata = [];
 			$maildata = array_add($maildata, 'goonid', $user->UGoonID);
 			$maildata = array_add($maildata, 'game', $game->GName);
 
 			// Send out the onboarding e-mail.
-			Mail::send('emails.game.register.approve', $maildata, function($msg) {
+			try {
+			Mail::send('emails.game-register-approve', $maildata, function($msg) use($game, $user) {
 				$msg->subject('Your ' . $game->GName . ' game membership request was approved!');
 				$msg->to($user->UEmail);
 			});
+			} catch (Exception $e) {}
 		}
 		else
 		{
 			$rejected = UserStatus::where('USCode', 'REJE')->first();
-			$gameuser->USID = $rejected->USID;
-			$gameuser->save();
+			$gameuser->gameorgs()->updateExistingPivot($org->GOID,
+				array('USID' => $rejected->USID), false);
 
+			// Create note about the authorization.
+			$ntauth = NoteType::where('NTCode', 'AUTH')->first();
+			if (!empty($ntauth))
+			{
+				$auth = Session::get('auth');
+
+				$note = new Note;
+				$note->NTID = $ntauth->NTID;
+				$note->UID = $gameuser->user->UID;
+				$note->NNote = "User rejected from joining organization ".$org->GOName.".";
+				$note->NCreatedByUID = $auth->UID;
+				$note->save();
+
+				$org->notes()->attach($note);
+			}
+
+			$maildata = [];
 			$maildata = array_add($maildata, 'game', $game->GName);
 			$maildata = array_add($maildata, 'reason', 'You suck');
 
 			// Send out the rejection e-mail.
-			Mail::send('emails.game.register.deny', $maildata, function($msg) {
+			try {
+			Mail::send('emails.game-register-deny', $maildata, function($msg) use($game, $user) {
 				$msg->subject('Your ' . $game->GName . ' game membership request was DENIED!');
 				$msg->to($user->UEmail);
 			});
+			} catch (Exception $e) {}
 		}
 
 		return Response::json(array(

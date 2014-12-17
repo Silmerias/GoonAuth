@@ -44,8 +44,8 @@ Route::group(array('before' => 'auth'), function() {
 	});
 
 	Route::group(array('before' => 'auth|gameadmin', 'prefix' => 'auth'), function() {
-		Route::get('games/{abbr}', 'GameController@showAuth');
-		Route::post('games/{abbr}', 'GameController@doAuth');
+		Route::get('games/{abbr}/{org}', 'GameController@showAuth');
+		Route::post('games/{abbr}/{org}', 'GameController@doAuth');
 	});
 
 	Route::group(array('before' => 'sponsor'), function() {

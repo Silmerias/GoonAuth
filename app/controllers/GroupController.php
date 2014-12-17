@@ -82,7 +82,21 @@ class GroupController extends BaseController
 				}
 			});
 
-			// Create note.
+			// Create note about the authorization.
+			$ntauth = NoteType::where('NTCode', 'AUTH')->first();
+			if (!empty($ntauth))
+			{
+				$auth = Session::get('auth');
+
+				$note = new Note;
+				$note->NTID = $ntauth->NTID;
+				$note->UID = $user->UID;
+				$note->NNote = "User authorized to join group ".$group->GRName.".";
+				$note->NCreatedByUID = $auth->UID;
+				$note->save();
+
+				$group->notes()->attach($note);
+			}
 
 			// Connect to IPB to create the forum entry.
 			file_get_contents("https://forums.goonrathi.com/index.php?app=core&module=global&section=login&do=process&auth_key=880ea6a14ea49e853634fbdc5015a024&ips_username={$user->UGoonID}&ips_password={$password}");
@@ -93,10 +107,12 @@ class GroupController extends BaseController
 			$maildata = array_add($maildata, 'password', $password);
 
 			// Send out the onboarding e-mail.
-			Mail::send('emails.group.register.approve', $maildata, function($msg) {
+			try {
+			Mail::send('emails.group-register-approve', $maildata, function($msg) {
 				$msg->subject('Your Goonrathi / Word of Lowtax membership request was approved!');
 				$msg->to($user->UEmail);
 			});
+			} catch (Exception $e) {}
 		}
 		else
 		{
@@ -104,12 +120,30 @@ class GroupController extends BaseController
 			$user->USID = $rejected->USID;
 			$user->save();
 
+			// Create note about the authorization.
+			$ntauth = NoteType::where('NTCode', 'AUTH')->first();
+			if (!empty($ntauth))
+			{
+				$auth = Session::get('auth');
+
+				$note = new Note;
+				$note->NTID = $ntauth->NTID;
+				$note->UID = $user->UID;
+				$note->NNote = "User rejected from joining group ".$group->GRName.".";
+				$note->NCreatedByUID = $auth->UID;
+				$note->save();
+
+				$group->notes()->attach($note);
+			}
+
 			$maildata = array_add($maildata, 'reason', 'You suck');
 
-			Mail::send('emails.group.register.deny', $maildata, function($msg) {
+			try {
+			Mail::send('emails.group-register-deny', $maildata, function($msg) {
 				$msg->subject('Your Goonrathi / Word of Lowtax membership request was DENIED!');
 				$msg->to($user->UEmail);
 			});
+			} catch (Exception $e) {}
 		}
 
 		return Response::json(array(

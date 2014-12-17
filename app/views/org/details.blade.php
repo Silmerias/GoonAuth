@@ -26,7 +26,7 @@
 	@if ($org->gameusers()->where('UID', $auth->UID)->count() == 0)
 
 	<h4>You are currently not a part of this organization.</p>
-	<p><a href="{{ URL::to(Request::path().'/join') }}" class="btn btn-success">Join Organization</a></p>
+	<p style="margin-top: 30px"><a href="{{ URL::to(Request::path().'/join') }}" class="btn btn-success">Join Organization</a></p>
 
 	@else
 

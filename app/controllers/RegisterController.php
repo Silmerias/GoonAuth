@@ -121,6 +121,8 @@ class RegisterController extends BaseController
 			// Check if we have the token.
 			if (stristr($body, $token) !== false/* && $sa_regdate < $subTime*/)
 			{
+				$group = Group::where('GRName', 'Something Awful')->first();
+
 				// Success!  Let's create our user now.
 				$user = new User;
 				$user->USID = UserStatus::pending()->first()->USID;
@@ -131,8 +133,25 @@ class RegisterController extends BaseController
 				$user->USACachedName = $sa_name;
 				$user->USACachedPostCount = $sa_postcount;
 				$user->USACacheDate = Carbon::now();
-				$user->UGroup = Group::where('GRName', 'Something Awful')->first()->GRID;
+				$user->UGroup = $group->GRID;
 				$user->save();
+
+				// Create a note if a registration comment was specified.
+				$comment = Input::get('comment');
+				if (isset($comment) && !empty($comment) && strlen($comment) != 0)
+				{
+					$reg = NoteType::where('NTCode', 'REG')->first();
+					if (!empty($reg))
+					{
+						$note = new Note;
+						$note->NTID = $reg->NTID;
+						$note->UID = $user->UID;
+						$note->NNote = $group->GRName.' registration comment: '.$comment;
+						$note->save();
+
+						$group->notes()->attach($note);
+					}
+				}
 
 				return View::make('register.complete');
 			}

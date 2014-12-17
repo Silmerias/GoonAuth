@@ -39,7 +39,53 @@ class UserController extends BaseController
 		$auth = Session::get('auth');
 		$user = User::find($id);
 
-		$include = array('auth' => $auth, 'user' => $user);
+		// Get all groups the user has permissions in.
+		$groups = DB::table('Group')
+			->join('GroupAdmin', 'Group.GRID', '=', 'GroupAdmin.GRID')
+			->join('Role', 'GroupAdmin.RID', '=', 'Role.RID')
+			->where('GroupAdmin.UID', '=', $auth->UID)
+			->where('Role.RPermRead', '=', true)
+			->get();
+
+		// Get all the orgs the user has permissions in.
+		$orgs = DB::table('GameOrg')
+			->join('GameOrgAdmin', 'GameOrg.GOID', '=', 'GameOrgAdmin.GOID')
+			->join('Role', 'GameOrgAdmin.RID', '=', 'Role.RID')
+			->where('GameOrgAdmin.UID', '=', $auth->UID)
+			->where('Role.RPermRead', '=', true)
+			->get();
+
+		// Assemble the list of ids.
+		$grid = array();
+		$goid = array();
+		foreach ($groups as $e)
+			$gdrid[] = $e->GRID;
+		foreach ($orgs as $e)
+			$goid[] = $e->GOID;
+
+		// Find all valid notes.
+		$notes = DB::table('Note')
+			->join('NoteType', 'Note.NTID', '=', 'NoteType.NTID')
+			->leftJoin('User', 'Note.UID', '=', 'User.UID')
+			->leftJoin('User AS Created', 'Note.NCreatedByUID', '=', 'Created.UID')
+			->select('Note.NID as NID', 'Note.NNote as NNote', 'Note.NTimestamp as NTimestamp')
+			->addSelect('NoteType.NTColor as NTColor', 'NoteType.NTName as NTName')
+			->addSelect('User.UGoonID as UGoonID', 'Created.UGoonID as CreatedGoonID');
+		if (!empty($grid))
+		{
+			$notes->leftJoin('GroupHasNote', 'Note.NID', '=', 'GroupHasNote.NID')
+				->orWhereIn('GroupHasNote.GRID', $grid);
+		}
+		if (!empty($goid))
+		{
+			$notes->leftJoin('GameOrgHasNote', 'Note.NID', '=', 'GameOrgHasNote.NID')
+				->orWhereIn('GameOrgHasNote.GOID', $goid);
+		}
+		if (empty($grid) && empty($goid))
+			$notes = null;
+		else $notes = $notes->get();
+
+		$include = array('auth' => $auth, 'user' => $user, 'notes' => $notes);
 		return View::make('user.stats', $include);
 	}
 
