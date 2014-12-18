@@ -201,7 +201,7 @@ class CreateBaseTables extends Migration {
 		Schema::table('User', function($t) {
 			$t->foreign('USID', 'FK_User_UserStatus')
 				->references('USID')->on('UserStatus')
-				->onDelete('set null');
+				->onDelete('restrict');
 
 			$t->foreign('USponsorID', 'FK_User_Sponsor')
 				->references('UID')->on('User')
@@ -293,7 +293,7 @@ class CreateBaseTables extends Migration {
 		Schema::table('GameOrgHasGameUser', function($t) {
 			$t->foreign('USID', 'FK_GameOrgHasGameUser_UserStatus')
 				->references('USID')->on('UserStatus')
-				->onDelete('set null');
+				->onDelete('restrict');
 
 			$t->foreign('GOID', 'FK_GameOrgHasGameUser_GameOrg')
 				->references('GOID')->on('GameOrg')
