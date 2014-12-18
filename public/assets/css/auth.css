@@ -137,3 +137,8 @@ body {
   color: gray;
   font-size: 0.8em;
 }
+
+.ui-dialog-titlebar-close {
+  background-position: -96px -128px;
+  background-image: url("/assets/css/images/ui-icons_ef8c08_256x240.png");
+}
