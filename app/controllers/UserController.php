@@ -70,7 +70,7 @@ class UserController extends BaseController
 			->leftJoin('User AS Created', 'Note.NCreatedByUID', '=', 'Created.UID')
 			->select('Note.NID as NID', 'Note.NNote as NNote', 'Note.NTimestamp as NTimestamp')
 			->addSelect('NoteType.NTColor as NTColor', 'NoteType.NTName as NTName')
-			->addSelect('User.UGoonID as UGoonID', 'Created.UGoonID as CreatedGoonID');
+			->addSelect('User.UGoonID as UGoonID', 'Created.UGoonID as CreatedGoonID', 'Created.UID as CreatedUID');
 		if (!empty($grid))
 		{
 			$notes->leftJoin('GroupHasNote', 'Note.NID', '=', 'GroupHasNote.NID')

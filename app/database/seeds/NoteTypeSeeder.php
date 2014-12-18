@@ -15,13 +15,13 @@ class NoteTypeSeeder extends Seeder {
 		NoteType::create(array(
 			'NTCode' => 'REG',
 			'NTName' => 'Registration',
-			'NTColor' => '#FFFFCC'
+			'NTColor' => '#CCFFCC'
 		));
 
 		NoteType::create(array(
 			'NTCode' => 'AUTH',
 			'NTName' => 'Authorization',
-			'NTColor' => '#FFFFCC'
+			'NTColor' => '#CCFFFF'
 		));
 	}
 }

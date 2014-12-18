@@ -115,3 +115,25 @@ body {
 .form-register-token {
   margin: 25px 0px;
 }
+
+.note {
+  border: 1px solid black;
+  border-radius: 5px;
+  margin: 5px;
+  padding: 5px 5px 0px 5px;
+}
+
+.note-header {
+  border-bottom: 1px solid gray;
+}
+
+.note-type {
+  font-weight: bold;
+  color: red;
+  font-style: italic;
+}
+
+.note-footer {
+  color: gray;
+  font-size: 0.8em;
+}

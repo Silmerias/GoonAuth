@@ -85,7 +85,14 @@
 		<div class="note" style="background-color: {{ $note->NTColor }}">
 			<p class="note-header"><span class="note-type">{{ e($note->NTName) }}</span> - {{ e($note->UGoonID) }}</p>
 			<p class="note-comment">{{ e($note->NNote) }}</p>
-			<p class="note-footer">By {{ e(is_null($note->CreatedGoonID) ? 'System' : $note->CreatedGoonID) }} - {{ with(new Carbon($note->NTimestamp))->toDateTimeString() }}</p>
+			<p class="note-footer">By
+				@if (is_null($note->CreatedGoonID))
+					System
+				@else
+					<a href="user/{{ $note->CreatedUID }}">{{ $note->CreatedGoonID }}</a>
+				@endif
+				- {{ with(new Carbon($note->NTimestamp))->toDateTimeString() }}
+			</p>
 		</div>
 	@endforeach
 
