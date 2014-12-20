@@ -140,7 +140,7 @@ class RegisterController extends BaseController
 				$comment = Input::get('comment');
 				if (isset($comment) && !empty($comment) && strlen($comment) != 0)
 				{
-					$reg = NoteType::where('NTCode', 'REG')->first();
+					$reg = NoteType::where('NTCode', 'SYS')->first();
 					if (!empty($reg))
 					{
 						$note = new Note;
