@@ -67,6 +67,8 @@ class CreateBaseTables extends Migration {
 			$t->string('NTCode', 4);	// Note Type Code
 			$t->text('NTName');			// Type of note
 			$t->text('NTColor');		// Color of note
+			$t->boolean('NTSystemUseOnly')
+				->default(false);		// Note type is for system use only.
 		});
 
 		// Role

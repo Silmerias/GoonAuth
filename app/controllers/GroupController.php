@@ -35,6 +35,9 @@ class GroupController extends BaseController
 		if (empty($user))
 			return Response::json(array('success' => false));
 
+		$auth = Session::get('auth');
+		$ntauth = NoteType::where('NTCode', 'STAT')->first();
+
 		$maildata = array();
 
 		if (strcasecmp($action, "approve") == 0)
@@ -83,15 +86,12 @@ class GroupController extends BaseController
 			});
 
 			// Create note about the authorization.
-			$ntauth = NoteType::where('NTCode', 'AUTH')->first();
 			if (!empty($ntauth))
 			{
-				$auth = Session::get('auth');
-
 				$note = new Note;
 				$note->NTID = $ntauth->NTID;
 				$note->UID = $user->UID;
-				$note->NNote = "User authorized to join group ".$group->GRName.".";
+				$note->NNote = "User accepted into group ".$group->GRName.".";
 				$note->NCreatedByUID = $auth->UID;
 				$note->save();
 
@@ -121,11 +121,8 @@ class GroupController extends BaseController
 			$user->save();
 
 			// Create note about the authorization.
-			$ntauth = NoteType::where('NTCode', 'AUTH')->first();
 			if (!empty($ntauth))
 			{
-				$auth = Session::get('auth');
-
 				$note = new Note;
 				$note->NTID = $ntauth->NTID;
 				$note->UID = $user->UID;

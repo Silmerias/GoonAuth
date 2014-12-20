@@ -234,6 +234,46 @@ class GameController extends BaseController
 		return View::make('org.viewmembers', $include);
 	}
 
+	public function doGameOrgMembers($abbr, $org)
+	{
+		$auth = Session::get('auth');
+		$game = Game::where('GAbbr', $abbr)->first();
+		$org = GameOrg::where('GOAbbr', $org)->first();
+		if (empty($game) || empty($org))
+			return Response::json(array('success' => false));
+
+		$user = User::find(intval(Input::get('id')));
+		$action = Input::get('action');
+
+		switch ($action)
+		{
+			case 'kick':
+				return Response::json(array('success' => false));
+
+			case 'addnote':
+				$type = Input::get('type');
+				$text = trim(Input::get('text'));
+
+				if (strlen($text) != 0)
+				{
+					// Create the user's note.
+					$note = new Note;
+					$note->NTID = $type;
+					$note->UID = $user->UID;
+					$note->NCreatedByUID = $auth->UID;
+					$note->NNote = $text;
+					$note->save();
+
+					// Attach it to the organization.
+					$org->notes()->attach($note);
+				}
+
+				return Response::json(array('success' => true));
+		}
+
+		return Response::json(array('success' => false));
+	}
+
 	public function showGameOrgJoin($abbr, $org)
 	{
 		$auth = Session::get('auth');
@@ -262,7 +302,7 @@ class GameController extends BaseController
 		$comment = Input::get('comment');
 		if (isset($comment) && !empty($comment) && strlen($comment) != 0)
 		{
-			$reg = NoteType::where('NTCode', 'REG')->first();
+			$reg = NoteType::where('NTCode', 'SYS')->first();
 			if (!empty($reg))
 			{
 				$note = new Note;
@@ -298,6 +338,9 @@ class GameController extends BaseController
 		$gameuser = GameUser::find(Input::get('id'));
 		$user = User::find($gameuser->UID);
 
+		$auth = Session::get('auth');
+		$ntauth = NoteType::where('NTCode', 'STAT')->first();
+
 		if (strcasecmp($action, "approve") == 0)
 		{
 			$active = UserStatus::where('USCode', 'ACTI')->first();
@@ -313,15 +356,12 @@ class GameController extends BaseController
 			});
 
 			// Create note about the authorization.
-			$ntauth = NoteType::where('NTCode', 'AUTH')->first();
 			if (!empty($ntauth))
 			{
-				$auth = Session::get('auth');
-
 				$note = new Note;
 				$note->NTID = $ntauth->NTID;
 				$note->UID = $gameuser->user->UID;
-				$note->NNote = "User authorized to join organization ".$org->GOName.".";
+				$note->NNote = "User accepted into organization ".$org->GOName.".";
 				$note->NCreatedByUID = $auth->UID;
 				$note->save();
 
@@ -348,11 +388,8 @@ class GameController extends BaseController
 				array('USID' => $rejected->USID), false);
 
 			// Create note about the authorization.
-			$ntauth = NoteType::where('NTCode', 'AUTH')->first();
 			if (!empty($ntauth))
 			{
-				$auth = Session::get('auth');
-
 				$note = new Note;
 				$note->NTID = $ntauth->NTID;
 				$note->UID = $gameuser->user->UID;

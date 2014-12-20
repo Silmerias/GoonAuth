@@ -79,8 +79,9 @@
 
 	@if (isset($notes) && !empty($notes))
 
-	<h4>Notes: <button id="create-note" type="button" class="btn btn-sm btn-danger" style="margin-left: 30px">Add Note</button></h4>
+	<h4>Notes:</h4>
 
+	<div id="note-list">
 	@foreach ($notes as $note)
 		<div class="note" style="background-color: {{ $note->NTColor }}">
 			<p class="note-header"><span class="note-type">{{ e($note->NTName) }}</span> - {{ e($note->UGoonID) }}</p>
@@ -95,40 +96,11 @@
 			</p>
 		</div>
 	@endforeach
+	</div>
 
 	@endif
 
 	</div>
 </div>
-
-<div id="dialog-note" title="Create Note">
-	Note Type: <select name="notetype">
-	@foreach (NoteType::get() as $nt)
-		<option value="{{ $nt->NTID }}">{{ $nt->NTName }}</option>
-	@endforeach
-	</select>
-	<textarea name="notetext" placeholder="Type your note here" style="margin-top: 10px; width: 310px; height: 140px"></textarea>
-</div>
-
-<script>
-dialog = $("#dialog-note").dialog({
-	autoOpen: false,
-	height: 300,
-	width: 350,
-	modal: true,
-	closeText: "Test",
-	buttons: {
-		"Add Note": function() {
-		},
-		Cancel: function() {
-			dialog.dialog("close");
-		}
-	}
-});
-
-$("#create-note").button().on("click", function() {
-	dialog.dialog("open");
-});
-</script>
 
 @stop

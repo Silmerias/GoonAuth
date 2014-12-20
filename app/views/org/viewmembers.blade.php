@@ -21,7 +21,7 @@
 			<th style="width: 100px;">Status</th>
 			<th style="width: 150px;">Goon ID</th>
 			<th>Character Name</th>
-			<th style="width: 100px;">Actions</th>
+			<th style="width: 150px;">Actions</th>
 		</thead>
 		@foreach ($query->get() as $gameuser)
 		<tr id="ID_{{ $gameuser->GUID }}">
@@ -31,7 +31,8 @@
 			<td><a href="{{ URL::to('user/'.$gameuser->user->UID) }}">{{ e($gameuser->user->UGoonID) }}</a></td>
 			<td><a href="{{ GameController::buildGameProfile($game, $gameuser) }}">{{ e($gameuser->GUCachedName) }}</a></td>
 			<td>
-				<button type="button" class="btn btn-danger" onclick="kick({{ $gameuser->GUID }})">Kick</a>
+				<button type="button" class="btn btn-sm btn-danger" onclick="kick({{ $gameuser->GUID }})">Kick</a>
+				<button type="button" class="btn btn-sm btn-warning" style="margin-left: 5px" onclick="addnote({{ $gameuser->GUID }})">Add Note</button>
 			</td>
 		</tr>
 		@endforeach
@@ -40,6 +41,15 @@
 	@endif
 
 	</div>
+</div>
+
+<div id="dialog-note" title="Create Note">
+	Note Type: <select id="notetype" name="notetype">
+	@foreach (NoteType::with(array('roles.gameorgusers' => function($q) use($auth) { $q->where('GameOrgAdmin.UID', $auth->UID); }))->where('NTSystemUseOnly', 'false')->get() as $nt)
+		<option value="{{ $nt->NTID }}">{{ $nt->NTName }}</option>
+	@endforeach
+	</select>
+	<textarea id="notetext" name="notetext" placeholder="Type your note here" style="margin-top: 10px; width: 310px; height: 140px"></textarea>
 </div>
 
 <script>
@@ -65,6 +75,45 @@ function kick(id)
 	});
 	*/
 }
+
+function addnote(id)
+{
+	$('#notetext').val('');
+	$('#dialog-note').attr('uid', id);
+	dialog.dialog("open");
+}
+
+function submitnote()
+{
+	$.ajax({
+		url: "{{ URL::to(Request::path()) }}",
+		type: "post",
+		dataType: "json",
+		data: {
+			action: 'addnote',
+			id: $('#dialog-note').attr('uid'),
+			type: $('#notetype').val(),
+			text: $('#notetext').val()
+		}
+	}).done(function(ret) {
+		dialog.dialog("close");
+	});	
+}
+
+dialog = $('#dialog-note').dialog({
+	autoOpen: false,
+	height: 300,
+	width: 350,
+	modal: true,
+	buttons: {
+		'Add Note': function() {
+			submitnote();
+		},
+		Cancel: function() {
+			dialog.dialog("close");
+		}
+	}
+});
 
 </script>
 

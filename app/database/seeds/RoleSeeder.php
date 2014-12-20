@@ -6,8 +6,6 @@ class RoleSeeder extends Seeder {
 	{
 		DB::table('Role')->delete();
 
-		$nt = NoteType::where('NTName', 'System')->first();
-
 		$role = Role::create(array(
 			'RName' => 'Admin',
 			'RPermAdd' => true,
@@ -17,7 +15,7 @@ class RoleSeeder extends Seeder {
 			'RPermRead' => true
 		));
 
-		// Admin role gets all notes.
+		// Admin role gets to see/create all notes.
 		foreach (NoteType::get() as $note)
 			$role->notetypes()->attach($note);
 	}

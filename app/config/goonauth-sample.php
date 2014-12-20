@@ -5,12 +5,12 @@ return array(
 	/**
 	 * Your SA bbuserid cookie value. Required to auth accounts.
 	 */
-	'bbuserid' => '125337',
+	'bbuserid' => '0',
 
 	/**
 	 * Your SA bbpassword cookie value. Required to auth accounts.
 	 */
-	'bbpassword' => 'f819107c3275d0278db4a6a068407f00',
+	'bbpassword' => 'fffffffffffffffff',
 
 	/**
 	 * Administrator account

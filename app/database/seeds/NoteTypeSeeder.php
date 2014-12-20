@@ -6,21 +6,31 @@ class NoteTypeSeeder extends Seeder {
 	{
 		DB::table('NoteType')->delete();
 
+		// Special system notes.
 		NoteType::create(array(
 			'NTCode' => 'SYS',
 			'NTName' => 'System',
-			'NTColor' => '#FFFFCC'
+			'NTColor' => '#FFFFCC',
+			'NTSystemUseOnly' => true
+		));
+
+		// Status change notes.
+		NoteType::create(array(
+			'NTCode' => 'STAT',
+			'NTName' => 'Status Change',
+			'NTColor' => '#CCFFCC',
+			'NTSystemUseOnly' => true
 		));
 
 		NoteType::create(array(
-			'NTCode' => 'REG',
-			'NTName' => 'Registration',
-			'NTColor' => '#CCFFCC'
+			'NTCode' => 'GEN',
+			'NTName' => 'General',
+			'NTColor' => '#FFCCFF'
 		));
 
 		NoteType::create(array(
-			'NTCode' => 'AUTH',
-			'NTName' => 'Authorization',
+			'NTCode' => 'INT',
+			'NTName' => 'Intelligence',
 			'NTColor' => '#CCFFFF'
 		));
 	}
