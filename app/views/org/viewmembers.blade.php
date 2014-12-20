@@ -32,7 +32,7 @@
 			<td><a href="{{ GameController::buildGameProfile($game, $gameuser) }}">{{ e($gameuser->GUCachedName) }}</a></td>
 			<td>
 				<button type="button" class="btn btn-sm btn-danger" onclick="kick({{ $gameuser->GUID }})">Kick</a>
-				<button type="button" class="btn btn-sm btn-warning" style="margin-left: 5px" onclick="addnote({{ $gameuser->GUID }})">Add Note</button>
+				<button type="button" class="btn btn-sm btn-warning" style="margin-left: 5px" onclick="addnote({{ $gameuser->user->UID }})">Add Note</button>
 			</td>
 		</tr>
 		@endforeach
