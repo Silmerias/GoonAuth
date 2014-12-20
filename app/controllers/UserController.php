@@ -59,7 +59,7 @@ class UserController extends BaseController
 		$grid = array();
 		$goid = array();
 		foreach ($groups as $e)
-			$gdrid[] = $e->GRID;
+			$grid[] = $e->GRID;
 		foreach ($orgs as $e)
 			$goid[] = $e->GOID;
 
