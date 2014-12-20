@@ -22,7 +22,7 @@
 
 			<p>You are a member of the <strong>{{ $auth->group->GRName }}</strong> group.</p>
 			<p>You have <strong>{{ $auth->gameusers->count() }}</strong> registered game users in <strong>{{ $auth->games->count() }}</strong> games.</p>
-			@if ($auth->ownedgroups->count() != 0 || $auth->ownedgameorgss->count() != 0)
+			@if ($auth->ownedgroups->count() != 0 || $auth->ownedgameorgs->count() != 0)
 				<p>You own <strong>{{ $auth->ownedgroups->count() }}</strong> groups and <strong>{{ $auth->ownedgameorgs->count() }}</strong> game organizations.</p>
 			@endif
 
