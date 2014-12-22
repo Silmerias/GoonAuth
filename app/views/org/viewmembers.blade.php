@@ -7,8 +7,18 @@
 <div class="row">
 	<div class="col-md-12">
 
-	<?php $query = $org->gameusers()->with('User') ?>
-	<?php $statuses = UserStatus::get() ?>
+	<?php
+		$rejected = UserStatus::where('USCode', 'REJE')->first();
+		$query = $org->gameusers()->where('GameOrgHasGameUser.USID', '<>', $rejected->USID)->get();
+
+		/*
+		$queries = DB::getQueryLog();
+		$last_query = end($queries);
+		print_r($last_query);
+		*/
+
+		$statuses = UserStatus::get();
+	?>
 
 	@if ($query->count() == 0)
 
@@ -23,7 +33,7 @@
 			<th>Character Name</th>
 			<th style="width: 150px;">Actions</th>
 		</thead>
-		@foreach ($query->get() as $gameuser)
+		@foreach ($query as $gameuser)
 		<tr id="ID_{{ $gameuser->GUID }}">
 			<td>
 				{{ e($statuses[$gameuser->pivot->USID - 1]->USStatus) }}

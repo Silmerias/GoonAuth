@@ -6,7 +6,7 @@
 		<div class="navbar-collapse collapse">
 			@foreach ($game->orgs()->get() as $org)
 				<ul class="nav navbar-nav">
-					<li><a href="{{ URL::to(Request::path().'/'.$org->GOAbbr) }}">{{ $org->GOName }}</a></li>
+					<li><a href="{{ URL::to('games/'.$game->GAbbr.'/'.$org->GOAbbr) }}">{{ $org->GOName }}</a></li>
 				</ul>
 			@endforeach
 		</div>

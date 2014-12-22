@@ -55,7 +55,7 @@
 </div>
 
 <div id="dialog-reject-reason" title="Rejection Reason">
-	<textarea id="reject-text" name="eject-text" placeholder="Reason for rejection" style="width: 310px; height: 200px"></textarea>
+	<textarea id="reject-text" name="eject-text" placeholder="Reason for rejection" style="width: 310px; height: 170px; padding: 5px"></textarea>
 </div>
 
 <script>
@@ -106,7 +106,7 @@ reject = $('#dialog-reject-reason').dialog({
 				reject.dialog("close");
 				if (ret.success == true)
 				{
-					$('#ID_'+id)
+					$('#ID_'+$('#dialog-reject-reason').attr('uid'))
 						.closest('tr')
 						.children('td')
 						.wrapInner('<div class="td-slider" />')
