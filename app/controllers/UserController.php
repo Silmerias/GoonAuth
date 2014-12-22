@@ -13,7 +13,7 @@ class UserController extends BaseController
 
 	public function doLogin()
 	{
-		$valid = $this->LDAPPasswordCheck(Input::get('goonid'), Input::get('password'));
+		$valid = LDAP::PasswordCheck(Input::get('goonid'), Input::get('password'));
 		if ($valid === false)
 		{
 			Session::flash('error', 'Invalid username/password.');
@@ -73,7 +73,8 @@ class UserController extends BaseController
 				->leftJoin('User AS Created', 'Note.NCreatedByUID', '=', 'Created.UID')
 				->select('Note.NID as NID', 'Note.NNote as NNote', 'Note.NTimestamp as NTimestamp')
 				->addSelect('NoteType.NTColor as NTColor', 'NoteType.NTName as NTName')
-				->addSelect('User.UGoonID as UGoonID', 'Created.UGoonID as CreatedGoonID', 'Created.UID as CreatedUID');
+				->addSelect('User.UGoonID as UGoonID', 'Created.UGoonID as CreatedGoonID', 'Created.UID as CreatedUID')
+				->orderBy('Note.NTimestamp', 'ASC');
 
 			if (!empty($grid))
 				$notes->leftJoin('GroupHasNote', 'Note.NID', '=', 'GroupHasNote.NID');
@@ -93,91 +94,5 @@ class UserController extends BaseController
 
 		$include = array('auth' => $auth, 'user' => $user, 'notes' => $notes);
 		return View::make('user.stats', $include);
-	}
-
-
-	private function LDAPExecute( $func )
-	{
-		if (Config::get('goonauth.disableLDAP'))
-			return;
-
-		$ldaphost = Config::get('goonauth.ldapHost');
-		$ldapport = Config::get('goonauth.ldapPort');
-
-		// Connect to our LDAP server.
-		$ldap = ldap_connect($ldaphost, $ldapport);
-		if (!$ldap)
-		{
-			error_log("[ldap] Could not connect to $ldaphost");
-			return;
-		}
-
-		// Set options.
-		ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
-		ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
-
-		// Grab some settings.
-		$ldapuser = Config::get('goonauth.ldapUser');
-		$ldappass = Config::get('goonauth.ldapPassword');
-
-		// If nothing was entered, use NULL so we do an anonymous bind.
-		if (strlen($ldapuser) === 0)
-			$ldapuser = NULL;
-		else $ldapuser = "cn=" . $ldapuser . "," . Config::get('goonauth.ldapDN');
-		if (strlen($ldappass) === 0)
-			$ldappass = NULL;
-
-		// Attempt to bind now.
-		if (ldap_bind($ldap, $ldapuser, $ldappass))
-		{
-			// Execute our function.
-			$func($ldap);
-		}
-		else
-		{
-			error_log("[ldap] Failed to bind to $ldaphost : $ldapport with user $ldapuser");
-		}
-
-		ldap_close($ldap);
-	}
-
-	private function LDAPPasswordCheck($username, $password)
-	{
-		if (Config::get('goonauth.disableLDAP'))
-			return true;
-
-		if (!isset($username) || !isset($password) || strlen($password) == 0)
-			return false;
-
-		$ldaphost = Config::get('goonauth.ldapHost');
-		$ldapport = Config::get('goonauth.ldapPort');
-
-		// Connect to our LDAP server.
-		$ldap = ldap_connect($ldaphost, $ldapport);
-		if (!$ldap)
-		{
-			error_log("[ldap] Could not connect to $ldaphost");
-			return false;
-		}
-
-		// Set options.
-		ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
-		ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
-
-		// Grab some settings.
-		$ldapuser = "cn=" . $username . "," . Config::get('goonauth.ldapDN');
-		$ldappass = $password;
-
-		// Attempt to bind now.
-		$ret = false;
-		try
-		{
-			if (ldap_bind($ldap, $ldapuser, $ldappass))
-				$ret = true;
-		}
-		catch (Exception $e) {}
-
-		ldap_close($ldap);
-		return $ret;
 	}
 }

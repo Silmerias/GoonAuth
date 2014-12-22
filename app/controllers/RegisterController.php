@@ -143,13 +143,13 @@ class RegisterController extends BaseController
 					$reg = NoteType::where('NTCode', 'SYS')->first();
 					if (!empty($reg))
 					{
-						$note = new Note;
-						$note->NTID = $reg->NTID;
-						$note->UID = $user->UID;
-						$note->NNote = $group->GRName.' registration comment: '.$comment;
-						$note->save();
-
-						$group->notes()->attach($note);
+						NoteHelper::Add(array(
+							'user' => $user,
+							'createdby' => null,
+							'obj' => $group,
+							'type' => $reg,
+							'text' => $group->GRName.' registration comment: '.$comment,
+						));
 					}
 				}
 

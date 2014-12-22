@@ -49,7 +49,7 @@ class GroupController extends BaseController
 			$password = sha1('dick' . intval(rand()) . 'butt');
 			$password = substr($password, 0, 13);
 
-			$this->LDAPExecute(function($ldap) {
+			LDAP::Execute(function($ldap) {
 				// Generate a salt.
 				$salt = md5(uniqid(rand(), TRUE));
 				$salt = substr($salt, 0, 4);
@@ -88,14 +88,13 @@ class GroupController extends BaseController
 			// Create note about the authorization.
 			if (!empty($ntauth))
 			{
-				$note = new Note;
-				$note->NTID = $ntauth->NTID;
-				$note->UID = $user->UID;
-				$note->NNote = "User accepted into group ".$group->GRName.".";
-				$note->NCreatedByUID = $auth->UID;
-				$note->save();
-
-				$group->notes()->attach($note);
+				NoteHelper::Add(array(
+					'user' => $user,
+					'createdby' => $auth,
+					'obj' => $group,
+					'type' => $ntauth,
+					'text' => "User accepted into group ".$group->GRName.".",
+				));
 			}
 
 			// Connect to IPB to create the forum entry.
@@ -123,14 +122,13 @@ class GroupController extends BaseController
 			// Create note about the authorization.
 			if (!empty($ntauth))
 			{
-				$note = new Note;
-				$note->NTID = $ntauth->NTID;
-				$note->UID = $user->UID;
-				$note->NNote = "User rejected from joining group ".$group->GRName.".";
-				$note->NCreatedByUID = $auth->UID;
-				$note->save();
-
-				$group->notes()->attach($note);
+				NoteHelper::Add(array(
+					'user' => $user,
+					'createdby' => $auth,
+					'obj' => $group,
+					'type' => $ntauth,
+					'text' => "User rejected from joining group ".$group->GRName.".",
+				));
 			}
 
 			$maildata = array_add($maildata, 'reason', 'You suck');
@@ -146,51 +144,5 @@ class GroupController extends BaseController
 		return Response::json(array(
 			'success' => true
 		));
-	}
-
-
-	private function LDAPExecute( $func )
-	{
-		if (Config::get('goonauth.disableLDAP'))
-			return;
-
-		$ldaphost = Config::get('goonauth.ldapHost');
-		$ldapport = Config::get('goonauth.ldapPort');
-
-		// Connect to our LDAP server.
-		$ldap = ldap_connect($ldaphost, $ldapport);
-		if (!$ldap)
-		{
-			error_log("[ldap] Could not connect to $ldaphost");
-			return;
-		}
-
-		// Set options.
-		ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
-		ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
-
-		// Grab some settings.
-		$ldapuser = Config::get('goonauth.ldapUser');
-		$ldappass = Config::get('goonauth.ldapPassword');
-
-		// If nothing was entered, use NULL so we do an anonymous bind.
-		if (strlen($ldapuser) === 0)
-			$ldapuser = NULL;
-		else $ldapuser = "cn=" . $ldapuser . "," . Config::get('goonauth.ldapDN');
-		if (strlen($ldappass) === 0)
-			$ldappass = NULL;
-
-		// Attempt to bind now.
-		if (ldap_bind($ldap, $ldapuser, $ldappass))
-		{
-			// Execute our function.
-			$func($ldap);
-		}
-		else
-		{
-			error_log("[ldap] Failed to bind to $ldaphost : $ldapport with user $ldapuser");
-		}
-
-		ldap_close($ldap);
 	}
 }

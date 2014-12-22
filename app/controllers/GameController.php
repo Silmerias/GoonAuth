@@ -251,21 +251,18 @@ class GameController extends BaseController
 				return Response::json(array('success' => false));
 
 			case 'addnote':
-				$type = Input::get('type');
+				$type = NoteType::find(Input::get('type'));
 				$text = trim(Input::get('text'));
 
 				if (strlen($text) != 0)
 				{
-					// Create the user's note.
-					$note = new Note;
-					$note->NTID = $type;
-					$note->UID = $user->UID;
-					$note->NCreatedByUID = $auth->UID;
-					$note->NNote = $text;
-					$note->save();
-
-					// Attach it to the organization.
-					$org->notes()->attach($note);
+					NoteHelper::Add(array(
+						'user' => $user,
+						'createdby' => $auth,
+						'obj' => $org,
+						'type' => $type,
+						'text' => $text,
+					));
 				}
 
 				return Response::json(array('success' => true));
@@ -305,13 +302,13 @@ class GameController extends BaseController
 			$reg = NoteType::where('NTCode', 'SYS')->first();
 			if (!empty($reg))
 			{
-				$note = new Note;
-				$note->NTID = $reg->NTID;
-				$note->UID = $gameuser->user->UID;
-				$note->NNote = $org->GOName.' registration comment: '.$comment;
-				$note->save();
-
-				$org->notes()->attach($note);
+				NoteHelper::Add(array(
+					'user' => $gameuser->user,
+					'createdby' => null,
+					'obj' => $org,
+					'type' => $reg,
+					'text' => $org->GOName.' registration comment: '.$comment,
+				));
 			}
 		}
 
@@ -347,7 +344,7 @@ class GameController extends BaseController
 			$gameuser->gameorgs()->updateExistingPivot($org->GOID,
 				array('USID' => $active->USID), false);
 
-			$this->LDAPExecute(function($ldap) {
+			LDAP::Execute(function($ldap) {
 				// Add the user to the organizations's LDAP group.
 				$userdn = "cn=" . $user->UGoonID . "," . Config::get('goonauth.ldapDN');
 				$forumdn = "cn=" . $org->GOLDAPGroup . "," . Config::get('goonauth.ldapGroupDN');
@@ -358,14 +355,13 @@ class GameController extends BaseController
 			// Create note about the authorization.
 			if (!empty($ntauth))
 			{
-				$note = new Note;
-				$note->NTID = $ntauth->NTID;
-				$note->UID = $gameuser->user->UID;
-				$note->NNote = "User accepted into organization ".$org->GOName.".";
-				$note->NCreatedByUID = $auth->UID;
-				$note->save();
-
-				$org->notes()->attach($note);
+				NoteHelper::Add(array(
+					'user' => $gameuser->user,
+					'createdby' => $auth,
+					'obj' => $org,
+					'type' => $ntauth,
+					'text' => "User accepted into organization ".$org->GOName.".",
+				));
 			}
 
 			// Assemble the data required for the e-mail.
@@ -390,14 +386,13 @@ class GameController extends BaseController
 			// Create note about the authorization.
 			if (!empty($ntauth))
 			{
-				$note = new Note;
-				$note->NTID = $ntauth->NTID;
-				$note->UID = $gameuser->user->UID;
-				$note->NNote = "User rejected from joining organization ".$org->GOName.".";
-				$note->NCreatedByUID = $auth->UID;
-				$note->save();
-
-				$org->notes()->attach($note);
+				NoteHelper::Add(array(
+					'user' => $gameuser->user,
+					'createdby' => $auth,
+					'obj' => $org,
+					'type' => $ntauth,
+					'text' => 'User rejected from joining organization '.$org->GOName.'.',
+				));
 			}
 
 			$maildata = [];
@@ -416,51 +411,5 @@ class GameController extends BaseController
 		return Response::json(array(
 			'success' => true
 		));
-	}
-
-
-	private function LDAPExecute( $func )
-	{
-		if (Config::get('goonauth.disableLDAP'))
-			return;
-
-		$ldaphost = Config::get('goonauth.ldapHost');
-		$ldapport = Config::get('goonauth.ldapPort');
-
-		// Connect to our LDAP server.
-		$ldap = ldap_connect($ldaphost, $ldapport);
-		if (!$ldap)
-		{
-			error_log("[ldap] Could not connect to $ldaphost");
-			return;
-		}
-
-		// Set options.
-		ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
-		ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
-
-		// Grab some settings.
-		$ldapuser = Config::get('goonauth.ldapUser');
-		$ldappass = Config::get('goonauth.ldapPassword');
-
-		// If nothing was entered, use NULL so we do an anonymous bind.
-		if (strlen($ldapuser) === 0)
-			$ldapuser = NULL;
-		else $ldapuser = "cn=" . $ldapuser . "," . Config::get('goonauth.ldapDN');
-		if (strlen($ldappass) === 0)
-			$ldappass = NULL;
-
-		// Attempt to bind now.
-		if (ldap_bind($ldap, $ldapuser, $ldappass))
-		{
-			// Execute our function.
-			$func($ldap);
-		}
-		else
-		{
-			error_log("[ldap] Failed to bind to $ldaphost : $ldapport with user $ldapuser");
-		}
-
-		ldap_close($ldap);
 	}
 }
