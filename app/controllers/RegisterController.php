@@ -123,9 +123,15 @@ class RegisterController extends BaseController
 			{
 				$group = Group::where('GRName', 'Something Awful')->first();
 
+				// Grab IP.
+				$ip = inet_pton($_SERVER['REMOTE_ADDR'])
+				if ($ip === false)
+					$ip = null;
+
 				// Success!  Let's create our user now.
 				$user = new User;
 				$user->USID = UserStatus::pending()->first()->USID;
+				$user->UIPAddress = $ip;
 				$user->UEmail = $email;
 				$user->UGoonID = $goonid;
 				$user->USAUserID = $sa_userid;
