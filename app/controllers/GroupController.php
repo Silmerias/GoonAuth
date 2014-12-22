@@ -65,6 +65,8 @@ class GroupController extends BaseController
 				$info['displayName'] = $user->UGoonID;
 				$info['userPassword'] = $pass;
 				$info['mail'] = $user->UEmail;
+				$info['objectClass'][0] = "person";
+				$info['objectClass'][1] = "inetOrgPerson";
 
 				// Add the user!
 				$userdn = "cn=" . $user->UGoonID . "," . Config::get('goonauth.ldapDN');
