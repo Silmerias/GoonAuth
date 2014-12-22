@@ -124,7 +124,7 @@ class RegisterController extends BaseController
 				$group = Group::where('GRName', 'Something Awful')->first();
 
 				// Grab IP.
-				$ip = inet_pton($_SERVER['REMOTE_ADDR'])
+				$ip = inet_pton($_SERVER['REMOTE_ADDR']);
 				if ($ip === false)
 					$ip = null;
 
