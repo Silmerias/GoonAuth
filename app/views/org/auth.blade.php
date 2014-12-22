@@ -46,6 +46,10 @@
 	</div>
 </div>
 
+<div id="dialog-reject-reason" title="Rejection Reason">
+	<textarea id="reject-text" name="eject-text" placeholder="Reason for rejection" style="width: 310px; height: 200px"></textarea>
+</div>
+
 <script>
 
 function approve(id)
@@ -70,23 +74,44 @@ function approve(id)
 
 function deny(id)
 {
-	$.ajax({
-		url: "{{ URL::to(Request::path()) }}",
-		type: "post",
-		dataType: "json",
-		data: { action: 'deny', id: id }
-	}).done(function(ret) {
-		if (ret.success == true)
-		{
-			$('#ID_'+id)
-				.closest('tr')
-				.children('td')
-				.wrapInner('<div class="td-slider" />')
-				.children(".td-slider")
-				.slideUp();
-		}
-	});
+	$('#dialog-reject-reason').attr('uid', id);
+	$('#dialog-reject-reason').dialog('open');
 }
+
+reject = $('#dialog-reject-reason').dialog({
+	autoOpen: false,
+	height: 300,
+	width: 350,
+	modal: true,
+	buttons: {
+		'Reject': function() {
+			$.ajax({
+				url: "{{ URL::to(Request::path()) }}",
+				type: "post",
+				dataType: "json",
+				data: {
+					action: 'deny',
+					id: $('#dialog-reject-reason').attr('uid'),
+					text: $('#reject-text').val()
+				}
+			}).done(function(ret) {
+				reject.dialog("close");
+				if (ret.success == true)
+				{
+					$('#ID_'+id)
+						.closest('tr')
+						.children('td')
+						.wrapInner('<div class="td-slider" />')
+						.children(".td-slider")
+						.slideUp();
+				}
+			});
+		},
+		Cancel: function() {
+			reject.dialog("close");
+		}
+	}
+});
 
 </script>
 

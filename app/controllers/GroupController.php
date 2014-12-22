@@ -115,6 +115,8 @@ class GroupController extends BaseController
 		}
 		else
 		{
+			$reason = Input::get('text');
+
 			$rejected = UserStatus::where('USCode', 'REJE')->first();
 			$user->USID = $rejected->USID;
 			$user->save();
@@ -127,11 +129,11 @@ class GroupController extends BaseController
 					'createdby' => $auth,
 					'obj' => $group,
 					'type' => $ntauth,
-					'text' => "User rejected from joining group ".$group->GRName.".",
+					'text' => 'User rejected from joining group '.$group->GRName.'.  Reason: '.$reason,
 				));
 			}
 
-			$maildata = array_add($maildata, 'reason', 'You suck');
+			$maildata = array_add($maildata, 'reason', $reason);
 
 			try {
 			Mail::send('emails.group-register-deny', $maildata, function($msg) {

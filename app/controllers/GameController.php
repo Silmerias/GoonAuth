@@ -379,6 +379,8 @@ class GameController extends BaseController
 		}
 		else
 		{
+			$reason = Input::get('text');
+
 			$rejected = UserStatus::where('USCode', 'REJE')->first();
 			$gameuser->gameorgs()->updateExistingPivot($org->GOID,
 				array('USID' => $rejected->USID), false);
@@ -391,13 +393,13 @@ class GameController extends BaseController
 					'createdby' => $auth,
 					'obj' => $org,
 					'type' => $ntauth,
-					'text' => 'User rejected from joining organization '.$org->GOName.'.',
+					'text' => 'User rejected from joining organization '.$org->GOName.'.  Reason: '.$reason,
 				));
 			}
 
 			$maildata = [];
 			$maildata = array_add($maildata, 'game', $game->GName);
-			$maildata = array_add($maildata, 'reason', 'You suck');
+			$maildata = array_add($maildata, 'reason', $reason);
 
 			// Send out the rejection e-mail.
 			try {
