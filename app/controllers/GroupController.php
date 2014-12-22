@@ -49,7 +49,7 @@ class GroupController extends BaseController
 			$password = sha1('dick' . intval(rand()) . 'butt');
 			$password = substr($password, 0, 13);
 
-			LDAP::Execute(function($ldap) {
+			LDAP::Execute(function($ldap) use($password, $user, $group) {
 				// Generate a salt.
 				$salt = md5(uniqid(rand(), TRUE));
 				$salt = substr($salt, 0, 4);

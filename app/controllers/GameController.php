@@ -344,7 +344,7 @@ class GameController extends BaseController
 			$gameuser->gameorgs()->updateExistingPivot($org->GOID,
 				array('USID' => $active->USID), false);
 
-			LDAP::Execute(function($ldap) {
+			LDAP::Execute(function($ldap) use($user, $org) {
 				// Add the user to the organizations's LDAP group.
 				$userdn = "cn=" . $user->UGoonID . "," . Config::get('goonauth.ldapDN');
 				$forumdn = "cn=" . $org->GOLDAPGroup . "," . Config::get('goonauth.ldapGroupDN');
