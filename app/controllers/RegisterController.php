@@ -127,6 +127,7 @@ class RegisterController extends BaseController
 				$ip = inet_pton($_SERVER['REMOTE_ADDR']);
 				if ($ip === false)
 					$ip = null;
+				else $ip = bin2hex($ip);
 
 				// Success!  Let's create our user now.
 				$user = new User;

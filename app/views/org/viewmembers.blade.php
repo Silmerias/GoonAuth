@@ -39,7 +39,7 @@
 				{{ e($statuses[$gameuser->pivot->USID - 1]->USStatus) }}
 			</td>
 			<td><a href="{{ URL::to('user/'.$gameuser->user->UID) }}">{{ e($gameuser->user->UGoonID) }}</a></td>
-			<td><a href="{{ GameController::buildGameProfile($game, $gameuser) }}">{{ e($gameuser->GUCachedName) }}</a></td>
+			<td>{{ GameController::buildGameProfile($game, $gameuser) }}</td>
 			<td>
 				<button type="button" class="btn btn-sm btn-danger" onclick="kick({{ $gameuser->GUID }})">Kick</a>
 				<button type="button" class="btn btn-sm btn-warning" style="margin-left: 5px" onclick="addnote({{ $gameuser->user->UID }})">Add Note</button>

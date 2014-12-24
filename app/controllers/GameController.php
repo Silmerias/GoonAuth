@@ -134,10 +134,15 @@ class GameController extends BaseController
 	public static function buildGameProfile($game, $gameuser)
 	{
 		if (strcasecmp($game->GAbbr, "mwo") == 0)
-			return sprintf($game->GProfileURL, $gameuser->GUUserID, strtolower(str_replace(' ', '-', $gameuser->GUCachedName)));
+			return e($gameuser->GUCachedName);
+			//return sprintf($game->GProfileURL, $gameuser->GUUserID, strtolower(str_replace(' ', '-', $gameuser->GUCachedName)));
 
 		if (strcasecmp($game->GAbbr, "sc") == 0)
-			return sprintf($game->GProfileURL, $gameuser->GUCachedName);
+		{
+			$profile = sprintf($game->GProfileURL, $gameuser->GUCachedName);
+			$profile = '<a href="'.$profile.'">'.e($gameuser->GUCachedName).'</a>';
+			return $profile;
+		}
 	}
 
 	public function showGames()
@@ -183,27 +188,36 @@ class GameController extends BaseController
 		$username = Input::get('username');
 		$token = Session::get('token');
 
-		if (!isset($token))
+		$requirevalidation = $game->GRequireValidation;
+
+		if (!isset($token) && $requirevalidation)
 			return Redirect::back()->with('error', 'An unknown error has occured.');
 
 		if (!isset($username))
 			return Redirect::back()->with('error', 'You must enter your Game Username.');
 
 		// Attempt a verification.
-		$func = 'verify_'.$abbr;
-		$ret = $this->$func($username, $token);
-		if (!isset($ret) || $ret['ret'] === false)
-			return Redirect::back()->with('error', 'Verification failed.');
+		$ret = null;
+		if ($requirevalidation)
+		{
+			$func = 'verify_'.$abbr;
+			$ret = $this->$func($username, $token);
+			if (!isset($ret) || $ret['ret'] === false)
+				return Redirect::back()->with('error', 'Verification failed.');
+		}
 
 		// Success!  Let's create our user now.
 		$user = new GameUser;
 		$user->GID = $game->GID;
 		$user->UID = $auth->UID;
-		$user->GUUserID = $ret['userid'];
-		$user->GURegDate = $ret['regdate'];
 		$user->GUCacheDate = Carbon::now();
 		$user->GUCachedName = $username;
-		$user->GUCachedPostCount = $ret['postcount'];
+		if (isset($ret))
+		{
+			$user->GUUserID = $ret['userid'];
+			$user->GURegDate = $ret['regdate'];
+			$user->GUCachedPostCount = $ret['postcount'];
+		}
 		$user->save();
 
 		$include = array('auth' => $auth, 'game' => $game);

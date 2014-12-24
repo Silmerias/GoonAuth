@@ -48,7 +48,12 @@
 			@if (empty($user->UIPAddress))
 				<td></td>
 			@else
-				<td>{{ inet_ntop($user->UIPAddress) }}</td>
+				<?php
+					$ip = $user->UIPAddress;
+					if (is_null($ip)) $ip = '';
+					else $ip = inet_ntop(pack('H*', $ip));
+				?>
+				<td>{{ $ip }}</td>
 			@endif
 		</tr>
 	</table>

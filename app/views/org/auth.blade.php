@@ -30,7 +30,7 @@
 		@foreach ($query->get() as $gameuser)
 		<tr id="ID_{{ $gameuser->GUID }}">
 			<td><a href="{{ URL::to('user/'.$gameuser->user->UID) }}">{{ e($gameuser->user->UGoonID) }}</a></td>
-			<td><a href="{{ GameController::buildGameProfile($game, $gameuser) }}">{{ e($gameuser->GUCachedName) }}</a></td>
+			<td>{{ GameController::buildGameProfile($game, $gameuser) }}</td>
 			<td>{{ $gameuser->GURegDate }}</td>
 			<td>{{ $gameuser->GUCachedPostCount }}</td>
 			<td>

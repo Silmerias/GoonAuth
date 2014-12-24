@@ -18,7 +18,7 @@ class CreateBaseTables extends Migration {
 
 			$t->integer('USID')->unsigned();	// User Status ID
 
-			$t->binary('UIPAddress')->nullable();	// User IP Address
+			$t->string('UIPAddress', 24)->nullable();	// User IP Address
 
 			$t->string('UEmail', 100)->unique();	// User E-Mail.
 			$t->string('UGoonID', 100)->unique();	// User Goon ID.
@@ -119,8 +119,9 @@ class CreateBaseTables extends Migration {
 
 			$t->text('GAbbr');	// Game abbreviation
 			$t->text('GName');	// Game name
-			$t->text('GEditProfileURL');	// Game edit profile URL
-			$t->text('GProfileURL');		// Game profile URL
+			$t->text('GEditProfileURL');		// Game edit profile URL
+			$t->text('GProfileURL')->nullable;	// Game profile URL
+			$t->boolean('GRequireValidation')->default(true);	// Game requires profile validation.
 
 			$t->text('GLDAPGroup')->nullable();	// LDAP group for the game.
 		});
@@ -145,7 +146,7 @@ class CreateBaseTables extends Migration {
 			$t->integer('GID')->unsigned();		// Game ID
 			$t->integer('UID')->unsigned();		// User ID
 
-			$t->integer('GUUserID');				// User's Game ID
+			$t->integer('GUUserID')->nullable();	// User's Game ID
 			$t->timestamp('GURegDate')->nullable();	// User's Game Reg Date
 
 			$t->timestamp('GUCacheDate')->nullable();		// Date the game info was cached

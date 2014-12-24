@@ -22,7 +22,8 @@ class GameSeeder extends Seeder {
 			'GName' => 'MechWarrior Online',
 			'GLDAPGroup' => null,	// MWO
 			'GEditProfileURL' => 'http://mwomercs.com/forums/index.php?app=core&module=usercp&tab=core',
-			'GProfileURL' => 'http://mwomercs.com/forums/user/%d-%s'
+			'GProfileURL' => 'http://mwomercs.com/forums/user/%d-%s',
+			'GRequireValidation' => false
 		));
 
 		$fljk = GameOrg::create(array(
