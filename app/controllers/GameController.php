@@ -254,7 +254,7 @@ class GameController extends BaseController
 		$game = Game::where('GAbbr', $abbr)->first();
 		$org = GameOrg::where('GOAbbr', $org)->first();
 		if (empty($game) || empty($org))
-			return Response::json(array('success' => false));
+			return Response::json(array('success' => false, 'message' => 'Invalid request.  Try logging off and back on.'));
 
 		$user = User::find(intval(Input::get('id')));
 		$action = Input::get('action');
@@ -262,7 +262,7 @@ class GameController extends BaseController
 		switch ($action)
 		{
 			case 'kick':
-				return Response::json(array('success' => false));
+				return Response::json(array('success' => false, 'message' => 'Not yet implemented.'));
 
 			case 'addnote':
 				$type = NoteType::find(Input::get('type'));
@@ -354,17 +354,53 @@ class GameController extends BaseController
 
 		if (strcasecmp($action, "approve") == 0)
 		{
-			$active = UserStatus::where('USCode', 'ACTI')->first();
-			$gameuser->gameorgs()->updateExistingPivot($org->GOID,
-				array('USID' => $active->USID), false);
-
 			LDAP::Execute(function($ldap) use($user, $org) {
 				// Add the user to the organizations's LDAP group.
 				$userdn = "cn=" . $user->UGoonID . "," . Config::get('goonauth.ldapDN');
-				$forumdn = "cn=" . $org->GOLDAPGroup . "," . Config::get('goonauth.ldapGroupDN');
-				if (!ldap_mod_add($ldap, $forumdn, array('member' => $userdn)))
+				$dn = "cn=" . $org->GOLDAPGroup . "," . Config::get('goonauth.ldapGroupDN');
+
+				// Delete first.
+				@ldap_mod_del($ldap, $dn, array('member' => $userdn));
+
+				// Add to the LDAP group.
+				if (@ldap_mod_add($ldap, $dn, array('member' => $userdn)) == false)
+				{
 					error_log("[ldap] Failed to add user to organization group.");
+					error_log("[ldap] Failed to add user to org group: {$org->GOLDAPGroup}.");
+					return Response::json(array(
+						'success' => false,
+						'message' => 'Unable to add user to organization group.  Contact Adeptus for assistance.'
+					));
+				}
 			});
+
+			// Send out the e-mail.
+			try
+			{
+				// Assemble the data required for the e-mail.
+				$maildata = [];
+				$maildata = array_add($maildata, 'goonid', $user->UGoonID);
+				$maildata = array_add($maildata, 'org', $org->GOName);
+
+				// Send out the onboarding e-mail.
+				Mail::send('emails.game-register-approve', $maildata, function($msg) use($org, $user) {
+					$msg->subject('Your ' . $org->GOName . ' organization membership request was approved!');
+					$msg->to($user->UEmail);
+				});
+			}
+			catch (Exception $e)
+			{
+				error_log('E-mail error: '.var_dump($e));
+				return Response::json(array(
+					'success' => false,
+					'message' => 'Unable to send e-mail.  Contact Adeptus for assistance.'
+				));
+			}
+
+			// Add the user.
+			$active = UserStatus::where('USCode', 'ACTI')->first();
+			$gameuser->gameorgs()->updateExistingPivot($org->GOID,
+				array('USID' => $active->USID), false);
 
 			// Create note about the authorization.
 			if (!empty($ntauth))
@@ -377,22 +413,35 @@ class GameController extends BaseController
 					'text' => "User accepted into organization ".$org->GOName.".",
 				));
 			}
-
-			// Assemble the data required for the e-mail.
-			$maildata = [];
-			$maildata = array_add($maildata, 'goonid', $user->UGoonID);
-			$maildata = array_add($maildata, 'org', $org->GOName);
-
-			// Send out the onboarding e-mail.
-			Mail::send('emails.game-register-approve', $maildata, function($msg) use($org, $user) {
-				$msg->subject('Your ' . $org->GOName . ' organization membership request was approved!');
-				$msg->to($user->UEmail);
-			});
 		}
 		else
 		{
 			$reason = Input::get('text');
 
+			// Try sending the e-mail out first.
+			// If this fails, we want to stop the process until it can be fixed.
+			try
+			{
+				$maildata = [];
+				$maildata = array_add($maildata, 'org', $org->GOName);
+				$maildata = array_add($maildata, 'reason', $reason);
+
+				// Send out the rejection e-mail.
+				Mail::send('emails.game-register-deny', $maildata, function($msg) use($org, $user) {
+					$msg->subject('Your ' . $org->GOName . ' organization membership request was DENIED!');
+					$msg->to($user->UEmail);
+				});
+			}
+			catch (Exception $e)
+			{
+				error_log('E-mail error: '.var_dump($e));
+				return Response::json(array(
+					'success' => false,
+					'message' => 'Unable to send e-mail.  Contact Adeptus for assistance.'
+				));
+			}
+
+			// Reject the user.
 			$rejected = UserStatus::where('USCode', 'REJE')->first();
 			$gameuser->gameorgs()->updateExistingPivot($org->GOID,
 				array('USID' => $rejected->USID), false);
@@ -408,16 +457,6 @@ class GameController extends BaseController
 					'text' => 'User rejected from joining organization '.$org->GOName.'.  Reason: '.$reason,
 				));
 			}
-
-			$maildata = [];
-			$maildata = array_add($maildata, 'org', $org->GOName);
-			$maildata = array_add($maildata, 'reason', $reason);
-
-			// Send out the rejection e-mail.
-			Mail::send('emails.game-register-deny', $maildata, function($msg) use($org, $user) {
-				$msg->subject('Your ' . $org->GOName . ' organization membership request was DENIED!');
-				$msg->to($user->UEmail);
-			});
 		}
 
 		return Response::json(array(

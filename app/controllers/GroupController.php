@@ -70,22 +70,73 @@ class GroupController extends BaseController
 
 				// Add the user!
 				$userdn = "cn=" . $user->UGoonID . "," . Config::get('goonauth.ldapDN');
-				if (!ldap_add($ldap, $userdn, $info))
-					error_log("[ldap] Failed to create user {$info['cn']}");
+				if (@ldap_add($ldap, $userdn, $info) == false)
+				{
+					if (@ldap_modify($ldap, $userdn, $info) == false)
+					{
+						error_log("[ldap] Failed to create user {$info['cn']}");
+						return Response::json(array(
+							'success' => false,
+							'message' => 'Unable to create user.  Contact Adeptus for assistance.'
+						));
+					}
+				}
+
+				// Delete the user from the group first, just in case.
+				@ldap_mod_del($ldap, $forumdn, array('member' => $userdn));
 
 				// Add the user to the forums LDAP group.
 				$forumdn = "cn=ForumMembers" . "," . Config::get('goonauth.ldapGroupDN');
-				if (!ldap_mod_add($ldap, $forumdn, array('member' => $userdn)))
+				if (@ldap_mod_add($ldap, $forumdn, array('member' => $userdn)) == false)
+				{
 					error_log("[ldap] Failed to add user to forum group.");
+					return Response::json(array(
+						'success' => false,
+						'message' => 'Unable to add user to forum group.  Contact Adeptus for assistance.'
+					));
+				}
 
 				// Add the user to the LDAP group for their group.
 				if (!is_null($group->GRLDAPGroup))
 				{
 					$forumdn = "cn=". $group->GRLDAPGroup . "," . Config::get('goonauth.ldapGroupDN');
-					if (!ldap_mod_add($ldap, $forumdn, array('member' => $userdn)))
-						error_log("[ldap] Failed to add user to forum group.");
+
+					// Delete first.
+					@ldap_mod_del($ldap, $forumdn, array('member' => $userdn));
+
+					// Add to the LDAP group.
+					if (@ldap_mod_add($ldap, $forumdn, array('member' => $userdn)) == false)
+					{
+						error_log("[ldap] Failed to add user to group: {$group->GRLDAPGroup}.");
+						return Response::json(array(
+							'success' => false,
+							'message' => 'Unable to add user to group.  Contact Adeptus for assistance.'
+						));
+					}
 				}
 			});
+
+			// Send out the onboarding e-mail.
+			try
+			{
+				// Assemble the data required for the e-mail.
+				$maildata = array_add($maildata, 'goonid', $user->UGoonID);
+				$maildata = array_add($maildata, 'group', $user->group->GRName);
+				$maildata = array_add($maildata, 'password', $password);
+
+				Mail::send('emails.group-register-approve', $maildata, function($msg) use($user) {
+					$msg->subject('Your Goonrathi / Word of Lowtax membership request was approved!');
+					$msg->to($user->UEmail);
+				});
+			}
+			catch (Exception $e)
+			{
+				error_log('E-mail error: '.var_dump($e));
+				return Response::json(array(
+					'success' => false,
+					'message' => 'Unable to send e-mail.  Contact Adeptus for assistance.'
+				));
+			}
 
 			// Create note about the authorization.
 			if (!empty($ntauth))
@@ -101,27 +152,37 @@ class GroupController extends BaseController
 
 			// Connect to IPB to create the forum entry.
 			file_get_contents("https://forums.goonrathi.com/index.php?app=core&module=global&section=login&do=process&auth_key=880ea6a14ea49e853634fbdc5015a024&ips_username={$user->UGoonID}&ips_password={$password}");
-
-			// Assemble the data required for the e-mail.
-			$maildata = array_add($maildata, 'goonid', $user->UGoonID);
-			$maildata = array_add($maildata, 'group', $user->group->GRName);
-			$maildata = array_add($maildata, 'password', $password);
-
-			// Send out the onboarding e-mail.
-			Mail::send('emails.group-register-approve', $maildata, function($msg) use($user) {
-				$msg->subject('Your Goonrathi / Word of Lowtax membership request was approved!');
-				$msg->to($user->UEmail);
-			});
 		}
 		else
 		{
 			$reason = Input::get('text');
 
+			// Try sending the e-mail out first.
+			// If this fails, we want to stop the process until it can be fixed.
+			try
+			{
+				$maildata = array_add($maildata, 'reason', $reason);
+
+				Mail::send('emails.group-register-deny', $maildata, function($msg) use($user) {
+					$msg->subject('Your Goonrathi / Word of Lowtax membership request was DENIED!');
+					$msg->to($user->UEmail);
+				});
+			}
+			catch (Exception $e)
+			{
+				error_log('E-mail error: '.var_dump($e));
+				return Response::json(array(
+					'success' => false,
+					'message' => 'Unable to send e-mail.  Contact Adeptus for assistance.'
+				));
+			}
+
+			// Reject the user.
 			$rejected = UserStatus::where('USCode', 'REJE')->first();
 			$user->USID = $rejected->USID;
 			$user->save();
 
-			// Create note about the authorization.
+			// Create note about the rejection.
 			if (!empty($ntauth))
 			{
 				NoteHelper::Add(array(
@@ -132,13 +193,6 @@ class GroupController extends BaseController
 					'text' => 'User rejected from joining group '.$group->GRName.'.  Reason: '.$reason,
 				));
 			}
-
-			$maildata = array_add($maildata, 'reason', $reason);
-
-			Mail::send('emails.group-register-deny', $maildata, function($msg) use($user) {
-				$msg->subject('Your Goonrathi / Word of Lowtax membership request was DENIED!');
-				$msg->to($user->UEmail);
-			});
 		}
 
 		return Response::json(array(

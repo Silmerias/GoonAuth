@@ -10,11 +10,17 @@
 	<h2 class="form-signin-heading">Login using your Goon ID</h2>
 	<p>If you don't have an account yet, {{ HTML::link(URL::to('register'), "click here") }} to start your auth process.</p>
 	@if (Session::has('banned'))
-		<div class="alert alert-danger">You have been banned</div>
+		<div class="alert alert-danger">
+			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+			<span class="sr-only">Error:</span>
+			You have been banned
+		</div>
 	@endif
 	@if (Session::has('error'))
 		<div class="alert alert-danger">
-		{{ Session::get('error') }}
+			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+			<span class="sr-only">Error:</span>
+			{{ Session::get('error') }}
 		</div>
 	@endif
 

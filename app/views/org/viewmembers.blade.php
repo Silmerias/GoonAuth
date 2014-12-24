@@ -41,8 +41,8 @@
 			<td><a href="{{ URL::to('user/'.$gameuser->user->UID) }}">{{ e($gameuser->user->UGoonID) }}</a></td>
 			<td>{{ GameController::buildGameProfile($game, $gameuser) }}</td>
 			<td>
-				<button type="button" class="btn btn-sm btn-danger" onclick="kick({{ $gameuser->GUID }})">Kick</a>
-				<button type="button" class="btn btn-sm btn-warning" style="margin-left: 5px" onclick="addnote({{ $gameuser->user->UID }})">Add Note</button>
+				<button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modal-Kick" data-gid="{{ $gameuser->GUID }}">Kick</button>
+				<button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#modal-Note" data-uid="{{ $gameuser->user->UID }}">Add Note</button>
 			</td>
 		</tr>
 		@endforeach
@@ -53,76 +53,101 @@
 	</div>
 </div>
 
-<div id="dialog-note" title="Create Note">
-	Note Type: <select id="notetype" name="notetype">
-	@foreach (NoteType::with(array('roles.gameorgusers' => function($q) use($auth) { $q->where('GameOrgAdmin.UID', $auth->UID); }))->where('NTSystemUseOnly', 'false')->get() as $nt)
-		<option value="{{ $nt->NTID }}">{{ $nt->NTName }}</option>
-	@endforeach
-	</select>
-	<textarea id="notetext" name="notetext" placeholder="Type your note here" style="margin-top: 10px; width: 310px; height: 140px"></textarea>
+<div class="modal fade" id="modal-Error" tabindex="-1" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Error</h4>
+			</div>
+			<div class="modal-body">
+				<div class="alert alert-danger">
+					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+					<span class="sr-only">Error:</span>
+					<span class="error"></span>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modal-Note" tabindex="-1" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Add Note</h4>
+			</div>
+			<div class="modal-body">
+				<form>
+					<div class="form-group">
+						<label for="note-type" class="control-label">Note Type:</label>
+						<select id="note-type" class="form-control">
+						@foreach (NoteType::with(array('roles.gameorgusers' => function($q) use($auth) { $q->where('GameOrgAdmin.UID', $auth->UID); }))->where('NTSystemUseOnly', 'false')->get() as $nt)
+							<option value="{{ $nt->NTID }}">{{ $nt->NTName }}</option>
+						@endforeach
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="note-text" class="control-label">Message:</label>
+						<textarea id="note-text" class="form-control" placeholder="Type your note here"></textarea>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" id="note-add" class="btn btn-primary">Add Note</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
 </div>
 
 <script>
 
-function kick(id)
+function error(msg)
 {
-	/*
-	$.ajax({
-		url: "{{ URL::to(Request::path()) }}",
-		type: "post",
-		dataType: "json",
-		data: { action: 'deny', id: id }
-	}).done(function(ret) {
-		if (ret.success == true)
-		{
-			$('#ID_'+id)
-				.closest('tr')
-				.children('td')
-				.wrapInner('<div class="td-slider" />')
-				.children(".td-slider")
-				.slideUp();
-		}
-	});
-	*/
+	$('#modal-Error .modal-body .error').text(msg);
+	$('#modal-Error').modal('show');
 }
 
-function addnote(id)
-{
-	$('#notetext').val('');
-	$('#dialog-note').attr('uid', id);
-	dialog.dialog("open");
-}
+$('#modal-Note').on('show.bs.modal', function (event) {
+	var button = $(event.relatedTarget);
+	var uid = button.data('uid');
 
-function submitnote()
-{
+	var modal = $(this);
+	modal.find('.modal-body textarea').val('');
+	modal.find('#note-add').attr('data-id', uid);
+});
+
+$('#note-add').click(function (event) {
+	var id = $(this).attr('data-id');
+
 	$.ajax({
-		url: "{{ URL::to(Request::path()) }}",
-		type: "post",
-		dataType: "json",
+		url: '{{ URL::to(Request::path()) }}',
+		type: 'post',
+		dataType: 'json',
 		data: {
 			action: 'addnote',
-			id: $('#dialog-note').attr('uid'),
-			type: $('#notetype').val(),
-			text: $('#notetext').val()
+			id: id,
+			type: $('#note-type').val(),
+			text: $('#note-text').val()
 		}
-	}).done(function(ret) {
-		dialog.dialog("close");
-	});	
-}
-
-dialog = $('#dialog-note').dialog({
-	autoOpen: false,
-	height: 300,
-	width: 350,
-	modal: true,
-	buttons: {
-		'Add Note': function() {
-			submitnote();
-		},
-		Cancel: function() {
-			dialog.dialog("close");
+	})
+	.done(function(ret) {
+		$('#modal-Note').modal('hide');
+		if (ret.success == false)
+		{
+			$('#modal-Note').modal('hide');
+			error(ret.message);
 		}
-	}
+	})
+	.fail(function(ret) {
+		$('#modal-Note').modal('hide');
+		error('An internal server error has occurred.');
+	});
 });
 
 </script>

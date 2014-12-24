@@ -8,9 +8,7 @@
     <title>Auth Landing</title>
     {{ HTML::style('assets/css/bootstrap.min.css') }}
     {{ HTML::style('assets/css/auth.css') }}
-    {{ HTML::style('assets/css/jquery-ui.min.css') }}
     {{ HTML::script('assets/js/jquery-1.11.1.min.js') }}
-    {{ HTML::script('assets/js/jquery-ui.min.js') }}
     {{ HTML::script('assets/js/bootstrap.min.js') }}
 
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
