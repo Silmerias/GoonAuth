@@ -75,14 +75,14 @@ class GroupController extends BaseController
 
 				// Add the user to the forums LDAP group.
 				$forumdn = "cn=ForumMembers" . "," . Config::get('goonauth.ldapGroupDN');
-				if (!ldap_mod_add($ldap, $forumdn, array('members' => $userdn)))
+				if (!ldap_mod_add($ldap, $forumdn, array('member' => $userdn)))
 					error_log("[ldap] Failed to add user to forum group.");
 
 				// Add the user to the LDAP group for their group.
 				if (!is_null($group->GRLDAPGroup))
 				{
 					$forumdn = "cn=". $group->GRLDAPGroup . "," . Config::get('goonauth.ldapGroupDN');
-					if (!ldap_mod_add($ldap, $forumdn, array('members' => $userdn)))
+					if (!ldap_mod_add($ldap, $forumdn, array('member' => $userdn)))
 						error_log("[ldap] Failed to add user to forum group.");
 				}
 			});

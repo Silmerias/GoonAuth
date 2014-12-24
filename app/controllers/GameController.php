@@ -362,7 +362,7 @@ class GameController extends BaseController
 				// Add the user to the organizations's LDAP group.
 				$userdn = "cn=" . $user->UGoonID . "," . Config::get('goonauth.ldapDN');
 				$forumdn = "cn=" . $org->GOLDAPGroup . "," . Config::get('goonauth.ldapGroupDN');
-				if (!ldap_mod_add($ldap, $forumdn, array('members' => $userdn)))
+				if (!ldap_mod_add($ldap, $forumdn, array('member' => $userdn)))
 					error_log("[ldap] Failed to add user to organization group.");
 			});
 
