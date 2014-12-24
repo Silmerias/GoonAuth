@@ -8,7 +8,7 @@ class GroupSeeder extends Seeder {
 
 		$sa = Group::create(array(
 			'GRName' => 'Something Awful',
-			'GRLDAPGroup' => null	// SA
+			'GRLDAPGroup' => 'SA'
 		));
 	}
 }

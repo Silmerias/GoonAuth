@@ -381,11 +381,11 @@ class GameController extends BaseController
 			// Assemble the data required for the e-mail.
 			$maildata = [];
 			$maildata = array_add($maildata, 'goonid', $user->UGoonID);
-			$maildata = array_add($maildata, 'game', $game->GName);
+			$maildata = array_add($maildata, 'org', $org->GOName);
 
 			// Send out the onboarding e-mail.
-			Mail::send('emails.game-register-approve', $maildata, function($msg) use($game, $user) {
-				$msg->subject('Your ' . $game->GName . ' game membership request was approved!');
+			Mail::send('emails.game-register-approve', $maildata, function($msg) use($org, $user) {
+				$msg->subject('Your ' . $org->GOName . ' organization membership request was approved!');
 				$msg->to($user->UEmail);
 			});
 		}
@@ -410,12 +410,12 @@ class GameController extends BaseController
 			}
 
 			$maildata = [];
-			$maildata = array_add($maildata, 'game', $game->GName);
+			$maildata = array_add($maildata, 'org', $org->GOName);
 			$maildata = array_add($maildata, 'reason', $reason);
 
 			// Send out the rejection e-mail.
-			Mail::send('emails.game-register-deny', $maildata, function($msg) use($game, $user) {
-				$msg->subject('Your ' . $game->GName . ' game membership request was DENIED!');
+			Mail::send('emails.game-register-deny', $maildata, function($msg) use($org, $user) {
+				$msg->subject('Your ' . $org->GOName . ' organization membership request was DENIED!');
 				$msg->to($user->UEmail);
 			});
 		}
