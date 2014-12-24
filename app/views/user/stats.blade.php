@@ -95,7 +95,7 @@
 				@if (is_null($note->CreatedGoonID))
 					System
 				@else
-					<a href="user/{{ $note->CreatedUID }}">{{ $note->CreatedGoonID }}</a>
+					<a href="{{ URL::to('user/'.$note->CreatedUID) }}">{{ e($note->CreatedGoonID) }}</a>
 				@endif
 				- {{ with(new Carbon($note->NTimestamp))->toDateTimeString() }}
 			</p>

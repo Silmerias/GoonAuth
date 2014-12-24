@@ -171,7 +171,7 @@ class GameController extends BaseController
 		if (empty($game))
 			return Redirect::to('games');
 
-		$token = uniqid('FART-');
+		$token = uniqid('FART');
 		Session::put('token', $token);
 
 		$include = array('auth' => $auth, 'game' => $game, 'token' => $token);
