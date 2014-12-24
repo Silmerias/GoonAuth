@@ -384,12 +384,10 @@ class GameController extends BaseController
 			$maildata = array_add($maildata, 'game', $game->GName);
 
 			// Send out the onboarding e-mail.
-			try {
 			Mail::send('emails.game-register-approve', $maildata, function($msg) use($game, $user) {
 				$msg->subject('Your ' . $game->GName . ' game membership request was approved!');
 				$msg->to($user->UEmail);
 			});
-			} catch (Exception $e) {}
 		}
 		else
 		{
@@ -416,12 +414,10 @@ class GameController extends BaseController
 			$maildata = array_add($maildata, 'reason', $reason);
 
 			// Send out the rejection e-mail.
-			try {
 			Mail::send('emails.game-register-deny', $maildata, function($msg) use($game, $user) {
 				$msg->subject('Your ' . $game->GName . ' game membership request was DENIED!');
 				$msg->to($user->UEmail);
 			});
-			} catch (Exception $e) {}
 		}
 
 		return Response::json(array(
