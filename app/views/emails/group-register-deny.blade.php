@@ -1,5 +1,3 @@
-I'm sorry, your application has been denied.
-
-Why?
-
-{{ $reason }}
+<p>I'm sorry, your application has been denied.</p>
+<p>Why?</p>
+<p>{{ $reason }}</p>
