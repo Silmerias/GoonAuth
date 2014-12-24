@@ -108,7 +108,7 @@ class GroupController extends BaseController
 			$maildata = array_add($maildata, 'password', $password);
 
 			// Send out the onboarding e-mail.
-			Mail::send('emails.group-register-approve', $maildata, function($msg) {
+			Mail::send('emails.group-register-approve', $maildata, function($msg) use($user) {
 				$msg->subject('Your Goonrathi / Word of Lowtax membership request was approved!');
 				$msg->to($user->UEmail);
 			});
@@ -135,7 +135,7 @@ class GroupController extends BaseController
 
 			$maildata = array_add($maildata, 'reason', $reason);
 
-			Mail::send('emails.group-register-deny', $maildata, function($msg) {
+			Mail::send('emails.group-register-deny', $maildata, function($msg) use($user) {
 				$msg->subject('Your Goonrathi / Word of Lowtax membership request was DENIED!');
 				$msg->to($user->UEmail);
 			});
