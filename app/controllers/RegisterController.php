@@ -52,7 +52,7 @@ class RegisterController extends BaseController
 		Session::put('register-goonid', Input::get('goonid'));
 		Session::put('register-email', Input::get('email'));
 
-		$token = uniqid('FART-');
+		$token = uniqid('FART');
 		Session::put('token', $token);
 
 		return View::make('register.link', array('token' => $token));
