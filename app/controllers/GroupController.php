@@ -33,10 +33,20 @@ class GroupController extends BaseController
 
 		// Test for valid user.
 		if (empty($user))
-			return Response::json(array('success' => false));
+			return Response::json(array('success' => false, 'message' => 'Invalid data, please relog and try again.'));
 
 		$auth = Session::get('auth');
 		$ntauth = NoteType::where('NTCode', 'STAT')->first();
+
+		// Check for auth permission.
+		$perms = new UserPerm($auth);
+		if ($perms->group()->auth == false)
+		{
+			return Response::json(array(
+				'success' => false,
+				'message' => 'You do not have permission to authorize members.'
+			));
+		}
 
 		$maildata = array();
 

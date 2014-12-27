@@ -1,7 +1,8 @@
 @extends('layouts.main')
 @section('content')
 
-@if ($auth->grouproles()->count() != 0)
+<?php $perms = new UserPerm($auth); ?>
+@if ($perms->group()->auth == true)
 <p style="margin-top: 20px"><a class="btn btn-danger" href="{{ URL::to('auth/group/'.$auth->group->GRID) }}">Authorize Group Members</a></p>
 @endif
 

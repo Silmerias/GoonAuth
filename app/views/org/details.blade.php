@@ -15,11 +15,13 @@
 
 <a class="label label-info" href="{{ URL::to('games/'.$game->GAbbr) }}">Back to {{ $game->GName }}</a>
 
-@if ($auth->gameorgroles()->where('GOID', $org->GOID)->count() != 0)
+<?php $perms = new UserPerm($auth) ?>
+
+@if ($perms->gameOrg($org->GOID)->auth == true)
 <p style="margin-top: 20px"><a class="btn btn-danger" href="{{ URL::to('auth/'.Request::path()) }}">Authorize Members</a></p>
 @endif
 
-@if ($auth->gameorgroles()->where('GOID', $org->GOID)->count() != 0)
+@if ($perms->gameOrg($org->GOID)->read == true)
 <p style="margin-top: 20px"><a class="btn btn-success" href="{{ URL::to(Request::path().'/view') }}">View Members</a></p>
 @endif
 

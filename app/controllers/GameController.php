@@ -352,6 +352,16 @@ class GameController extends BaseController
 		$auth = Session::get('auth');
 		$ntauth = NoteType::where('NTCode', 'STAT')->first();
 
+		// Check for auth permission.
+		$perms = new UserPerm($auth);
+		if ($perms->gameOrg($org->GOID)->auth == false)
+		{
+			return Response::json(array(
+				'success' => false,
+				'message' => 'You do not have permission to authorize members.'
+			));
+		}
+
 		if (strcasecmp($action, "approve") == 0)
 		{
 			LDAP::Execute(function($ldap) use($user, $org) {

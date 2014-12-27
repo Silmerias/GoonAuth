@@ -86,7 +86,7 @@
 					<div class="form-group">
 						<label for="note-type" class="control-label">Note Type:</label>
 						<select id="note-type" class="form-control">
-						@foreach (NoteType::with(array('roles.gameorgusers' => function($q) use($auth) { $q->where('GameOrgAdmin.UID', $auth->UID); }))->where('NTSystemUseOnly', 'false')->get() as $nt)
+						@foreach (NoteType::with(array('roles.gameorgusers' => function($q) use($auth, $org) { $q->where('GameOrgAdmin.UID', $auth->UID)->where('GameOrgAdmin.GOID', $org->GOID); }))->where('NTSystemUseOnly', 'false')->get() as $nt)
 							<option value="{{ $nt->NTID }}">{{ $nt->NTName }}</option>
 						@endforeach
 						</select>
