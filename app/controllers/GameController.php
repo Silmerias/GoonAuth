@@ -321,7 +321,7 @@ class GameController extends BaseController
 					'createdby' => null,
 					'obj' => $org,
 					'type' => $reg,
-					'text' => $org->GOName.' registration comment: '.$comment,
+					'text' => $org->GOName." registration comment:\n".$comment,
 				));
 			}
 		}
@@ -350,7 +350,7 @@ class GameController extends BaseController
 		$user = User::find($gameuser->UID);
 
 		$auth = Session::get('auth');
-		$ntauth = NoteType::where('NTCode', 'STAT')->first();
+		$ntstatus = NoteType::where('NTCode', 'STAT')->first();
 
 		// Check for auth permission.
 		$perms = new UserPerm($auth);
@@ -413,14 +413,14 @@ class GameController extends BaseController
 				array('USID' => $active->USID), false);
 
 			// Create note about the authorization.
-			if (!empty($ntauth))
+			if (!empty($ntstatus))
 			{
 				NoteHelper::Add(array(
 					'user' => $gameuser->user,
 					'createdby' => $auth,
 					'obj' => $org,
-					'type' => $ntauth,
-					'text' => "User accepted into organization ".$org->GOName.".",
+					'type' => $ntstatus,
+					'text' => 'User accepted into organization '.$org->GOName.'.',
 				));
 			}
 		}
@@ -457,14 +457,14 @@ class GameController extends BaseController
 				array('USID' => $rejected->USID), false);
 
 			// Create note about the authorization.
-			if (!empty($ntauth))
+			if (!empty($ntstatus))
 			{
 				NoteHelper::Add(array(
 					'user' => $gameuser->user,
 					'createdby' => $auth,
 					'obj' => $org,
-					'type' => $ntauth,
-					'text' => 'User rejected from joining organization '.$org->GOName.'.  Reason: '.$reason,
+					'type' => $ntstatus,
+					'text' => 'User rejected from joining organization '.$org->GOName.".\nReason: ".$reason,
 				));
 			}
 		}

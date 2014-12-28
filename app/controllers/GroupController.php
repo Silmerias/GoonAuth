@@ -36,7 +36,7 @@ class GroupController extends BaseController
 			return Response::json(array('success' => false, 'message' => 'Invalid data, please relog and try again.'));
 
 		$auth = Session::get('auth');
-		$ntauth = NoteType::where('NTCode', 'STAT')->first();
+		$ntstatus = NoteType::where('NTCode', 'STAT')->first();
 
 		// Check for auth permission.
 		$perms = new UserPerm($auth);
@@ -149,13 +149,13 @@ class GroupController extends BaseController
 			}
 
 			// Create note about the authorization.
-			if (!empty($ntauth))
+			if (!empty($ntstatus))
 			{
 				NoteHelper::Add(array(
 					'user' => $user,
 					'createdby' => $auth,
 					'obj' => $group,
-					'type' => $ntauth,
+					'type' => $ntstatus,
 					'text' => "User accepted into group ".$group->GRName.".",
 				));
 			}
@@ -193,14 +193,14 @@ class GroupController extends BaseController
 			$user->save();
 
 			// Create note about the rejection.
-			if (!empty($ntauth))
+			if (!empty($ntstatus))
 			{
 				NoteHelper::Add(array(
 					'user' => $user,
 					'createdby' => $auth,
 					'obj' => $group,
-					'type' => $ntauth,
-					'text' => 'User rejected from joining group '.$group->GRName.'.  Reason: '.$reason,
+					'type' => $ntstatus,
+					'text' => 'User rejected from joining group '.$group->GRName.".\nReason: ".$reason,
 				));
 			}
 		}

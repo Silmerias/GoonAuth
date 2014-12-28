@@ -155,7 +155,7 @@ class RegisterController extends BaseController
 							'createdby' => null,
 							'obj' => $group,
 							'type' => $reg,
-							'text' => $group->GRName.' registration comment: '.$comment,
+							'text' => $group->GRName." registration comment:\n".$comment,
 						));
 					}
 				}
