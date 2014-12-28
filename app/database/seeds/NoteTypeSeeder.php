@@ -22,6 +22,14 @@ class NoteTypeSeeder extends Seeder {
 			'NTSystemUseOnly' => true
 		));
 
+		// Legacy notes.
+		NoteType::create(array(
+			'NTCode' => 'LEGA',
+			'NTName' => 'Legacy',
+			'NTColor' => '#CCCCCC',
+			'NTSystemUseOnly' => true
+		));
+
 		NoteType::create(array(
 			'NTCode' => 'GEN',
 			'NTName' => 'General',

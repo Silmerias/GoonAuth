@@ -75,7 +75,8 @@ class CreateBaseTables extends Migration {
 		Schema::create('Role', function($t) {
 			$t->increments('RID');	// Role ID
 
-			$t->text('RName');	// Role name
+			$t->string('RCode', 4)->unique();	// Role code.
+			$t->text('RName');					// Role name
 
 			$t->boolean('RPermAdd')->default(false);	// Add permission
 			$t->boolean('RPermRemove')->default(false);	// Remove permission
