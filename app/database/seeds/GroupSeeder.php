@@ -11,5 +11,11 @@ class GroupSeeder extends Seeder {
 			'GRName' => 'Something Awful',
 			'GRLDAPGroup' => 'SA'
 		));
+
+		$frog = Group::create(array(
+			'GRCode' => 'FROG',
+			'GRName' => 'FROGSWARM',
+			'GRLDAPGroup' => 'FROGSWARM'
+		));
 	}
 }

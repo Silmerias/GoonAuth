@@ -19,21 +19,19 @@
 			<td><span class="label label-default">Group</span></td>
 			<td>{{ e($user->group->GRName) }}</td>
 		</tr>
+@if (false)
 		<tr>
 			<td><span class="label label-default">E-Mail</span></td>
 			<td>{{ e($user->UEmail) }}</td>
 		</tr>
-		<tr>
-			<td><span class="label label-default">Sponsor</span></td>
-			@if (is_null($user->sponsor))
-				<td></td>
-			@else
-				<td><a href="http://forums.somethingawful.com/member.php?action=getinfo&amp;username={{ urlencode($user->sponsor->USACachedName) }}">{{ e($user->sponsor->USACachedName) }}</a></td>
-			@endif
-		</tr>
+@endif
 		<tr>
 			<td><span class="label label-default">SA Name</span></td>
-			<td><a href="http://forums.somethingawful.com/member.php?action=getinfo&amp;username={{ urlencode($user->USACachedName) }}">{{ e($user->USACachedName) }}</a></td>
+			@if (is_null($user->USAUserID))
+				<td></td>
+			@else
+				<td><a href="http://forums.somethingawful.com/member.php?action=getinfo&amp;username={{ urlencode($user->USACachedName) }}">{{ e($user->USACachedName) }}</a></td>
+			@endif
 		</tr>
 		<tr>
 			<td><span class="label label-default">SA Reg Date</span></td>
@@ -45,7 +43,7 @@
 		</tr>
 		<tr>
 			<td><span class="label label-default">IP Address</span></td>
-			@if (empty($user->UIPAddress))
+			@if (is_null($user->UIPAddress))
 				<td></td>
 			@else
 				<?php
@@ -58,7 +56,43 @@
 		</tr>
 	</table>
 
-	@if ($user->sponsoring()->count() != 0)
+	<?php
+		$sponsors = $user->sponsors()->get();
+		$sponsoring = $user->sponsoring()->get();
+	?>
+
+	@if (!$sponsors->isEmpty())
+
+	<p>Sponsored by:</p>
+
+	<table class="table">
+		<thead>
+			<th>Sponsor</th>
+			<th>Group</th>
+			<th>Game Organization</th>
+		</thead>
+		<tbody>
+		@foreach ($sponsors as $s)
+			<tr>
+				<td><a href="http://forums.somethingawful.com/member.php?action=getinfo&amp;username={{ urlencode($s->USACachedName) }}">{{ e($s->USACachedName) }}</a></td>
+				@if (is_null($s->pivot->GRID))
+					<td></td>
+				@else
+					<td>{{ Group::find($s->pivot->GRID)->GRName }}</td>
+				@endif
+
+				@if (is_null($s->pivot->GOID))
+					<td></td>
+				@else
+					<td>{{ GameOrg::find($s->pivot->GOID)->GOName }}</td>
+				@endif
+			</tr>
+		@endforeach
+		</tbody>
+	</table>
+	@endif
+
+	@if (!$sponsoring->isEmpty())
 
 	<p>Sponsored members:</p>
 
@@ -67,17 +101,19 @@
 			<th style="width: 75px;">Status</th>
 			<th>Goon ID</th>
 		</thead>
-		@foreach ($user->sponsoring()->get() as $sponsored)
-		<tr>
-			<?php $status = $sponsored->userstatus()->first() ?>
-			@if (strcmp($status->USCode, 'ACTI') == 0)
-				<td><span class="label label-primary">{{ $status->USStatus }}</span></td>
-			@else
-				<td><span class="label label-default">{{ $status->USStatus }}</span></td>
-			@endif
-			<td><a href="{{ URL::to('user/'.$sponsored->UID) }}">{{ $sponsored->UGoonID }}</a></td>
-		</tr>
+		<tbody>
+		@foreach ($sponsoring as $s)
+			<tr>
+				<?php $status = $s->userstatus()->first() ?>
+				@if (strcmp($status->USCode, 'ACTI') == 0)
+					<td><span class="label label-primary">{{ $status->USStatus }}</span></td>
+				@else
+					<td><span class="label label-default">{{ $status->USStatus }}</span></td>
+				@endif
+				<td><a href="{{ URL::to('user/'.$s->UID) }}">{{ $s->UGoonID }}</a></td>
+			</tr>
 		@endforeach
+		</tbody>
 	</table>
 
 	@endif

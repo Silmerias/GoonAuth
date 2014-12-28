@@ -82,9 +82,6 @@ Route::filter('gameadmin', function($route) {
 Route::filter('sponsor', function() {
 	if (!Session::has('auth') || is_null(Session::get('auth')->USAUserID))
 		return Redirect::to('/');
-
-	if (!is_null(Session::get('auth')->USponsorID))
-		return Redirect::to('/');
 });
 
 

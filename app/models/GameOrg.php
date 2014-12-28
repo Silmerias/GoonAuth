@@ -22,4 +22,8 @@ class GameOrg extends Eloquent {
 	public function notes() {
 		return $this->belongsToMany('Note', 'GameOrgHasNote', 'GOID', 'NID');
 	}
+
+	public function sponsored() {
+		return $this->belongsToMany('User', 'Sponsor', 'GOID', 'UID');
+	}
 }

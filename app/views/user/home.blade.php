@@ -10,7 +10,10 @@
 	<div class="col-md-6 col-md-offset-3">
 		<div class="authed">
 			<i class="fa fa-meh-o"></i>
-			<?php $sponsored = !is_null($auth->USponsorID) ?>
+			<?php
+				$sponsors = $auth->sponsors()->where('Sponsor.GRID', $auth->group->GRID)->get();
+				$sponsored = !$sponsors->isEmpty();
+			?>
 
 			<h2>You are authed!</h2>
 			@if ($sponsored == false)
@@ -18,7 +21,7 @@
 					<p>Your account is linked to the SA account <strong>{{ e($auth->USACachedName) }}</strong>.</p>
 				@endif
 			@else
-				<h2>You were sponsored by {{ e($auth->sponsor->UGoonID) }}.</h2>
+				<h2>You were sponsored by {{ e($sponsors->UGoonID) }}.</h2>
 			@endif
 
 			<p>You are a member of the <strong>{{ $auth->group->GRName }}</strong> group.</p>

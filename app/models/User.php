@@ -10,20 +10,12 @@ class User extends Eloquent {
 		return $this->belongsTo('UserStatus', 'USID');
 	}
 
-	public function sponsor() {
-		return $this->belongsTo('User', 'USponsorID');
-	}
-
 	public function group() {
 		return $this->belongsTo('Group', 'UGroup');
 	}
 
 	public function notes() {
 		return $this->hasMany('Note', 'UID');
-	}
-
-	public function sponsoring() {
-		return $this->hasMany('User', 'USponsorID');
 	}
 
 	public function ownedgroups() {
@@ -50,7 +42,11 @@ class User extends Eloquent {
 		return $this->hasMany('GameUser', 'UID');
 	}
 
-	public function scopeSponsored($query) {
-		return $query->whereNotNull('USponsorID');
+	public function sponsors() {
+		return $this->belongsToMany('User', 'Sponsor', 'UID', 'SSponsorID');
+	}
+
+	public function sponsoring() {
+		return $this->belongsToMany('User', 'Sponsor', 'SSponsorID', 'UID');
 	}
 }

@@ -17,4 +17,8 @@ class Group extends Eloquent {
 	public function members() {
 		return $this->hasMany('User', 'UGroup');
 	}
+
+	public function sponsored() {
+		return $this->belongsToMany('User', 'Sponsor', 'GRID', 'UID');
+	}
 }

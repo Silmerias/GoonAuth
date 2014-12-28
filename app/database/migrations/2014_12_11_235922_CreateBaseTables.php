@@ -32,16 +32,27 @@ class CreateBaseTables extends Migration {
 			$t->timestamp('USACacheDate')->nullable();		// Date the SA info was cached
 			$t->text('USACachedName')->nullable();			// Cached SA name
 			$t->integer('USACachedPostCount')->nullable();	// Cached SA post count
-
-			$t->integer('USponsorID')->unsigned()->nullable();	// Sponsor
 		});
 
 		// UserStatus
 		Schema::create('UserStatus', function($t) {
-			$t->increments('USID');	// User Status ID
+			$t->increments('USID');		// User Status ID
 
 			$t->string('USCode', 4);	// Status Code
 			$t->text('USStatus');		// Status text
+		});
+
+		// Sponsor
+		Schema::create('Sponsor', function($t) {
+			$t->increments('SID');	// Sponsor ID
+
+			$t->integer('UID')->unsigned();			// Sponsored user.
+			$t->integer('SSponsorID')->unsigned();	// Sponsoring user.
+
+			$t->integer('GRID')
+				->unsigned()->nullable();	// Group sponsorship.
+			$t->integer('GOID')
+				->unsigned()->nullable();	// Game Org sponsorship.
 		});
 
 		// Note
@@ -210,13 +221,28 @@ class CreateBaseTables extends Migration {
 				->references('USID')->on('UserStatus')
 				->onDelete('restrict');
 
-			$t->foreign('USponsorID', 'FK_User_Sponsor')
-				->references('UID')->on('User')
-				->onDelete('restrict');
-
 			$t->foreign('UGroup', 'FK_User_Group')
 				->references('GRID')->on('Group')
 				->onDelete('restrict');
+		});
+
+		// Sponsor
+		Schema::table('Sponsor', function($t) {
+			$t->foreign('UID', 'FK_Sponsor_User')
+				->references('UID')->on('User')
+				->onDelete('cascade');
+
+			$t->foreign('SSponsorID', 'FK_Sponsor_User_Sponsor')
+				->references('UID')->on('User')
+				->onDelete('cascade');
+
+			$t->foreign('GRID', 'FK_Sponsor_Group')
+				->references('GRID')->on('Group')
+				->onDelete('cascade');
+
+			$t->foreign('GOID', 'FK_Sponsor_GameOrg')
+				->references('GOID')->on('GameOrg')
+				->onDelete('cascade');
 		});
 
 		// Note
@@ -359,7 +385,12 @@ class CreateBaseTables extends Migration {
 		// Remove the references.
 		Schema::table('User', function($t) {
 			$t->dropForeign('FK_User_UserStatus');
-			$t->dropForeign('FK_User_Sponsor');
+		});
+		Schema::table('Sponsor', function($t) {
+			$t->dropForeign('FK_Sponsor_User');
+			$t->dropForeign('FK_Sponsor_User_Sponsor');
+			$t->dropForeign('FK_Sponsor_Group');
+			$t->dropForeign('FK_Sponsor_GameOrg');
 		});
 		Schema::table('Note', function($t) {
 			$t->dropForeign('FK_Note_NoteType');
@@ -411,6 +442,7 @@ class CreateBaseTables extends Migration {
 		// Drop the tables.
 		Schema::drop('User');
 		Schema::drop('UserStatus');
+		Schema::drop('Sponsor');
 		Schema::drop('Note');
 		Schema::drop('NoteType');
 		Schema::drop('Role');
