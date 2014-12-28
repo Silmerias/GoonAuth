@@ -9,7 +9,7 @@ class NoteSeeder extends Seeder {
 		$admin = User::where('UGoonID', Config::get('goonauth.adminAccount'))->first();
 		$roll = Role::where('RName', 'Admin')->first();
 
-		$sa = Group::first();
+		$sa = Group::where('GRCode', 'SA')->first();
 		$fljk = GameOrg::where('GOAbbr', 'FLJK')->first();
 		$wol = GameOrg::where('GOAbbr', 'WoL')->first();
 

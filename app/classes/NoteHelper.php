@@ -16,9 +16,12 @@ class NoteHelper
 		$note->NNote = $text;
 		if (isset($createdby))
 			$note->NCreatedByUID = $createdby->UID;
+		if (!isset($bind))
+			$note->NGlobal = true;
 
 		$note->save();
 
-		$bind->notes()->attach($note);
+		if (isset($bind))
+			$bind->notes()->attach($note);
 	}
 }

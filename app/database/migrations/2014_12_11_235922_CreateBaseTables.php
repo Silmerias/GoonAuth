@@ -26,8 +26,8 @@ class CreateBaseTables extends Migration {
 			$t->integer('UGroup')->unsigned();	// Group the user belongs to
 			$t->text('ULDAPLogin')->nullable();	// LDAP login
 
-			$t->integer('USAUserID')->nullable();		// SA user ID
-			$t->timestamp('USARegDate')->nullable();	// SA reg date
+			$t->integer('USAUserID')->nullable();	// SA user ID
+			$t->date('USARegDate')->nullable();		// SA reg date
 
 			$t->timestamp('USACacheDate')->nullable();		// Date the SA info was cached
 			$t->text('USACachedName')->nullable();			// Cached SA name
@@ -50,6 +50,8 @@ class CreateBaseTables extends Migration {
 
 			$t->integer('NTID')->unsigned();	// Note Type ID
 			$t->integer('UID')->unsigned();		// User ID
+
+			$t->boolean('NGlobal')->default(false);	// Global note
 
 			$t->integer('NCreatedByUID')
 				->unsigned()->nullable();	// User who created the note
@@ -100,7 +102,8 @@ class CreateBaseTables extends Migration {
 			$t->integer('GROwnerID')
 				->unsigned()->nullable();	// Group owner
 
-			$t->text('GRName');	// Group name
+			$t->string('GRCode', 4)->unique();	// Group code
+			$t->text('GRName');					// Group name
 
 			$t->text('GRLDAPGroup')->nullable();	// LDAP group for the group.
 		});
@@ -148,7 +151,7 @@ class CreateBaseTables extends Migration {
 			$t->integer('UID')->unsigned();		// User ID
 
 			$t->integer('GUUserID')->nullable();	// User's Game ID
-			$t->timestamp('GURegDate')->nullable();	// User's Game Reg Date
+			$t->date('GURegDate')->nullable();		// User's Game Reg Date
 
 			$t->timestamp('GUCacheDate')->nullable();		// Date the game info was cached
 			$t->text('GUCachedName')->nullable();			// Cached name

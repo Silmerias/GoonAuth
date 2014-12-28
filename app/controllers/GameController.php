@@ -267,13 +267,14 @@ class GameController extends BaseController
 			case 'addnote':
 				$type = NoteType::find(Input::get('type'));
 				$text = trim(Input::get('text'));
+				$global = Input::get('global');
 
 				if (strlen($text) != 0)
 				{
 					NoteHelper::Add(array(
 						'user' => $user,
 						'createdby' => $auth,
-						'obj' => $org,
+						'obj' => ($global == true ? null : $org),
 						'type' => $type,
 						'text' => $text,
 					));

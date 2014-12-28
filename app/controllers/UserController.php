@@ -74,6 +74,7 @@ class UserController extends BaseController
 				->select('Note.NID as NID', 'Note.NNote as NNote', 'Note.NTimestamp as NTimestamp')
 				->addSelect('NoteType.NTColor as NTColor', 'NoteType.NTName as NTName')
 				->addSelect('User.UGoonID as UGoonID', 'Created.UGoonID as CreatedGoonID', 'Created.UID as CreatedUID')
+				->addSelect('Note.NGlobal as NGlobal')
 				->orderBy('Note.NTimestamp', 'ASC');
 
 			if (!empty($grid))
@@ -87,6 +88,9 @@ class UserController extends BaseController
 					$q->orWhereIn('GroupHasNote.GRID', $grid);
 				if (!empty($goid))
 					$q->orWhereIn('GameOrgHasNote.GOID', $goid);
+
+				// Check for global notes.
+				$q->orWhere('Note.NGlobal', true);
 			});
 
 			$notes = $notes->get();

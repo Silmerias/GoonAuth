@@ -89,7 +89,13 @@
 	<div id="note-list">
 	@foreach ($notes as $note)
 		<div class="note" style="background-color: {{ $note->NTColor }}">
-			<p class="note-header"><span class="note-type">{{ e($note->NTName) }}</span> - {{ e($note->UGoonID) }}</p>
+			<p class="note-header">
+				<span class="note-type">{{ e($note->NTName) }}</span>
+				<span class="note-user">- {{ e($note->UGoonID) }}</span>
+				@if ($note->NGlobal == true)
+					<span class="note-global">[Global]</span>
+				@endif
+			</p>
 			<p class="note-comment">{{ str_replace("\n", '<br>', e($note->NNote)) }}</p>
 			<p class="note-footer">By
 				@if (is_null($note->CreatedGoonID))

@@ -7,6 +7,7 @@ class GroupSeeder extends Seeder {
 		DB::table('Group')->delete();
 
 		$sa = Group::create(array(
+			'GRCode' => 'SA',
 			'GRName' => 'Something Awful',
 			'GRLDAPGroup' => 'SA'
 		));

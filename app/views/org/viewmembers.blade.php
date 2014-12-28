@@ -82,20 +82,24 @@
 				<h4 class="modal-title">Add Note</h4>
 			</div>
 			<div class="modal-body">
-				<form>
-					<div class="form-group">
-						<label for="note-type" class="control-label">Note Type:</label>
-						<select id="note-type" class="form-control">
-						@foreach (NoteType::with(array('roles.gameorgusers' => function($q) use($auth, $org) { $q->where('GameOrgAdmin.UID', $auth->UID)->where('GameOrgAdmin.GOID', $org->GOID); }))->where('NTSystemUseOnly', 'false')->get() as $nt)
-							<option value="{{ $nt->NTID }}">{{ $nt->NTName }}</option>
-						@endforeach
-						</select>
-					</div>
-					<div class="form-group">
-						<label for="note-text" class="control-label">Message:</label>
-						<textarea id="note-text" class="form-control" placeholder="Type your note here"></textarea>
-					</div>
-				</form>
+				<div class="form-group">
+					<label for="note-type" class="control-label">Note Type:</label>
+					<select id="note-type" class="form-control">
+					@foreach (NoteType::with(array('roles.gameorgusers' => function($q) use($auth, $org) { $q->where('GameOrgAdmin.UID', $auth->UID)->where('GameOrgAdmin.GOID', $org->GOID); }))->where('NTSystemUseOnly', 'false')->get() as $nt)
+						<option value="{{ $nt->NTID }}">{{ $nt->NTName }}</option>
+					@endforeach
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="note-text" class="control-label">Message:</label>
+					<textarea id="note-text" class="form-control" placeholder="Type your note here"></textarea>
+				</div>
+				<div class="input-group">
+					<span class="input-group-addon">
+						<input id="note-global" type="checkbox">
+					</span>
+					<label for="note-global" class="form-control text-sm">Global note?</label>
+				</div>
 			</div>
 			<div class="modal-footer">
 				<button type="button" id="note-add" class="btn btn-primary">Add Note</button>
@@ -120,6 +124,7 @@ $('#modal-Note').on('show.bs.modal', function (event) {
 	var modal = $(this);
 	modal.find('.modal-body textarea').val('');
 	modal.find('#note-add').attr('data-id', uid);
+	modal.find('#note-global').prop('checked', false);
 });
 
 $('#note-add').click(function (event) {
@@ -133,7 +138,8 @@ $('#note-add').click(function (event) {
 			action: 'addnote',
 			id: id,
 			type: $('#note-type').val(),
-			text: $('#note-text').val()
+			text: $('#note-text').val(),
+			global: $('#note-global').prop('checked')
 		}
 	})
 	.done(function(ret) {
