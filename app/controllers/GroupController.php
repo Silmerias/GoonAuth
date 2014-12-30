@@ -59,7 +59,11 @@ class GroupController extends BaseController
 			$password = sha1('dick' . intval(rand()) . 'butt');
 			$password = substr($password, 0, 13);
 
-			LDAP::Execute(function($ldap) use($password, $user, $group) {
+			LDAP::Execute(function($ldap) use($password, $user, $group)
+			{
+				$uid = intval(Config::get('goonauth.ldapUidStart'));
+				$gid = intval(Config::get('goonauth.ldapGid'));
+
 				// Generate a salt.
 				$salt = md5(uniqid(rand(), TRUE));
 				$salt = substr($salt, 0, 4);
@@ -75,8 +79,12 @@ class GroupController extends BaseController
 				$info['displayName'] = $user->UGoonID;
 				$info['userPassword'] = $pass;
 				$info['mail'] = $user->UEmail;
+				$info['homeDirectory'] = '/home/'.$user->UGoonID;
+				$info['uidNumber'] = $uid + $user->UID;
+				$info['gidNumber'] = $gid;
 				$info['objectClass'][0] = "person";
 				$info['objectClass'][1] = "inetOrgPerson";
+				$info['objectClass'][1] = "posixAccount";
 
 				// Add the user!
 				$userdn = "cn=" . $user->UGoonID . "," . Config::get('goonauth.ldapDN');

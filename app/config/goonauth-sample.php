@@ -15,7 +15,7 @@ return array(
 	/**
 	 * Administrator account
 	 */
-	'adminAccount' => 'ipboard.ldap.account',
+	'adminAccount' => 'auth.ldap.account',
 
 	/**
 	 * URL to your forums
@@ -36,6 +36,8 @@ return array(
 	 */
 	'ldapDN' => 'ou=users,dc=mydomain,dc=com',
 	'ldapGroupDN' => 'ou=groups,dc=mydomain,dc=com',	
+	'ldapUidStart' => 20000,
+	'ldapGid' => 10001,
 
 	/**
 	 * Forum usergroup for authed goons
