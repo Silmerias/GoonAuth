@@ -21,4 +21,8 @@ class Group extends Eloquent {
 	public function sponsored() {
 		return $this->belongsToMany('User', 'Sponsor', 'GRID', 'UID');
 	}
+
+	public function supervisor() {
+		return $this->belongsTo('Group', 'GRSupervisorID');
+	}
 }

@@ -116,7 +116,10 @@ class CreateBaseTables extends Migration {
 			$t->string('GRCode', 4)->unique();	// Group code
 			$t->text('GRName');					// Group name
 
-			$t->text('GRLDAPGroup')->nullable();	// LDAP group for the group.
+			$t->text('GRLDAPGroup')->nullable();	// LDAP group for the group
+
+			$t->integer('GRSupervisorID')
+				->unsigned()->nullable();	// Supervising Group ID
 		});
 
 		// GroupAdmin
@@ -276,6 +279,10 @@ class CreateBaseTables extends Migration {
 			$t->foreign('GROwnerID', 'FK_Group_User')
 				->references('UID')->on('User')
 				->onDelete('set null');
+
+			$t->foreign('GRSupervisorID', 'FK_Group_Group_Supervisor')
+				->references('GRID')->on('Group')
+				->onDelete('set null');
 		});
 
 		// GroupAdmin
@@ -403,6 +410,7 @@ class CreateBaseTables extends Migration {
 		});
 		Schema::table('Group', function($t) {
 			$t->dropForeign('FK_Group_User');
+			$t->dropForeign('FK_Group_Group_Supervisor');
 		});
 		Schema::table('GroupAdmin', function($t) {
 			$t->dropForeign('FK_GroupAdmin_Group');

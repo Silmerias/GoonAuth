@@ -160,6 +160,19 @@ class RegisterController extends BaseController
 					}
 				}
 
+				// Send out the registration e-mail.
+				try
+				{
+					Mail::send('emails.register-complete', $maildata, function($msg) use($user) {
+						$msg->subject('Your Goonrathi / Word of Lowtax membership request has been submitted for review.');
+						$msg->to($user->UEmail);
+					});
+				}
+				catch (Exception $e)
+				{
+					error_log('E-mail error: '.var_dump($e));
+				}
+
 				return View::make('register.complete');
 			}
 			else

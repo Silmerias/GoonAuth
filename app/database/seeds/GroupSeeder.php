@@ -15,7 +15,8 @@ class GroupSeeder extends Seeder {
 		$frog = Group::create(array(
 			'GRCode' => 'FROG',
 			'GRName' => 'FrogSwarm',
-			'GRLDAPGroup' => 'FROGSWARM'
+			'GRLDAPGroup' => 'FROGSWARM',
+			'GRSupervisorID' => $sa->GRID
 		));
 	}
 }
