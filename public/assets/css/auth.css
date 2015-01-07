@@ -117,6 +117,10 @@ body {
   margin-right: auto;
 }
 
+.form-register input {
+  margin: 0px 0px 5px 0px;
+}
+
 .form-register-heading {
   font-size: 16pt;
 }

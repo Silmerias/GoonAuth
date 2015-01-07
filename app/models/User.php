@@ -35,7 +35,7 @@ class User extends Eloquent {
 	}
 
 	public function games() {
-		return $this->hasManyThrough('Game', 'GameUser', 'UID', 'GID');
+		return $this->belongsToMany('Game', 'GameUser', 'UID', 'GID');
 	}
 
 	public function gameusers() {
