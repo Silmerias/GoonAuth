@@ -36,6 +36,12 @@ App::after(function($request, $response)
 |
 */
 
+Route::filter('secure', function()
+{
+	if (App::environment('production') && !Request::secure())
+		return Redirect::secure(Request::path());
+});
+
 Route::filter('auth', function()
 {
 	if (!Session::has('authenticated'))
