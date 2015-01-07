@@ -11,16 +11,22 @@
 |
 */
 
+$force = 'http';
+if (App::environment('production'))
+	$force = 'https';
+
 Route::controller('register', 'RegisterController');
 
 Route::get('/', array('before' => 'auth', 'uses' => 'UserController@showHome'));
-Route::get('login', function() {
+
+Route::get('login', array($force, function() {
 	if (empty(Session::get('auth')))
 		Session::flush();
 
 	return View::make('user.login');
-});
-Route::post('login', 'UserController@doLogin');
+}));
+Route::post('login', array($force, 'UserController@doLogin'));
+
 Route::get('logout', function() {
 	Session::flush();
 	return Redirect::to('login');
