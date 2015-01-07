@@ -1,7 +1,11 @@
 @extends('layouts.main')
 @section('content')
+
+<p><a class="label label-info" href="{{ URL::to('games/'.$game->GAbbr) }}">Back to {{ $game->GName }}</a></p>
+
 <!-- Organization navbar -->
 <div class="navbar navbar-default" role="navigation">
+	<span class="navbar-brand">Organizations</span>
 	<div class="container">
 		<div class="navbar-collapse collapse">
 			<div class="navbar-form">
@@ -13,17 +17,17 @@
 	</div>
 </div>
 
-<a class="label label-info" href="{{ URL::to('games/'.$game->GAbbr) }}">Back to {{ $game->GName }}</a>
-
 <?php $perms = new UserPerm($auth) ?>
 
-@if ($perms->gameOrg($org->GOID)->auth == true)
-<p style="margin-top: 20px"><a class="btn btn-danger" href="{{ URL::to('auth/'.Request::path()) }}">Authorize Members</a></p>
-@endif
+<p style="margin-top: 20px">
+	@if ($perms->gameOrg($org->GOID)->auth == true)
+	<a class="btn btn-danger" href="{{ URL::to('auth/'.Request::path()) }}">Authorize Members</a>
+	@endif
 
-@if ($perms->gameOrg($org->GOID)->read == true)
-<p style="margin-top: 20px"><a class="btn btn-success" href="{{ URL::to(Request::path().'/view') }}">View Members</a></p>
-@endif
+	@if ($perms->gameOrg($org->GOID)->read == true)
+	<a class="btn btn-success" href="{{ URL::to(Request::path().'/view') }}">View Members</a>
+	@endif
+</p>
 
 <h1>{{ e($org->GOName) }} Character List</h1>
 <div class="row">

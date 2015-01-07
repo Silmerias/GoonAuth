@@ -1,20 +1,24 @@
 @extends('layouts.main')
 @section('content')
+
+<!-- default, info, warning, danger, success -->
+<p><a class="label label-info" href="{{ URL::to('games') }}">Back to Games</a></p>
+
 <!-- Organization navbar -->
 <div class="navbar navbar-default" role="navigation">
+	<span class="navbar-brand">Organizations</span>
 	<div class="container">
 		<div class="navbar-collapse collapse">
 			<div class="navbar-form">
 			@foreach ($game->orgs()->get() as $org)
-				<a href="{{ URL::to(Request::path().'/'.$org->GOAbbr) }}" class="btn btn-default">{{ $org->GOName }}</a>
+				<a href="{{ URL::to('games/'.$game->GAbbr.'/'.$org->GOAbbr) }}" class="btn btn-default">{{ $org->GOName }}</a>
 			@endforeach
 			</div>
 		</div><!--/.nav-collapse -->
 	</div>
 </div>
 
-<!-- default, info, warning, danger, success -->
-<a class="label label-info" href="{{ URL::to('games') }}">Back to Games</a>
+<p>After you have added a character to this game, click an organization to join it.</p>
 
 <?php /*
 @if ($auth->gameorgroles()->where('GID', $game->GID)->count() != 0)
