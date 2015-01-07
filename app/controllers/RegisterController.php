@@ -164,7 +164,8 @@ class RegisterController extends BaseController
 				// Send out the registration e-mail.
 				try
 				{
-					Mail::send('emails.register-complete', null, function($msg) use($user) {
+					$maildata = [];
+					Mail::send('emails.register-complete', $maildata, function($msg) use($user) {
 						$msg->subject('Your Goonrathi / Word of Lowtax membership request has been submitted for review.');
 						$msg->to($user->UEmail);
 					});
