@@ -8,6 +8,10 @@ body {
   margin: 0 auto;
 }
 
+.form-signin input {
+  margin-bottom: 5px;
+}
+
 .form-signin .form-signin-heading {
   font-size: 16pt;
 }
@@ -148,6 +152,12 @@ body {
 .note-footer {
   color: gray;
   font-size: 0.8em;
+}
+
+.note-subject {
+  font-size: 0.9em;
+  font-weight: bold;
+  font-style: italic;
 }
 
 .ui-dialog-titlebar-close {

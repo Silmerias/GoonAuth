@@ -20,28 +20,32 @@ class NoteSeeder extends Seeder {
 			'NTID' => $status->NTID,
 			'UID' => $admin->UID,
 			'NCreatedByUID' => null,
-			'NNote' => 'User accepted into group Something Awful.'
+			'NSubject' => 'Authentication',
+			'NMessage' => 'User accepted into group Something Awful.'
 		));
 
 		$n_owner_fljk = Note::create(array(
 			'NTID' => $system->NTID,
 			'UID' => $admin->UID,
 			'NCreatedByUID' => null,
-			'NNote' => 'User has taken ownership of organization Goonrathi.'
+			'NSubject' => 'Ownership Change',
+			'NMessage' => 'User has taken ownership of organization Goonrathi.'
 		));
 
 		$n_owner_wol = Note::create(array(
 			'NTID' => $system->NTID,
 			'UID' => $admin->UID,
 			'NCreatedByUID' => null,
-			'NNote' => 'User has taken ownership of organization Word of Lowtax.'
+			'NSubject' => 'Ownership Change',
+			'NMessage' => 'User has taken ownership of organization Word of Lowtax.'
 		));
 
 		$n_join_wol = Note::create(array(
 			'NTID' => $status->NTID,
 			'UID' => $admin->UID,
 			'NCreatedByUID' => null,
-			'NNote' => 'User accepted into organization Word of Lowtax.'
+			'NSubject' => 'Authentication',
+			'NMessage' => 'User accepted into organization Word of Lowtax.'
 		));
 
 		$sa->notes()->attach($n_join_sa);

@@ -162,9 +162,10 @@ class GroupController extends BaseController
 				NoteHelper::Add(array(
 					'user' => $user,
 					'createdby' => $auth,
-					'obj' => $group,
+					'group' => $group,
 					'type' => $ntstatus,
-					'text' => "User accepted into group ".$group->GRName.".",
+					'subject' => 'Authorization',
+					'message' => 'User accepted into group '.$group->GRName.'.',
 				));
 			}
 
@@ -206,9 +207,10 @@ class GroupController extends BaseController
 				NoteHelper::Add(array(
 					'user' => $user,
 					'createdby' => $auth,
-					'obj' => $group,
+					'group' => $group,
 					'type' => $ntstatus,
-					'text' => 'User rejected from joining group '.$group->GRName.".\nReason: ".$reason,
+					'subject' => 'Authorization',
+					'message' => 'User rejected from joining group '.$group->GRName.".\nReason: ".$reason,
 				));
 			}
 		}

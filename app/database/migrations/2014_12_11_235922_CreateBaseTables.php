@@ -70,7 +70,8 @@ class CreateBaseTables extends Migration {
 			$t->timestamp('NTimestamp')
 				->default(DB::raw('CURRENT_TIMESTAMP'));	// Time the note was created.
 
-			$t->text('NNote');	// The note
+			$t->text('NSubject');	// The note subject
+			$t->text('NMessage');	// The note message
 		});
 
 		// NoteType

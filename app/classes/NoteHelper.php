@@ -6,22 +6,34 @@ class NoteHelper
 	{
 		$user = $arr['user'];
 		$createdby = $arr['createdby'];
-		$bind = $arr['obj'];
+		$org = isset($arr['org']) ? $arr['org'] : null;
+		$group = isset($arr['group']) ? $arr['group'] : null;
 		$type = $arr['type'];
-		$text = $arr['text'];
+		$subject = $arr['subject'];
+		$message = $arr['message'];
 
 		$note = new Note;
 		$note->NTID = $type->NTID;
 		$note->UID = $user->UID;
-		$note->NNote = $text;
+		$note->NMessage = trim($message);
+
+		// Subject is optional.
+		if (isset($subject))
+			$note->NSubject = trim($subject);
+
+		// Created by is optional.
 		if (isset($createdby))
 			$note->NCreatedByUID = $createdby->UID;
-		if (!isset($bind))
+
+		// If no org or group is set, make it global.
+		if (!isset($org) && !isset($group))
 			$note->NGlobal = true;
 
 		$note->save();
 
-		if (isset($bind))
-			$bind->notes()->attach($note);
+		if (isset($org))
+			$org->notes()->attach($note);
+		if (isset($group))
+			$group->notes()->attach($note);
 	}
 }

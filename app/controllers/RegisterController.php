@@ -153,9 +153,10 @@ class RegisterController extends BaseController
 						NoteHelper::Add(array(
 							'user' => $user,
 							'createdby' => null,
-							'obj' => $group,
+							'group' => $group,
 							'type' => $reg,
-							'text' => $group->GRName." registration comment:\n".$comment,
+							'subject' => $group->GRName.' registration comment',
+							'message' => $comment,
 						));
 					}
 				}

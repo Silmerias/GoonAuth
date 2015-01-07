@@ -71,7 +71,7 @@ class UserController extends BaseController
 				->join('NoteType', 'Note.NTID', '=', 'NoteType.NTID')
 				->leftJoin('User', 'Note.UID', '=', 'User.UID')
 				->leftJoin('User AS Created', 'Note.NCreatedByUID', '=', 'Created.UID')
-				->select('Note.NID as NID', 'Note.NNote as NNote', 'Note.NTimestamp as NTimestamp')
+				->select('Note.NID as NID', 'Note.NSubject as NSubject', 'Note.NMessage as NMessage', 'Note.NTimestamp as NTimestamp')
 				->addSelect('NoteType.NTColor as NTColor', 'NoteType.NTName as NTName')
 				->addSelect('User.UGoonID as UGoonID', 'Created.UGoonID as CreatedGoonID', 'Created.UID as CreatedUID')
 				->addSelect('Note.NGlobal as NGlobal')

@@ -266,17 +266,19 @@ class GameController extends BaseController
 
 			case 'addnote':
 				$type = NoteType::find(Input::get('type'));
-				$text = trim(Input::get('text'));
+				$subject = Input::get('subject');
+				$message = Input::get('message');
 				$global = Input::get('global');
 
-				if (strlen($text) != 0)
+				if (strlen($message) != 0)
 				{
 					NoteHelper::Add(array(
 						'user' => $user,
 						'createdby' => $auth,
-						'obj' => ($global == true ? null : $org),
+						'org' => ($global == true ? null : $org),
 						'type' => $type,
-						'text' => $text,
+						'subject' => $subject,
+						'message' => $message,
 					));
 				}
 
@@ -320,9 +322,10 @@ class GameController extends BaseController
 				NoteHelper::Add(array(
 					'user' => $gameuser->user,
 					'createdby' => null,
-					'obj' => $org,
+					'org' => $org,
 					'type' => $reg,
-					'text' => $org->GOName." registration comment:\n".$comment,
+					'subject' => $org->GOName." registration comment",
+					'message' => $comment,
 				));
 			}
 		}
@@ -419,9 +422,10 @@ class GameController extends BaseController
 				NoteHelper::Add(array(
 					'user' => $gameuser->user,
 					'createdby' => $auth,
-					'obj' => $org,
+					'org' => $org,
 					'type' => $ntstatus,
-					'text' => 'User accepted into organization '.$org->GOName.'.',
+					'subject' => 'Authorization',
+					'message' => 'User accepted into organization '.$org->GOName.'.',
 				));
 			}
 		}
@@ -463,9 +467,10 @@ class GameController extends BaseController
 				NoteHelper::Add(array(
 					'user' => $gameuser->user,
 					'createdby' => $auth,
-					'obj' => $org,
+					'org' => $org,
 					'type' => $ntstatus,
-					'text' => 'User rejected from joining organization '.$org->GOName.".\nReason: ".$reason,
+					'subject' => 'Authorization',
+					'message' => 'User rejected from joining organization '.$org->GOName.".\nReason: ".$reason,
 				));
 			}
 		}
