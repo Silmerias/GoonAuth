@@ -4,11 +4,11 @@
 <div class="navbar navbar-default" role="navigation">
 	<div class="container">
 		<div class="navbar-collapse collapse">
+			<div class="navbar-form">
 			@foreach ($game->orgs()->get() as $org)
-				<ul class="nav navbar-nav">
-					<li><a href="{{ URL::to('games/'.$game->GAbbr.'/'.$org->GOAbbr) }}">{{ $org->GOName }}</a></li>
-				</ul>
+				<a href="{{ URL::to('games/'.$game->GAbbr.'/'.$org->GOAbbr) }}" class="btn btn-default">{{ $org->GOName }}</a>
 			@endforeach
+			</div>
 		</div>
 	</div>
 </div>

@@ -5,8 +5,10 @@
 	<a href="{{ URL::to('register/goon') }}" class="register-choice">
 	Goon<br><span>(or being sponsored by one)</span>
 	</a>
-	<a href="{{ URL::to('register/affiliate') }}" class="register-choice">
+	<!-- <a href="{{ URL::to('register/affiliate') }}" class="register-choice"> -->
+	<a href="#" class="register-choice">
 	Affiliate<br><span>(a member of an affiliated organization)</span>
+	<br><span>(not yet implemented)</span>
 	</a>
 </div>
 @stop
