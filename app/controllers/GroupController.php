@@ -84,7 +84,7 @@ class GroupController extends BaseController
 				$info['gidNumber'] = $gid;
 				$info['objectClass'][0] = "person";
 				$info['objectClass'][1] = "inetOrgPerson";
-				$info['objectClass'][1] = "posixAccount";
+				$info['objectClass'][2] = "posixAccount";
 
 				// Add the user!
 				$userdn = "cn=" . $user->UGoonID . "," . Config::get('goonauth.ldapDN');
