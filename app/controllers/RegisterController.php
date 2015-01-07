@@ -171,7 +171,7 @@ class RegisterController extends BaseController
 				}
 				catch (Exception $e)
 				{
-					error_log('E-mail error: '.var_dump($e));
+					error_log('E-mail error: '.$e->getMessage());
 				}
 
 				return View::make('register.complete');
