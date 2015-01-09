@@ -13,7 +13,7 @@ body {
 }
 
 .form-signin .form-signin-heading {
-  font-size: 16pt;
+  /*font-size: 16pt;*/
 }
 
 .form-signin .form-signin-heading,
@@ -26,30 +26,17 @@ body {
 
 .form-control {
   position: relative;
-  /*height: auto;*/
   -webkit-box-sizing: border-box;
      -moz-box-sizing: border-box;
           box-sizing: border-box;
-  /*padding: 10px;*/
-  font-size: 14px;
 }
 
 .text-sm {
-  font-size: 12px;
+  font-size: small;
 }
 
 .form-control:focus {
   z-index: 2;
-}
-.form-signin input[type="email"] {
-  margin-bottom: -1px;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
-}
-.form-signin input[type="password"] {
-  margin-bottom: 10px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
 }
 
 .not-authed,
@@ -89,7 +76,7 @@ body {
 }
 
 .register .register-heading {
-  font-size: 16pt;
+  /*font-size: 16pt;*/
 }
 
 .register-choice {
@@ -100,14 +87,14 @@ body {
   border: 1px solid darkgray;
   margin: 12px 5px;
   padding-top: 50px;
-  font-size: 18pt;
+  font-size: 1.8em;
   font-weight: bold;
   text-align: center;
-  line-height: 0.8em;
+  line-height: 0.9em;
 }
 
 .register-choice span {
-  font-size: 12pt;
+  font-size: 0.6em;
   font-weight: normal;
 }
 
@@ -117,12 +104,12 @@ body {
   margin-right: auto;
 }
 
-.form-register input {
+.form-register input, .form-register textarea {
   margin: 0px 0px 5px 0px;
 }
 
 .form-register-heading {
-  font-size: 16pt;
+  /*font-size: 16pt;*/
 }
 
 .form-register-token {

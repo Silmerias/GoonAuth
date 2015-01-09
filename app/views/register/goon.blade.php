@@ -23,8 +23,11 @@
 		<div class="alert alert-danger" style="display:none"></div>
 	@endif
 
+	<div id="valid-goonid" class="alert alert-danger" style="display:none"></div>
+	<div id="valid-email" class="alert alert-danger" style="display:none"></div>
+
 	<input type="text" name="goonid" class="form-control" placeholder="Desired Goon ID" required="" autofocus="" onblur="validateGoonID()">
-	<input type="email" name="email" class="form-control" placeholder="E-Mail Address" required="" autofocus="">
+	<input type="email" name="email" class="form-control" placeholder="E-Mail Address" required="" autofocus="" onblur="validateEmail()">
 	<button class="btn btn-lg btn-primary btn-block" type="submit">Next</button>
 </form>
 
@@ -43,16 +46,45 @@ function validateGoonID()
 	}).done(function(msg) {
 		if (msg.valid == "false")
 		{
-			$('.alert').removeClass('alert-success');
-			$('.alert').addClass('alert-danger')
-				.text("That Goon ID has already been taken.")
+			$('#valid-goonid').removeClass('alert-success');
+			$('#valid-goonid').addClass('alert-danger')
+				.text(msg.message)
 				.slideDown();
 		}
 		else
 		{
-			$('.alert').removeClass('alert-danger');
-			$('.alert').addClass('alert-success')
+			$('#valid-goonid').removeClass('alert-danger');
+			$('#valid-goonid').addClass('alert-success')
 				.text("Goon ID is available.")
+				.slideDown();
+		}
+	});
+}
+
+function validateEmail()
+{
+	var email = $('input[name="email"]').val();
+	if (email.length == 0)
+		return;
+
+	$.ajax({
+		url: "{{ URL::to('register/check-email') }}",
+		type: "post",
+		dataType: "json",
+		data: { email: email }
+	}).done(function(msg) {
+		if (msg.valid == "false")
+		{
+			$('#valid-email').removeClass('alert-success');
+			$('#valid-email').addClass('alert-danger')
+				.text(msg.message)
+				.slideDown();
+		}
+		else
+		{
+			$('#valid-email').removeClass('alert-danger');
+			$('#valid-email').addClass('alert-success')
+				.text("E-mail is acceptable.")
 				.slideDown();
 		}
 	});
