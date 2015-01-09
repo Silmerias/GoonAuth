@@ -7,7 +7,7 @@
 <!-- Organization navbar -->
 <div class="navbar navbar-default" role="navigation">
 	<div class="navbar-header">
-		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".org-list">
 			<span class="sr-only">Toggle navigation</span>
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
@@ -16,7 +16,7 @@
 		<span class="navbar-brand">Organizations</span>
 	</div>
 	<div class="container">
-		<div class="navbar-collapse collapse">
+		<div class="org-list navbar-collapse collapse">
 			<div class="navbar-form">
 			@foreach ($game->orgs()->get() as $org)
 				<a href="{{ URL::to('games/'.$game->GAbbr.'/'.$org->GOAbbr) }}" class="btn btn-default">{{ $org->GOName }}</a>
