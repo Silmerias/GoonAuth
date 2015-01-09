@@ -155,3 +155,7 @@ body {
   background-position: -96px -128px;
   background-image: url("/assets/css/images/ui-icons_ef8c08_256x240.png");
 }
+
+.navbar-nav > .active > a {
+  background-color: #080808;
+}

@@ -5,7 +5,15 @@
 
 <!-- Organization navbar -->
 <div class="navbar navbar-default" role="navigation">
-	<span class="navbar-brand">Organizations</span>
+	<div class="navbar-header">
+		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+			<span class="sr-only">Toggle navigation</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		</button>
+		<span class="navbar-brand">Organizations</span>
+	</div>
 	<div class="container">
 		<div class="navbar-collapse collapse">
 			<div class="navbar-form">
