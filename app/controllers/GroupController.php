@@ -143,7 +143,7 @@ class GroupController extends BaseController
 				$maildata = array_add($maildata, 'password', $password);
 
 				Mail::send('emails.group-register-approve', $maildata, function($msg) use($user) {
-					$msg->subject('Your Goonrathi / Word of Lowtax membership request was approved!');
+					$msg->subject('Your Goonrathi membership request was approved!');
 					$msg->to($user->UEmail);
 				});
 			}
@@ -183,7 +183,7 @@ class GroupController extends BaseController
 				$maildata = array_add($maildata, 'reason', $reason);
 
 				Mail::send('emails.group-register-deny', $maildata, function($msg) use($user) {
-					$msg->subject('Your Goonrathi / Word of Lowtax membership request was DENIED!');
+					$msg->subject('Your Goonrathi membership request was DENIED!');
 					$msg->to($user->UEmail);
 				});
 			}

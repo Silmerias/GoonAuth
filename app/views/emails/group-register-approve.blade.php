@@ -10,7 +10,7 @@ Your temporary password is: {{ $password }}</p>
 Your password for all of our services is the same, so if you ever forget your password, just reset it on the forums.</p>
 <p>Your next step will be to log into the auth portal again and join a game.  We support multiple games on our system and some games may have different membership requirements, so you will need to go through another authentication cycle.  Just click the "Join Game" button and follow the directions.</p>
 <p>Here are some handy links:<br>
-Auth Portal: <a href="http://registration.goonrathi.com/">http://registration.goonrathi.com/</a><br>
+Auth Portal: <a href="http://goonauth.goonrathi.com/">http://goonauth.goonrathi.com/</a><br>
 Forum: <a href="http://forums.goonrathi.com/">http://forums.goonrathi.com/</a><br>
 Jabber: <a href="http://www.goonrathi.com/jabber.html">http://www.goonrathi.com/jabber.html</a>
 </p>
