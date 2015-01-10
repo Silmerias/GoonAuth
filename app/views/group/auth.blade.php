@@ -33,7 +33,9 @@
 		@foreach ($query->get() as $user)
 		<tr id="ID_{{ $user->UID }}">
 			<td><a href="{{ URL::to('user/'.$user->UID) }}">{{ e($user->UGoonID) }}</a></td>
-			<td><a href="http://forums.somethingawful.com/member.php?action=getinfo&amp;username={{ urlencode($user->USACachedName) }}">{{ e($user->USACachedName) }}</a></td>
+			<td class="progress-bar-here">
+				<a href="http://forums.somethingawful.com/member.php?action=getinfo&amp;username={{ urlencode($user->USACachedName) }}">{{ e($user->USACachedName) }}</a>
+			</td>
 			@if (is_null($user->sponsor))
 				<td></td>
 			@else
@@ -131,8 +133,27 @@ $('.table button').click(function (event) {
 	if (auth == undefined || uid == undefined)
 		return true;
 
+	// Don't process pending records.
+	var row = $('#ID_'+uid);
+	if (row.attr('status') === 'pending')
+		return true;
+
 	if (auth == true)
 	{
+		// Set to pending.
+		row.attr('status', 'pending');
+
+		// Add the progress bar.
+		var p = $('.progress-bar-here', row);
+		p.html(
+			'<div class="progress">'
+			+'	<div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" style="width: 100%; text-align:left">'
+			+		p.html()
+			+'	</div>'
+			+'</div>'
+		);
+
+		// Send the action.
 		$.ajax({
 			url: '{{ URL::to(Request::path()) }}',
 			type: 'post',
@@ -159,6 +180,20 @@ $('.table button').click(function (event) {
 
 $('#reject-btn').click(function (event) {
 	var id = $('#reject-btn').attr('data-id');
+
+	// Set the row as pending action.
+	var row = $('#ID_'+id);
+	row.attr('status', 'pending');
+
+	// Add the progress bar.
+	var p = $('.progress-bar-here', row);
+	p.html(
+		'<div class="progress">'
+		+'	<div class="progress-bar progress-bar-danger progress-bar-striped" role="progressbar" style="width: 100%; text-align:left">'
+		+		p.html()
+		+'	</div>'
+		+'</div>'
+	);
 
 	$.ajax({
 		url: '{{ URL::to(Request::path()) }}',

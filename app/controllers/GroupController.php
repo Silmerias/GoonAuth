@@ -48,11 +48,20 @@ class GroupController extends BaseController
 			));
 		}
 
+		// Check to see if the user is already active.
+		$active = UserStatus::where('USCode', 'ACTI')->first();
+		if ($user->USID === $active->USID)
+		{
+			return Response::json(array(
+				'success' => false,
+				'message' => 'User is already active in a group.'
+			));
+		}
+
 		$maildata = array();
 
 		if (strcasecmp($action, "approve") == 0)
 		{
-			$active = UserStatus::where('USCode', 'ACTI')->first();
 			$user->USID = $active->USID;
 			$user->save();
 
