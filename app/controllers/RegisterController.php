@@ -183,6 +183,9 @@ class RegisterController extends BaseController
 		if (!isset($sa_name))
 			return Redirect::back()->with('error', 'You must enter your SA Username.');
 
+		if (User::where('USACachedName', $sa_name)->count() !== 0)
+			return Redirect::back()->with('error', 'That SA Username has already been registered.');
+
 		$cookieJar = new ArrayCookieJar();
 
 		$bbpCookie = new Cookie();
@@ -233,7 +236,7 @@ class RegisterController extends BaseController
 			// Check if we have the token.
 			if (stristr($body, $token) !== false/* && $sa_regdate < $subTime*/)
 			{
-				$group = Group::where('GRName', 'Something Awful')->first();
+				$group = Group::where('GRCode', 'SA')->first();
 
 				// Grab IP.
 				$ip = inet_pton($_SERVER['REMOTE_ADDR']);

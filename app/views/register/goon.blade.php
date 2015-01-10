@@ -58,6 +58,11 @@ function validateGoonID()
 				.text("Goon ID is available.")
 				.slideDown();
 		}
+	}).error(function() {
+		$('#valid-goonid').removeClass('alert-danger');
+		$('#valid-goonid').addClass('alert-success')
+			.text("An internal server error has occurred.")
+			.slideDown();
 	});
 }
 
@@ -87,6 +92,11 @@ function validateEmail()
 				.text("E-mail is acceptable.")
 				.slideDown();
 		}
+	}).error(function() {
+		$('#valid-goonid').removeClass('alert-danger');
+		$('#valid-goonid').addClass('alert-success')
+			.text("An internal server error has occurred.")
+			.slideDown();
 	});
 }
 </script>

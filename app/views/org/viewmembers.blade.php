@@ -7,20 +7,9 @@
 <div class="row">
 	<div class="col-md-12">
 
-	<?php
-		$rejected = UserStatus::where('USCode', 'REJE')->first();
-		$query = $org->gameusers()->where('GameOrgHasGameUser.USID', '<>', $rejected->USID)->get();
+	<?php $statuses = UserStatus::get(); ?>
 
-		/*
-		$queries = DB::getQueryLog();
-		$last_query = end($queries);
-		print_r($last_query);
-		*/
-
-		$statuses = UserStatus::get();
-	?>
-
-	@if ($query->count() == 0)
+	@if ($members->count() == 0)
 
 	<p>There are no members in this organization.</p>
 
@@ -33,7 +22,7 @@
 			<th>Character Name</th>
 			<th style="width: 150px;">Actions</th>
 		</thead>
-		@foreach ($query as $gameuser)
+		@foreach ($members as $gameuser)
 		<tr id="ID_{{ $gameuser->GUID }}">
 			<td>
 				{{ e($statuses[$gameuser->pivot->USID - 1]->USStatus) }}
@@ -47,6 +36,8 @@
 		</tr>
 		@endforeach
 	</table>
+
+	{{ $members->links(); }}
 
 	@endif
 

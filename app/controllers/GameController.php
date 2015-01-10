@@ -244,7 +244,10 @@ class GameController extends BaseController
 		if (empty($game) || empty($org))
 			return Redirect::to('games');
 
-		$include = array('auth' => $auth, 'game' => $game, 'org' => $org);
+		$rejected = UserStatus::where('USCode', 'REJE')->first();
+		$members = $org->gameusers()->where('GameOrgHasGameUser.USID', '<>', $rejected->USID)->paginate(10);
+
+		$include = array('auth' => $auth, 'game' => $game, 'org' => $org, 'members' => $members);
 		return View::make('org.viewmembers', $include);
 	}
 
