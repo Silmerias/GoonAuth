@@ -25,8 +25,47 @@
 			{{ Session::get('error') }}
 		</div>
 		@endif
-		<input type="text" name="username" class="form-control" placeholder="Game Username" required="" autofocus="">
+
+		<div id="valid-user" class="alert alert-danger" style="display:none"></div>
+
+		<input type="text" name="username" class="form-control" placeholder="Game Username" required="" autofocus="" onblur="validateUser()">
 		<button class="btn btn-lg btn-primary btn-block" type="submit">Link</button>
 	</div>
 </form>
+
+<script>
+function validateUser()
+{
+	var user = $('input[name="username"]').val();
+	if (user.length == 0)
+		return;
+
+	$.ajax({
+		url: "{{ URL::to(Request::path().'/check-user') }}",
+		type: "post",
+		dataType: "json",
+		data: { username: user }
+	}).done(function(msg) {
+		if (msg.valid == "false")
+		{
+			$('#valid-user').removeClass('alert-success');
+			$('#valid-user').addClass('alert-danger')
+				.text(msg.message)
+				.slideDown();
+		}
+		else
+		{
+			$('#valid-user').removeClass('alert-danger');
+			$('#valid-user').addClass('alert-success')
+				.text("User has not been registered yet.")
+				.slideDown();
+		}
+	}).error(function() {
+		$('#valid-user').removeClass('alert-danger');
+		$('#valid-user').addClass('alert-success')
+			.text("An internal server error has occurred.")
+			.slideDown();
+	});
+}
+</script>
 @stop

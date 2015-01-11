@@ -188,6 +188,11 @@ class GameController extends BaseController
 		$username = Input::get('username');
 		$token = Session::get('token');
 
+		// Check if the user exists.
+		$count = GameUser::where('UID', $auth->UID)->where('GID', $game->GID)->where('GUCachedName', $username)->count();
+		if ($count !== 0)
+			return Redirect::back()->with('error', 'This game user is already linked to your account.');
+
 		$requirevalidation = $game->GRequireValidation;
 
 		if (!isset($token) && $requirevalidation)
@@ -222,6 +227,27 @@ class GameController extends BaseController
 
 		$include = array('auth' => $auth, 'game' => $game);
 		return View::make('games.complete', $include);
+	}
+
+	public function postCheckUser($abbr)
+	{
+		$auth = Session::get('auth');
+		$game = Game::where('GAbbr', $abbr)->first();
+		if (empty($game))
+			return array('valid' => 'false', 'message' => 'Invalid game.');
+
+		$username = Input::get('username');
+
+		// Make sure we got a username.
+		if (!isset($username))
+			return array('valid' => 'false', 'message' => 'Invalid username.');
+
+		// Check if the user exists.
+		$count = GameUser::where('UID', $auth->UID)->where('GID', $game->GID)->where('GUCachedName', $username)->count();
+		if ($count !== 0)
+			return array('valid' => 'false', 'message' => 'This game user is already linked to your account.');
+
+		return array('valid' => 'true');
 	}
 
 	public function showGameOrg($abbr, $org)
