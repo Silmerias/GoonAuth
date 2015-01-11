@@ -245,7 +245,11 @@ class GameController extends BaseController
 			return Redirect::to('games');
 
 		$rejected = UserStatus::where('USCode', 'REJE')->first();
-		$members = $org->gameusers()->where('GameOrgHasGameUser.USID', '<>', $rejected->USID)->paginate(10);
+		$members = $org->gameusers()
+			->join('User', 'GameUser.UID', '=', 'User.UID')
+			->where('GameOrgHasGameUser.USID', '<>', $rejected->USID)
+			->orderBy('UGoonID')
+			->paginate(15);
 
 		$include = array('auth' => $auth, 'game' => $game, 'org' => $org, 'members' => $members);
 		return View::make('org.viewmembers', $include);
