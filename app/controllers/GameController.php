@@ -345,22 +345,22 @@ class GameController extends BaseController
 		$pending = UserStatus::where('USCode', 'PEND')->first();
 		$gameuser->gameorgs()->attach($org, array('USID' => $pending->USID));
 
-		// Create a note if a registration comment was specified.
-		$comment = Input::get('comment');
-		if (isset($comment) && !empty($comment) && strlen($comment) != 0)
+		// Create a note.
+		$reg = NoteType::where('NTCode', 'SYS')->first();
+		if (!empty($reg))
 		{
-			$reg = NoteType::where('NTCode', 'SYS')->first();
-			if (!empty($reg))
-			{
-				NoteHelper::Add(array(
-					'user' => $gameuser->user,
-					'createdby' => null,
-					'org' => $org,
-					'type' => $reg,
-					'subject' => $org->GOName." registration comment",
-					'message' => $comment,
-				));
-			}
+			$comment = Input::get('comment');
+			if (!isset($comment) || empty($comment) || strlen($comment) == 0)
+				$comment = '';
+
+			NoteHelper::Add(array(
+				'user' => $gameuser->user,
+				'createdby' => null,
+				'org' => $org,
+				'type' => $reg,
+				'subject' => $org->GOName.' registration',
+				'message' => $comment,
+			));
 		}
 
 		return Redirect::to('games/'.$game->GAbbr.'/'.$org->GOAbbr);

@@ -34,6 +34,7 @@ Route::get('logout', function() {
 
 Route::group(array('before' => 'auth'), function() {
 	Route::get('user/{id}', 'UserController@showUser');
+	Route::get('user/{id}/notes', 'UserController@showNotes');
 
 	Route::get('games', 'GameController@showGames');
 	Route::get('games/{abbr}', 'GameController@showGame');

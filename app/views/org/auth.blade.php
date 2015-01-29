@@ -29,7 +29,7 @@
 		</thead>
 		@foreach ($query->get() as $gameuser)
 		<tr id="ID_{{ $gameuser->GUID }}">
-			<td><a href="{{ URL::to('user/'.$gameuser->user->UID) }}">{{ e($gameuser->user->UGoonID) }}</a></td>
+			<td><a href="{{ URL::to('user/'.$gameuser->user->UID) }}" target="_blank">{{ e($gameuser->user->UGoonID) }}</a></td>
 			<td class="progress-bar-here">
 				{{ GameController::buildGameProfile($game, $gameuser) }}
 			</td>

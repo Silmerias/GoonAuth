@@ -30,7 +30,7 @@
 			@if (is_null($user->USAUserID))
 				<td></td>
 			@else
-				<td><a href="http://forums.somethingawful.com/member.php?action=getinfo&amp;username={{ urlencode($user->USACachedName) }}">{{ e($user->USACachedName) }}</a></td>
+				<td><a href="http://forums.somethingawful.com/member.php?action=getinfo&amp;username={{ urlencode($user->USACachedName) }}" target="_blank">{{ e($user->USACachedName) }}</a></td>
 			@endif
 		</tr>
 		<tr>
@@ -74,7 +74,7 @@
 		<tbody>
 		@foreach ($sponsors as $s)
 			<tr>
-				<td><a href="http://forums.somethingawful.com/member.php?action=getinfo&amp;username={{ urlencode($s->USACachedName) }}">{{ e($s->USACachedName) }}</a></td>
+				<td><a href="http://forums.somethingawful.com/member.php?action=getinfo&amp;username={{ urlencode($s->USACachedName) }}" target="_blank">{{ e($s->USACachedName) }}</a></td>
 				@if (is_null($s->pivot->GRID))
 					<td></td>
 				@else
@@ -110,7 +110,7 @@
 				@else
 					<td><span class="label label-default">{{ $status->USStatus }}</span></td>
 				@endif
-				<td><a href="{{ URL::to('user/'.$s->UID) }}">{{ $s->UGoonID }}</a></td>
+				<td><a href="{{ URL::to('user/'.$s->UID) }}" target="_blank">{{ $s->UGoonID }}</a></td>
 			</tr>
 		@endforeach
 		</tbody>
@@ -138,7 +138,7 @@
 				@if (is_null($note->CreatedGoonID))
 					System
 				@else
-					<a href="{{ URL::to('user/'.$note->CreatedUID) }}">{{ e($note->CreatedGoonID) }}</a>
+					<a href="{{ URL::to('user/'.$note->CreatedUID) }}" target="_blank">{{ e($note->CreatedGoonID) }}</a>
 				@endif
 				- {{ with(new Carbon($note->NTimestamp))->toDateTimeString() }}
 			</p>

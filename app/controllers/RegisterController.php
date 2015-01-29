@@ -258,22 +258,22 @@ class RegisterController extends BaseController
 				$user->UGroup = $group->GRID;
 				$user->save();
 
-				// Create a note if a registration comment was specified.
-				$comment = Input::get('comment');
-				if (isset($comment) && !empty($comment) && strlen($comment) != 0)
+				// Create a note.
+				$reg = NoteType::where('NTCode', 'SYS')->first();
+				if (!empty($reg))
 				{
-					$reg = NoteType::where('NTCode', 'SYS')->first();
-					if (!empty($reg))
-					{
-						NoteHelper::Add(array(
-							'user' => $user,
-							'createdby' => null,
-							'group' => $group,
-							'type' => $reg,
-							'subject' => $group->GRName.' registration comment',
-							'message' => $comment,
-						));
-					}
+					$comment = Input::get('comment');
+					if (!isset($comment) || empty($comment) || strlen($comment) == 0)
+						$comment = '';
+
+					NoteHelper::Add(array(
+						'user' => $user,
+						'createdby' => null,
+						'group' => $group,
+						'type' => $reg,
+						'subject' => $group->GRName.' registration',
+						'message' => $comment,
+					));
 				}
 
 				// Send out the registration e-mail.

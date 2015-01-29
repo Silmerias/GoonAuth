@@ -159,3 +159,13 @@ body {
 .navbar-nav > .active > a {
   background-color: #080808;
 }
+
+.note-popover {
+  max-height: 500px;
+  overflow-y: scroll;
+}
+
+.btn-note {
+  width: 30px;
+  height: 30px;
+}

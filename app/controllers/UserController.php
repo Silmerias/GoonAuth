@@ -38,6 +38,24 @@ class UserController extends BaseController
 	{
 		$auth = Session::get('auth');
 		$user = User::find($id);
+		$notes = getNotes($user);
+
+		$include = array('auth' => $auth, 'user' => $user, 'notes' => $notes);
+		return View::make('user.stats', $include);
+	}
+
+	public function showNotes($id)
+	{
+		$user = User::find($id);
+		$notes = $this->getNotes($user);
+
+		$include = array('notes' => $notes);
+		return View::make('user.notes', $include);
+	}
+
+	public function getNotes($user)
+	{
+		$auth = Session::get('auth');
 
 		// Get all groups the user has permissions in.
 		$groups = DB::table('Group')
@@ -96,7 +114,6 @@ class UserController extends BaseController
 			$notes = $notes->get();
 		}
 
-		$include = array('auth' => $auth, 'user' => $user, 'notes' => $notes);
-		return View::make('user.stats', $include);
+		return $notes;
 	}
 }

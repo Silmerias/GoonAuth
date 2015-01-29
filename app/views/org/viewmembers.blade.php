@@ -20,6 +20,7 @@
 			<th style="width: 100px;">Status</th>
 			<th style="width: 150px;">Goon ID</th>
 			<th>Character Name</th>
+			<th style="width: 40px;"></th>
 			<th style="width: 150px;">Actions</th>
 		</thead>
 		@foreach ($members as $gameuser)
@@ -27,8 +28,13 @@
 			<td>
 				{{ e($statuses[$gameuser->pivot->USID - 1]->USStatus) }}
 			</td>
-			<td><a href="{{ URL::to('user/'.$gameuser->user->UID) }}">{{ e($gameuser->user->UGoonID) }}</a></td>
+			<td><a href="{{ URL::to('user/'.$gameuser->user->UID) }}" target="_blank">{{ e($gameuser->user->UGoonID) }}</a></td>
 			<td>{{ GameController::buildGameProfile($game, $gameuser) }}</td>
+			<td>
+				<button type="button" class="btn btn-note" data-toggle="popover" data-uid="{{ $gameuser->user->UID }}">
+					<span class="glyphicon glyphicon-envelope" aria-hidden="true" style="color: goldenrod"></span>
+				</button>
+			</td>
 			<td>
 				<button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modal-Kick" data-gid="{{ $gameuser->GUID }}">Kick</button>
 				<button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#modal-Note" data-goonid="{{ e($gameuser->user->UGoonID) }}" data-uid="{{ $gameuser->user->UID }}">Add Note</button>
@@ -107,7 +113,7 @@
 					<p class="note-subject"></p>
 					<p class="note-comment"></p>
 					<p class="note-footer">By 
-						<a href="{{ URL::to('user/'.$auth->UID) }}">{{ e($auth->UGoonID) }}</a>
+						<a href="{{ URL::to('user/'.$auth->UID) }}" target="_blank">{{ e($auth->UGoonID) }}</a>
 						- {{ Carbon::now()->toDateTimeString() }}
 					</p>
 				</div>
@@ -195,6 +201,28 @@ $('#note-add').click(function (event) {
 	.fail(function(ret) {
 		$('#modal-Note').modal('hide');
 		error('An internal server error has occurred.');
+	});
+});
+
+$('[data-toggle="popover"]').click(function() {
+	var d = $(this);
+	var uid = d.data('uid');
+
+	d.off('click');
+	d.off('mouseenter mouseleave');
+
+	$.ajax({
+		url: '/user/'+uid+'/notes',
+		type: 'get'
+	})
+	.done(function(ret) {
+		d.popover({
+			trigger: 'focus',
+			html: 'true',
+			placement: 'left',
+			template: '<div class="popover note-popover"><div class="popover-content"></div></div>',
+			content: ret
+		}).popover('show');
 	});
 });
 
