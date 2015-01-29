@@ -38,7 +38,7 @@ class UserController extends BaseController
 	{
 		$auth = Session::get('auth');
 		$user = User::find($id);
-		$notes = getNotes($user);
+		$notes = $this->getNotes($user);
 
 		$include = array('auth' => $auth, 'user' => $user, 'notes' => $notes);
 		return View::make('user.stats', $include);
