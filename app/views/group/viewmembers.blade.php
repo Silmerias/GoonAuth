@@ -1,9 +1,9 @@
 @extends('layouts.main')
 @section('content')
 
-<a class="label label-info" href="{{ URL::to('games/'.$game->GAbbr.'/'.$org->GOAbbr) }}">Back to {{ e($org->GOName) }}</a>
+<a class="label label-info" href="{{ URL::to('/') }}">Back to Home</a>
 
-<h1>Organization Member List</h1>
+<h1>Group Member List</h1>
 <div class="row">
 	<div class="col-md-12">
 
@@ -36,16 +36,16 @@
 							</div>
 						</div>
 						<div class="col-md-6">
-							<div class="col-md-3"><p>Character</p></div>
+							<div class="col-md-3"><p>SA name</p></div>
 							<div class="col-md-9">
 								<div class="input-group">
 									<div class="input-group-btn">
-										<select id="filter-character-searchby" class="selectpicker" data-container="body" data-width="120px">
+										<select id="filter-sa-searchby" class="selectpicker" data-container="body" data-width="120px">
 											<option value="contains">contains</option>
 											<option value="starts">starts with</option>
 										</select>
 									</div>
-									<input id="filter-character" type="text" class="form-control" aria-label="...">
+									<input id="filter-sa" type="text" class="form-control" aria-label="...">
 								</div>
 							</div>
 						</div>
@@ -77,7 +77,7 @@
 
 	@if ($members->count() == 0)
 
-	<p>No members found.  Either this organization has no members or your filter returned 0 results.</p>
+	<p>No members found.  Either this group has no members or your filter returned 0 results.</p>
 
 	@else
 
@@ -85,25 +85,35 @@
 		<thead>
 			<th style="width: 100px;">Status</th>
 			<th style="width: 150px;">Goon ID</th>
-			<th>Character Name</th>
+			<th>SA Name</th>
+			<th>Sponsor</th>
+			<th style="width: 125px;">SA Reg Date</th>
+			<th style="width: 90px;">SA Posts</th>
 			<th style="width: 40px;"></th>
 			<th style="width: 150px;">Actions</th>
 		</thead>
-		@foreach ($members as $gameuser)
-		<tr id="ID_{{ $gameuser->GUID }}">
+		@foreach ($members as $user)
+		<tr id="ID_{{ $user->UID }}">
 			<td>
-				{{ e($statuses[$gameuser->pivot->USID - 1]->USStatus) }}
+				{{ e($statuses[$user->USID - 1]->USStatus) }}
 			</td>
-			<td><a href="{{ URL::to('user/'.$gameuser->user->UID) }}" target="_blank">{{ e($gameuser->user->UGoonID) }}</a></td>
-			<td>{{ GameController::buildGameProfile($game, $gameuser) }}</td>
+			<td><a href="{{ URL::to('user/'.$user->UID) }}" target="_blank">{{ e($user->UGoonID) }}</a></td>
+			<td><a href="http://forums.somethingawful.com/member.php?action=getinfo&amp;username={{ urlencode($user->USACachedName) }}">{{ e($user->USACachedName) }}</a></td>
+			@if (is_null($user->sponsor))
+				<td></td>
+			@else
+				<td><a href="http://forums.somethingawful.com/member.php?action=getinfo&amp;username={{ urlencode($user->sponsor->USACachedName) }}">{{ e($user->sponsor->USACachedName) }}</a></td>
+			@endif
+			<td>{{ $user->USARegDate }}</td>
+			<td>{{ $user->USACachedPostCount }}</td>
 			<td>
-				<button type="button" class="btn btn-note" data-toggle="popover" data-uid="{{ $gameuser->user->UID }}">
+				<button type="button" class="btn btn-note" data-toggle="popover" data-uid="{{ $user->UID }}">
 					<span class="glyphicon glyphicon-envelope" aria-hidden="true" style="color: goldenrod"></span>
 				</button>
 			</td>
 			<td>
-				<button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modal-Kick" data-gid="{{ $gameuser->GUID }}">Kick</button>
-				<button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#modal-Note" data-goonid="{{ e($gameuser->user->UGoonID) }}" data-uid="{{ $gameuser->user->UID }}">Add Note</button>
+				<button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modal-Kick" data-gid="{{ $user->UID }}">Kick</button>
+				<button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#modal-Note" data-goonid="{{ e($user->UGoonID) }}" data-uid="{{ $user->UID }}">Add Note</button>
 			</td>
 		</tr>
 		@endforeach
@@ -148,7 +158,7 @@
 				<div class="form-group">
 					<label for="note-type" class="control-label">Note Type:</label>
 					<select id="note-type" class="form-control">
-					@foreach (NoteType::with(array('roles.gameorgusers' => function($q) use($auth, $org) { $q->where('GameOrgAdmin.UID', $auth->UID)->where('GameOrgAdmin.GOID', $org->GOID); }))->where('NTSystemUseOnly', 'false')->get() as $nt)
+					@foreach (NoteType::with(array('roles.groupusers' => function($q) use($auth, $group) { $q->where('GroupAdmin.UID', $auth->UID)->where('GroupAdmin.GRID', $group->GRID); }))->where('NTSystemUseOnly', 'false')->get() as $nt)
 						<option value="{{ $nt->NTID }}" color="{{ $nt->NTColor }}">{{ $nt->NTName }}</option>
 					@endforeach
 					</select>
@@ -199,9 +209,9 @@ $(document).ready(function() {
 	var expand = false;
 	var params = getQueryParams(document.location.search);
 	if (params['goonid'] !== undefined)		{ expand = true; $('#filter-goonid').val(params['goonid']); }
-	if (params['character'] !== undefined)	{ expand = true; $('#filter-character').val(params['character']); }
 	if (params['goonid-by'] !== undefined)	{ expand = true; $('#filter-goonid-searchby').val(params['goonid-by']); }
-	if (params['character-by'] !== undefined){ expand = true; $('#filter-character-searchby').val(params['character-by']); }
+	if (params['sa'] !== undefined)			{ expand = true; $('#filter-sa').val(params['sa']); }
+	if (params['sa-by'] !== undefined)		{ expand = true; $('#filter-sa-searchby').val(params['sa-by']); }
 	if (params['status'] !== undefined)
 	{
 		expand = true;
@@ -314,14 +324,14 @@ $('#filter-apply').click(function() {
 	var filters = '';
 	var goonid = $('#filter-goonid').val();
 	var goonid_by = $('#filter-goonid-searchby').val();
-	var character = $('#filter-character').val();
-	var character_by = $('#filter-character-searchby').val();
+	var sa = $('#filter-sa').val();
+	var sa_by = $('#filter-sa-searchby').val();
 	var statuses = $('#filter-status').selectpicker('val');
 
 	if (goonid.length !== 0)
 		filters += '&goonid=' + encodeURIComponent(goonid) + '&goonid-by=' + encodeURIComponent(goonid_by);
-	if (character.length !== 0)
-		filters += '&character=' + encodeURIComponent(character) + '&character-by=' + encodeURIComponent(character_by);
+	if (sa.length !== 0)
+		filters += '&sa=' + encodeURIComponent(sa) + '&sa-by=' + encodeURIComponent(sa_by);
 	if (statuses !== null && statuses.length !== 0)
 	{
 		filters += '&status=';

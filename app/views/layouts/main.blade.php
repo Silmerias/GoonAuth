@@ -8,9 +8,11 @@
 
 		<title>Auth Landing</title>
 		{{ HTML::style('assets/css/bootstrap.min.css') }}
+		{{ HTML::style('assets/css/bootstrap-select.min.css') }}
 		{{ HTML::style('assets/css/auth.css') }}
 		{{ HTML::script('assets/js/jquery-1.11.1.min.js') }}
 		{{ HTML::script('assets/js/bootstrap.min.js') }}
+		{{ HTML::script('assets/js/bootstrap-select.min.js') }}
 
 		<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
 		<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
@@ -20,6 +22,20 @@
 			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
 			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 		<![endif]-->
+
+		<script>
+			function getQueryParams(qs) {
+				qs = qs.split("+").join(" ");
+
+				var params = {}, tokens, re = /[?&]?([^=]+)=([^&]*)/g;
+
+				while (tokens = re.exec(qs)) {
+					params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+				}
+
+				return params;
+			}
+		</script>
 	</head>
 
 	<body>
@@ -87,7 +103,6 @@
 
 		<div class="container">
 			@yield('content')
-
 		</div>
 
 		<div class="container">
@@ -98,6 +113,5 @@
 				</div>
 			</div>
 		</div>
-
 	</body>
 </html>

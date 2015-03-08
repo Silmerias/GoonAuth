@@ -59,11 +59,12 @@
 	<?php
 		$sponsors = $user->sponsors()->get();
 		$sponsoring = $user->sponsoring()->get();
+		$gameusers = $user->gameusers()->get();
 	?>
 
 	@if (!$sponsors->isEmpty())
 
-	<p>Sponsored by:</p>
+	<h4>Sponsored by:</h4>
 
 	<table class="table">
 		<thead>
@@ -94,7 +95,7 @@
 
 	@if (!$sponsoring->isEmpty())
 
-	<p>Sponsored members:</p>
+	<h4>Sponsored members:</h4>
 
 	<table class="table">
 		<thead>
@@ -117,6 +118,31 @@
 	</table>
 
 	@endif
+
+	<h4>Games and Organizations:</h4>
+
+	<table class="table">
+		<thead>
+			<th>Game</th>
+			<th>Game User</th>
+			<th>Organization</th>
+		</thead>
+		<tbody>
+		@foreach ($gameusers as $gameuser)
+			<?php
+				$orgs = '';
+				foreach ($gameuser->gameorgs()->get() as $gameorg)
+					$orgs .= ', '.$gameorg->GOName;
+				$orgs = substr($orgs, 1);
+			?>
+			<tr>
+				<td>{{ $gameuser->game->GName }}
+				<td>{{ $gameuser->GUCachedName }}</td>
+				<td>{{ $orgs }}</td>
+			</tr>
+		@endforeach
+		</tbody>
+	</table>
 
 	@if (isset($notes) && !empty($notes))
 

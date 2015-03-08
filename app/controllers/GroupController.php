@@ -228,4 +228,89 @@ class GroupController extends BaseController
 			'success' => true
 		));
 	}
+
+	public function showGroupMembers($grid)
+	{
+		$auth = Session::get('auth');
+		$group = Group::find($grid);
+		if (empty($group))
+			return Redirect::to('/');
+
+		$rejected = UserStatus::where('USCode', 'REJE')->first();
+		$members = $group->members()
+			->where('User.USID', '<>', $rejected->USID)
+			->orderBy('UGoonID');
+
+		if (Input::has('goonid'))
+		{
+			$goonid = Input::get('goonid');
+			$by = Input::get('goonid-by', 'contains');
+			if (strcmp($by, 'starts') === 0) $by = "$goonid%";
+			else $by = "%$goonid%";
+
+			$members = $members->where('User.UGoonID', 'LIKE', $by);
+			Log::error($by);
+		}
+
+		if (Input::has('sa'))
+		{
+			$sa = Input::get('sa');
+			$by = Input::get('sa-by', 'contains');
+			if (strcmp($by, 'starts') === 0) $by = "$sa%";
+			else $by = "%$sa%";
+
+			$members = $members->where('User.USACachedName', 'LIKE', $by);
+		}
+
+		if (Input::has('status'))
+		{
+			$statuses = explode(',', Input::get('status'));
+			$members = $members->whereIn('User.USID', $statuses);
+		}
+
+		// Paginate!
+		$members = $members->paginate(15);
+
+		$include = array('auth' => $auth, 'group' => $group, 'members' => $members);
+		return View::make('group.viewmembers', $include);
+	}
+
+	public function doGroupMembers($grid)
+	{
+		$auth = Session::get('auth');
+		$group = Group::find($grid);
+		if (empty($group))
+			return Response::json(array('success' => false, 'message' => 'Invalid request.  Try logging off and back on.'));
+
+		$user = User::find(intval(Input::get('id')));
+		$action = Input::get('action');
+
+		switch ($action)
+		{
+			case 'kick':
+				return Response::json(array('success' => false, 'message' => 'Not yet implemented.'));
+
+			case 'addnote':
+				$type = NoteType::find(Input::get('type'));
+				$subject = Input::get('subject');
+				$message = Input::get('message');
+				$global = Input::get('global');
+
+				if (strlen($message) != 0)
+				{
+					NoteHelper::Add(array(
+						'user' => $user,
+						'createdby' => $auth,
+						'group' => ($global == true ? null : $group),
+						'type' => $type,
+						'subject' => $subject,
+						'message' => $message,
+					));
+				}
+
+				return Response::json(array('success' => true));
+		}
+
+		return Response::json(array('success' => false));
+	}
 }

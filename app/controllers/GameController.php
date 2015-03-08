@@ -274,8 +274,37 @@ class GameController extends BaseController
 		$members = $org->gameusers()
 			->join('User', 'GameUser.UID', '=', 'User.UID')
 			->where('GameOrgHasGameUser.USID', '<>', $rejected->USID)
-			->orderBy('UGoonID')
-			->paginate(15);
+			->orderBy('UGoonID');
+
+		if (Input::has('goonid'))
+		{
+			$goonid = Input::get('goonid');
+			$by = Input::get('goonid-by', 'contains');
+			if (strcmp($by, 'starts') === 0) $by = "$goonid%";
+			else $by = "%$goonid%";
+
+			$members = $members->where('User.UGoonID', 'LIKE', $by);
+			Log::error($by);
+		}
+
+		if (Input::has('character'))
+		{
+			$character = Input::get('character');
+			$by = Input::get('character-by', 'contains');
+			if (strcmp($by, 'starts') === 0) $by = "$character%";
+			else $by = "%$character%";
+
+			$members = $members->where('GameUser.GUCachedName', 'LIKE', $by);
+		}
+
+		if (Input::has('status'))
+		{
+			$statuses = explode(',', Input::get('status'));
+			$members = $members->whereIn('GameOrgHasGameUser.USID', $statuses);
+		}
+
+		// Paginate!
+		$members = $members->paginate(15);
 
 		$include = array('auth' => $auth, 'game' => $game, 'org' => $org, 'members' => $members);
 		return View::make('org.viewmembers', $include);

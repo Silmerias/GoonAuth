@@ -2,9 +2,15 @@
 @section('content')
 
 <?php $perms = new UserPerm($auth); ?>
+
+<p style="margin-top: 20px">
 @if ($perms->group()->auth == true)
-<p style="margin-top: 20px"><a class="btn btn-danger" href="{{ URL::to('auth/group/'.$auth->group->GRID) }}">Authorize Group Members</a></p>
+	<a class="btn btn-danger" href="{{ URL::to('auth/group/'.$auth->group->GRID) }}">Authorize Group Members</a>
 @endif
+@if ($perms->group()->read == true)
+	<a class="btn btn-success" href="{{ URL::to('auth/group/'.$auth->group->GRID).'/view' }}">View Group Members</a>
+@endif
+</p>
 
 <div class="row">
 	<div class="col-md-6 col-md-offset-3">

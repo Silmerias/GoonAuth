@@ -11,10 +11,6 @@
 |
 */
 
-$force = 'http';
-if (App::environment('production'))
-	$force = 'https';
-
 Route::controller('register', 'RegisterController');
 
 Route::get('/', array('before' => 'auth', 'uses' => 'UserController@showHome'));
@@ -52,6 +48,8 @@ Route::group(array('before' => 'auth'), function() {
 	Route::group(array('before' => 'auth|groupadmin', 'prefix' => 'auth'), function() {
 		Route::get('group/{grid}', 'GroupController@showAuth');
 		Route::post('group/{grid}', 'GroupController@doAuth');
+		Route::get('group/{grid}/view', 'GroupController@showGroupMembers');
+		Route::post('group/{grid}/view', 'GroupController@doGroupMembers');
 	});
 
 	Route::group(array('before' => 'auth|gameadmin', 'prefix' => 'auth'), function() {
