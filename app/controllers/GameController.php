@@ -273,7 +273,6 @@ class GameController extends BaseController
 		$rejected = UserStatus::where('USCode', 'REJE')->first();
 		$members = $org->gameusers()
 			->join('User', 'GameUser.UID', '=', 'User.UID')
-			->where('GameOrgHasGameUser.USID', '<>', $rejected->USID)
 			->orderBy('UGoonID');
 
 		if (Input::has('goonid'))
@@ -302,6 +301,7 @@ class GameController extends BaseController
 			$statuses = explode(',', Input::get('status'));
 			$members = $members->whereIn('GameOrgHasGameUser.USID', $statuses);
 		}
+		else $members = $members->where('GameOrgHasGameUser.USID', '<>', $rejected->USID);
 
 		// Paginate!
 		$members = $members->paginate(15);

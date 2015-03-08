@@ -237,9 +237,7 @@ class GroupController extends BaseController
 			return Redirect::to('/');
 
 		$rejected = UserStatus::where('USCode', 'REJE')->first();
-		$members = $group->members()
-			->where('User.USID', '<>', $rejected->USID)
-			->orderBy('UGoonID');
+		$members = $group->members()->orderBy('UGoonID');
 
 		if (Input::has('goonid'))
 		{
@@ -267,6 +265,7 @@ class GroupController extends BaseController
 			$statuses = explode(',', Input::get('status'));
 			$members = $members->whereIn('User.USID', $statuses);
 		}
+		else $members = $members->where('User.USID', '<>', $rejected->USID);
 
 		// Paginate!
 		$members = $members->paginate(15);
