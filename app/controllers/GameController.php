@@ -275,8 +275,12 @@ class GameController extends BaseController
 			->join('User', 'GameUser.UID', '=', 'User.UID')
 			->orderBy('UGoonID');
 
+		$get = array();
 		if (Input::has('goonid'))
 		{
+			$get['goonid'] = Input::get('goonid');
+			$get['goonid-by'] = Input::get('goonid-by');
+
 			$goonid = Input::get('goonid');
 			$by = Input::get('goonid-by', 'contains');
 			if (strcmp($by, 'starts') === 0) $by = "$goonid%";
@@ -288,6 +292,9 @@ class GameController extends BaseController
 
 		if (Input::has('character'))
 		{
+			$get['character'] = Input::get('character');
+			$get['character-by'] = Input::get('character-by');
+
 			$character = Input::get('character');
 			$by = Input::get('character-by', 'contains');
 			if (strcmp($by, 'starts') === 0) $by = "$character%";
@@ -298,6 +305,8 @@ class GameController extends BaseController
 
 		if (Input::has('status'))
 		{
+			$get['status'] = Input::get('status');
+
 			$statuses = explode(',', Input::get('status'));
 			$members = $members->whereIn('GameOrgHasGameUser.USID', $statuses);
 		}
@@ -305,6 +314,10 @@ class GameController extends BaseController
 
 		// Paginate!
 		$members = $members->paginate(15);
+
+		// Make sure we include our GET parameters.
+		if (count($get) !== 0)
+			$members = $members->appends($get);
 
 		$include = array('auth' => $auth, 'game' => $game, 'org' => $org, 'members' => $members);
 		return View::make('org.viewmembers', $include);

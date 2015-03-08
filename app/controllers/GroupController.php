@@ -239,8 +239,12 @@ class GroupController extends BaseController
 		$rejected = UserStatus::where('USCode', 'REJE')->first();
 		$members = $group->members()->orderBy('UGoonID');
 
+		$get = array();
 		if (Input::has('goonid'))
 		{
+			$get['goonid'] = Input::get('goonid');
+			$get['goonid-by'] = Input::get('goonid-by');
+
 			$goonid = Input::get('goonid');
 			$by = Input::get('goonid-by', 'contains');
 			if (strcmp($by, 'starts') === 0) $by = "$goonid%";
@@ -252,6 +256,9 @@ class GroupController extends BaseController
 
 		if (Input::has('sa'))
 		{
+			$get['sa'] = Input::get('sa');
+			$get['sa-by'] = Input::get('sa-by');
+
 			$sa = Input::get('sa');
 			$by = Input::get('sa-by', 'contains');
 			if (strcmp($by, 'starts') === 0) $by = "$sa%";
@@ -262,6 +269,8 @@ class GroupController extends BaseController
 
 		if (Input::has('status'))
 		{
+			$get['status'] = Input::get('status');
+
 			$statuses = explode(',', Input::get('status'));
 			$members = $members->whereIn('User.USID', $statuses);
 		}
@@ -269,6 +278,10 @@ class GroupController extends BaseController
 
 		// Paginate!
 		$members = $members->paginate(15);
+
+		// Make sure we include our GET parameters.
+		if (count($get) !== 0)
+			$members = $members->appends($get);
 
 		$include = array('auth' => $auth, 'group' => $group, 'members' => $members);
 		return View::make('group.viewmembers', $include);
