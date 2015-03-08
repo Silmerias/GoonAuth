@@ -216,7 +216,8 @@ $(document).ready(function() {
 	{
 		expand = true;
 		var statuses = params['status'].split(',');
-		$('#filter-status').selectpicker('val', statuses);
+		$('#filter-status').val(statuses);
+		$('#filter-status').selectpicker('render');
 	}
 
 	if (expand === true)

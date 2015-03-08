@@ -199,14 +199,15 @@ $(document).ready(function() {
 	var expand = false;
 	var params = getQueryParams(document.location.search);
 	if (params['goonid'] !== undefined)		{ expand = true; $('#filter-goonid').val(params['goonid']); }
-	if (params['character'] !== undefined)	{ expand = true; $('#filter-character').val(params['character']); }
 	if (params['goonid-by'] !== undefined)	{ expand = true; $('#filter-goonid-searchby').val(params['goonid-by']); }
+	if (params['character'] !== undefined)	{ expand = true; $('#filter-character').val(params['character']); }
 	if (params['character-by'] !== undefined){ expand = true; $('#filter-character-searchby').val(params['character-by']); }
 	if (params['status'] !== undefined)
 	{
 		expand = true;
 		var statuses = params['status'].split(',');
-		$('#filter-status').selectpicker('val', statuses);
+		$('#filter-status').val(statuses);
+		$('#filter-status').selectpicker('render');
 	}
 
 	if (expand === true)
