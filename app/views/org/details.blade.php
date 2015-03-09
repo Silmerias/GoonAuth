@@ -25,16 +25,24 @@
 	</div>
 </div>
 
-<?php $perms = new UserPerm($auth) ?>
+<?php
+$perms = new UserPerm($auth);
+$pending = UserStatus::pending()->first();
+$pending_count = $org->gameusers()->where('GameOrgHasGameUser.USID', $pending->USID)->count();
+?>
 
 <p style="margin-top: 20px">
-	@if ($perms->gameOrg($org->GOID)->auth == true)
-	<a class="btn btn-danger" href="{{ URL::to('auth/'.Request::path()) }}">Authorize Members</a>
+@if ($perms->gameOrg($org->GOID)->auth == true)
+	<a class="btn btn-danger" href="{{ URL::to('auth/'.Request::path()) }}">Authorize Members
+	@if ($pending_count !== 0)
+		<span class="badge">{{ $pending_count }}</span>
+	@endif
+	</a>
 	@endif
 
 	@if ($perms->gameOrg($org->GOID)->read == true)
 	<a class="btn btn-success" href="{{ URL::to(Request::path().'/view') }}">View Members</a>
-	@endif
+@endif
 </p>
 
 <h1>{{ e($org->GOName) }} Character List</h1>

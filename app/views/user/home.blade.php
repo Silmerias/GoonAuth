@@ -1,11 +1,19 @@
 @extends('layouts.main')
 @section('content')
 
-<?php $perms = new UserPerm($auth); ?>
+<?php
+$perms = new UserPerm($auth);
+$pending = UserStatus::pending()->first();
+$pending_count = $auth->group->members()->where('USID', $pending->USID)->count();
+?>
 
 <p style="margin-top: 20px">
 @if ($perms->group()->auth == true)
-	<a class="btn btn-danger" href="{{ URL::to('auth/group/'.$auth->group->GRID) }}">Authorize Group Members</a>
+	<a class="btn btn-danger" href="{{ URL::to('auth/group/'.$auth->group->GRID) }}">Authorize Group Members
+	@if ($pending_count !== 0)
+		<span class="badge">{{ $pending_count }}</span>
+	@endif
+	</a>
 @endif
 @if ($perms->group()->read == true)
 	<a class="btn btn-success" href="{{ URL::to('auth/group/'.$auth->group->GRID).'/view' }}">View Group Members</a>
