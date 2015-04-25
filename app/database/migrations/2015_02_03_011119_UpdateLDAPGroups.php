@@ -25,12 +25,14 @@ class UpdateLDAPGroups extends Migration {
 		});
 
 		// Add unique constraints to the abbreviations.
+		/*
 		Schema::table('Game', function($t) {
 			$t->unique('GAbbr');
 		});
 		Schema::table('GameOrg', function($t) {
 			$t->unique('GOAbbr');
 		});
+		*/
 	}
 
 	/**
@@ -53,11 +55,13 @@ class UpdateLDAPGroups extends Migration {
 		});
 
 		// Remove unique constraints.
+		/*
 		Schema::table('Game', function($t) {
 			$t->dropUnique('Game_GAbbr_unique');
 		});
 		Schema::table('GameOrg', function($t) {
 			$t->dropUnique('GameOrg_GOAbbr_unique');
 		});
+		*/
 	}
 }
