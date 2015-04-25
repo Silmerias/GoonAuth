@@ -16,7 +16,7 @@ class CreateSponsoringTables extends Migration {
 		Schema::table('Sponsor', function($t) {
 			// Add our new columns.
 			$t->string('SCode', 10)->unique();
-			$t->integer('SSponsoredID')->unsigned->nullable();
+			$t->integer('SSponsoredID')->unsigned()->nullable();
 
 			// Add new constraints.
 			$t->foreign('SSponsoredID', 'FK_Sponsor_User_Sponsored')
