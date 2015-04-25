@@ -62,6 +62,37 @@
 							</div>
 						</div>
 						<div class="col-md-6">
+							<div class="col-md-3"><p>Reg Date</p></div>
+							<div class="col-md-9">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<select id="filter-regdate-searchby" class="selectpicker" data-container="body" data-width="120px">
+											<option value="gte" title=">=">&gt;=</option>
+											<option value="lte" title="<=">&lt;=</option>
+											<option value="e">=</option>
+										</select>
+									</div>
+									<input id="filter-regdate" class="form-control date" aria-label="...">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="col-md-3"><p>Order By</p></div>
+							<div class="col-md-9">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<select id="filter-orderby" class="selectpicker" data-container="body" data-width="100%">
+											<option value="goonid">Goon ID</option>
+											<option value="status">Status</option>
+											<option value="regdate">Reg Date</option>
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6">
 							<div class="col-md-offset-3 col-md-3">
 								<button type="button" id="filter-apply" class="btn btn-success">Apply</button>
 							</div>
@@ -208,10 +239,11 @@
 $(document).ready(function() {
 	var expand = false;
 	var params = getQueryParams(document.location.search);
-	if (params['goonid'] !== undefined)		{ expand = true; $('#filter-goonid').val(params['goonid']); }
 	if (params['goonid-by'] !== undefined)	{ expand = true; $('#filter-goonid-searchby').val(params['goonid-by']); }
 	if (params['sa'] !== undefined)			{ expand = true; $('#filter-sa').val(params['sa']); }
 	if (params['sa-by'] !== undefined)		{ expand = true; $('#filter-sa-searchby').val(params['sa-by']); }
+	if (params['regdate'] !== undefined)	{ expand = true; $('#filter-regdate').val(params['regdate']); }
+	if (params['regdate-by'] !== undefined)	{ expand = true; $('#filter-regdate-searchby').val(params['regdate-by']); }
 	if (params['status'] !== undefined)
 	{
 		expand = true;
@@ -219,6 +251,10 @@ $(document).ready(function() {
 		$('#filter-status').val(statuses);
 		$('#filter-status').selectpicker('render');
 	}
+	if (params['goonid'] !== undefined)		{ expand = true; $('#filter-goonid').val(params['goonid']); }
+	if (params['orderby'] !== undefined)	{ expand = true; $('#filter-orderby').val(params['orderby']); }
+
+	$('#filter-regdate').datepicker();
 
 	if (expand === true)
 		$('#collapseFilter').collapse('show');
@@ -328,6 +364,9 @@ $('#filter-apply').click(function() {
 	var sa = $('#filter-sa').val();
 	var sa_by = $('#filter-sa-searchby').val();
 	var statuses = $('#filter-status').selectpicker('val');
+	var regdate = $('#filter-regdate').val();
+	var regdate_by = $('#filter-regdate-searchby').val();
+	var orderby = $('#filter-orderby').val();
 
 	if (goonid.length !== 0)
 		filters += '&goonid=' + encodeURIComponent(goonid) + '&goonid-by=' + encodeURIComponent(goonid_by);
@@ -340,6 +379,10 @@ $('#filter-apply').click(function() {
 			filters += statuses[s] + ',';
 		filters = filters.substr(0, filters.length - 1);
 	}
+	if (regdate.length !== 0)
+		filters += '&regdate=' + encodeURIComponent(regdate) + '&regdate-by=' + encodeURIComponent(regdate_by);
+	if (orderby.length !== 0)
+		filters += '&orderby=' + encodeURIComponent(orderby);
 
 	if (filters.length !== 0)
 		window.location.href = '{{ URL::to(Request::path()) }}' + '?' + filters.substr(1);

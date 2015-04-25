@@ -6,13 +6,11 @@
 	</div>
 </div>
 
-<form class="form-register" role="form" action="{{ URL::action('RegisterController@postGoon') }}" method="post">
-	<h2 class="form-register-heading">Are you being sponsored?</h2>
-	<p>{{ HTML::link(URL::to('register/goon-sponsored'), "Click here") }} to access the sponsor form.</p>
-
+<form class="form-register" role="form" action="{{ URL::action('RegisterController@postGoonSponsored') }}" method="post">
 	<h2 class="form-register-heading">Fill out the following</h2>
 	<p>Your Goon ID is your login name. Your Display Name can be changed later, but remember that your Goon ID is always visible.</p>
 	<p>Make sure your e-mail is valid as you will receive your acceptance information through it.</p>
+	<p>If you don't have a sponsor code, you are doing this wrong.</p>
 
 	@if (Session::has('error'))
 		<div class="alert alert-danger">
@@ -24,9 +22,11 @@
 
 	<div id="valid-goonid" class="alert alert-danger" style="display:none"></div>
 	<div id="valid-email" class="alert alert-danger" style="display:none"></div>
+	<div id="valid-code" class="alert alert-danger" style="display:none"></div>
 
 	<input type="text" name="goonid" class="form-control" placeholder="Desired Goon ID" required="" autofocus="" onblur="validate(this)" data-type="goonid">
 	<input type="email" name="email" class="form-control" placeholder="E-Mail Address" required="" autofocus="" onblur="validate(this)" data-type="email">
+	<input type="text" name="code" class="form-control" placeholder="Sponsor Code" required="" autofocus="" onblur="validate(this)" data-type="code">
 	<button class="btn btn-lg btn-primary btn-block" type="submit">Next</button>
 </form>
 

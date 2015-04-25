@@ -18,6 +18,11 @@ class RegisterController extends BaseController
 		return View::make('register.goon');
 	}
 
+	public function getGoonSponsored()
+	{
+		return View::make('register.goon-sponsored');
+	}
+
 	public function getAffiliate()
 	{
 		return View::make('register.affiliate');
@@ -123,31 +128,60 @@ class RegisterController extends BaseController
 		return 0;
 	}
 
-	public function postCheckGoon()
+	private function verifyCode($code)
 	{
-		$valid = $this->verifyGoonID(Input::get('goonid'));
-		switch ($valid)
-		{
-			case 0: return Response::json(array('valid' => 'true'));
+		if (!isset($code) || strlen($code) == 0)
+			return -1;
 
-			default:
-			case -1: return Response::json(array('valid' => 'false', 'message' => 'Invalid GoonID.'));
-			case -2: return Response::json(array('valid' => 'false', 'message' => 'Your GoonID may only contain alpha-numeric, underscore, and hyphen characters.'));
-			case -3: return Response::json(array('valid' => 'false', 'message' => 'That GoonID is already in use.'));
-		}
+		// Check for an existing code.
+		$sponsor = Sponsor::where('SCode', $code)->whereNull('SSponsoredID')->first();
+		if (empty($sponsor))
+			return -2;
+
+		// Return our sponsor name.
+		return $sponsor->user->UGoonID;
 	}
 
-	public function postCheckEmail()
+	public function postCheck()
 	{
-		$valid = $this->verifyEmail(Input::get('email'));
-		switch ($valid)
+		if (Input::has('goonid'))
 		{
-			case 0: return Response::json(array('valid' => 'true'));
+			$valid = $this->verifyGoonID(Input::get('goonid'));
+			switch ($valid)
+			{
+				case 0: return Response::json(array('valid' => 'true', 'message' => 'Goon ID is available.'));
 
-			default:
-			case -1: return Response::json(array('valid' => 'false', 'message' => 'Invalid email.'));
-			case -2: return Response::json(array('valid' => 'false', 'message' => 'This is not a valid e-mail address.  Try again.'));
-			case -3: return Response::json(array('valid' => 'false', 'message' => 'That e-mail is already in use.'));
+				default:
+				case -1: return Response::json(array('valid' => 'false', 'message' => 'Invalid GoonID.'));
+				case -2: return Response::json(array('valid' => 'false', 'message' => 'Your GoonID may only contain alpha-numeric, underscore, and hyphen characters.'));
+				case -3: return Response::json(array('valid' => 'false', 'message' => 'That GoonID is already in use.'));
+			}
+		}
+
+		if (Input::has('email'))
+		{
+			$valid = $this->verifyEmail(Input::get('email'));
+			switch ($valid)
+			{
+				case 0: return Response::json(array('valid' => 'true', 'message' => 'E-mail is acceptable.'));
+
+				default:
+				case -1: return Response::json(array('valid' => 'false', 'message' => 'Invalid email.'));
+				case -2: return Response::json(array('valid' => 'false', 'message' => 'This is not a valid e-mail address.  Try again.'));
+				case -3: return Response::json(array('valid' => 'false', 'message' => 'That e-mail is already in use.'));
+			}
+		}
+
+		if (Input::has('code'))
+		{
+			$valid = $this->verifyCode(Input::get('code'));
+			switch ($valid)
+			{
+				default: return Response::json(array('valid' => 'true', 'message' => 'You are being sponsored by <strong>'.$valid.'</strong>.'));
+
+				case -1:
+				case -2: return Response::json(array('valid' => 'false', 'message' => 'Invalid sponsor code.'));
+			}
 		}
 	}
 
@@ -168,6 +202,30 @@ class RegisterController extends BaseController
 		Session::put('token', $token);
 
 		return View::make('register.link', array('token' => $token));
+	}
+
+	public function postGoonSponsored()
+	{
+		$goonid = $this->verifyGoonID(Input::get('goonid'));
+		if ($goonid !== 0)
+			return Redirect::back()->with('error', 'There was a problem with your entered GoonID.');
+
+		$email = $this->verifyEmail(Input::get('email'));
+		if ($email !== 0)
+			return Redirect::back()->with('error', 'There was a problem with your entered email.');
+
+		$code = $this->verifyCode(Input::get('code'));
+		if ($code === -1 || $code === -2)
+			return Redirect::back()->with('error', 'There was a problem with your sponsor code.');
+
+		$comment = 'Sponsored by: '.$code;
+		$user = $this->createUser(Input::get('email'), Input::get('goonid'), null, null, null, null, $comment);
+
+		$sponsor = Sponsor::where('SCode', Input::get('code'))->first();
+		$sponsor->sponsored()->associate($user);
+		$sponsor->save();
+
+		return View::make('register.complete', array('sponsored' => true));
 	}
 
 	public function postLink()
@@ -236,59 +294,11 @@ class RegisterController extends BaseController
 			// Check if we have the token.
 			if (stristr($body, $token) !== false/* && $sa_regdate < $subTime*/)
 			{
-				$group = Group::where('GRCode', 'SA')->first();
+				$comment = Input::get('comment');
+				if (!isset($comment) || empty($comment) || strlen($comment) == 0)
+					$comment = '';
 
-				// Grab IP.
-				$ip = inet_pton($_SERVER['REMOTE_ADDR']);
-				if ($ip === false)
-					$ip = null;
-				else $ip = bin2hex($ip);
-
-				// Success!  Let's create our user now.
-				$user = new User;
-				$user->USID = UserStatus::pending()->first()->USID;
-				$user->UIPAddress = $ip;
-				$user->UEmail = $email;
-				$user->UGoonID = $goonid;
-				$user->USAUserID = $sa_userid;
-				$user->USARegDate = Carbon::createFromFormat('M j, Y', $sa_regdate);
-				$user->USACachedName = $sa_name;
-				$user->USACachedPostCount = $sa_postcount;
-				$user->USACacheDate = Carbon::now();
-				$user->UGroup = $group->GRID;
-				$user->save();
-
-				// Create a note.
-				$reg = NoteType::where('NTCode', 'SYS')->first();
-				if (!empty($reg))
-				{
-					$comment = Input::get('comment');
-					if (!isset($comment) || empty($comment) || strlen($comment) == 0)
-						$comment = '';
-
-					NoteHelper::Add(array(
-						'user' => $user,
-						'createdby' => null,
-						'group' => $group,
-						'type' => $reg,
-						'subject' => $group->GRName.' registration',
-						'message' => $comment,
-					));
-				}
-
-				// Send out the registration e-mail.
-				try
-				{
-					$maildata = [];
-					Mail::send('emails.register-complete', $maildata, function($msg) use($user) {
-						$msg->subject('Your Goonrathi / Word of Lowtax membership request has been submitted for review.');
-						$msg->to($user->UEmail);
-					});
-				}
-				catch (Exception $e)
-				{
-					error_log('E-mail error: '.$e->getMessage());
-				}
+				$this->createUser($email, $goonid, $sa_userid, $sa_regdate, $sa_name, $sa_postcount, $comment);
 
 				return View::make('register.complete');
 			}
@@ -303,5 +313,60 @@ class RegisterController extends BaseController
 			return Redirect::back()->with('error', 'An unknown error has occured. Please try again.');
 		}
 		return Redirect::back();
+	}
+
+	private function createUser($email, $goonid, $sa_userid, $sa_regdate, $sa_name, $sa_postcount, $comment)
+	{
+		$group = Group::where('GRCode', 'SA')->first();
+
+		// Grab IP.
+		$ip = inet_pton($_SERVER['REMOTE_ADDR']);
+		if ($ip === false)
+			$ip = null;
+		else $ip = bin2hex($ip);
+
+		// Success!  Let's create our user now.
+		$user = new User;
+		$user->USID = UserStatus::pending()->first()->USID;
+		$user->UIPAddress = $ip;
+		$user->UEmail = $email;
+		$user->UGoonID = $goonid;
+		$user->USAUserID = $sa_userid;
+		$user->USARegDate = $sa_regdate !== null ? Carbon::createFromFormat('M j, Y', $sa_regdate) : null;
+		$user->USACachedName = $sa_name;
+		$user->USACachedPostCount = $sa_postcount;
+		$user->USACacheDate = Carbon::now();
+		$user->UGroup = $group->GRID;
+		$user->save();
+
+		// Create a note.
+		$reg = NoteType::where('NTCode', 'SYS')->first();
+		if (!empty($reg))
+		{
+			NoteHelper::Add(array(
+				'user' => $user,
+				'createdby' => null,
+				'group' => $group,
+				'type' => $reg,
+				'subject' => $group->GRName.' registration',
+				'message' => $comment,
+			));
+		}
+
+		// Send out the registration e-mail.
+		try
+		{
+			$maildata = [];
+			Mail::send('emails.register-complete', $maildata, function($msg) use($user) {
+				$msg->subject('Your Goonrathi / Word of Lowtax membership request has been submitted for review.');
+				$msg->to($user->UEmail);
+			});
+		}
+		catch (Exception $e)
+		{
+			error_log('E-mail error: '.$e->getMessage());
+		}
+
+		return $user;
 	}
 }

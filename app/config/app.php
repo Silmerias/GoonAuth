@@ -79,6 +79,7 @@ return array(
 	*/
 
 	'key' => 'SJ51U6TpAsqqXXSTdYTj6cIyDcO7tx92',
+	'cipher' => MCRYPT_RIJNDAEL_256,
 
 	/*
 	|--------------------------------------------------------------------------

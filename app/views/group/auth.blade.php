@@ -36,10 +36,10 @@
 			<td class="progress-bar-here">
 				<a href="http://forums.somethingawful.com/member.php?action=getinfo&amp;username={{ urlencode($user->USACachedName) }}">{{ e($user->USACachedName) }}</a>
 			</td>
-			@if (is_null($user->sponsor))
+			@if ($user->sponsors()->count() === 0)
 				<td></td>
 			@else
-				<td><a href="http://forums.somethingawful.com/member.php?action=getinfo&amp;username={{ urlencode($user->sponsor->USACachedName) }}">{{ e($user->sponsor->USACachedName) }}</a></td>
+				<td><a href="http://forums.somethingawful.com/member.php?action=getinfo&amp;username={{ urlencode($user->sponsors->first()->USACachedName) }}">{{ e($user->sponsors->first()->USACachedName) }}</a></td>
 			@endif
 			<td>{{ $user->USARegDate }}</td>
 			<td>{{ $user->USACachedPostCount }}</td>

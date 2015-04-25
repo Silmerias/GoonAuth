@@ -10,15 +10,7 @@ class Sponsor extends Eloquent {
 		return $this->belongsTo('User', 'UID');
 	}
 
-	public function sponsor() {
-		return $this->belongsTo('User', 'SSponsorID');
-	}
-
-	public function group() {
-		return $this->belongsTo('Group', 'GRID');
-	}
-
-	public function gameorg() {
-		return $this->belongsTo('GameOrg', 'GOID');
+	public function sponsored() {
+		return $this->belongsTo('User', 'SSponsoredID');
 	}
 }

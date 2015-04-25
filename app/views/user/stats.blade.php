@@ -69,24 +69,11 @@
 	<table class="table">
 		<thead>
 			<th>Sponsor</th>
-			<th>Group</th>
-			<th>Game Organization</th>
 		</thead>
 		<tbody>
 		@foreach ($sponsors as $s)
 			<tr>
 				<td><a href="http://forums.somethingawful.com/member.php?action=getinfo&amp;username={{ urlencode($s->USACachedName) }}" target="_blank">{{ e($s->USACachedName) }}</a></td>
-				@if (is_null($s->pivot->GRID))
-					<td></td>
-				@else
-					<td>{{ Group::find($s->pivot->GRID)->GRName }}</td>
-				@endif
-
-				@if (is_null($s->pivot->GOID))
-					<td></td>
-				@else
-					<td>{{ GameOrg::find($s->pivot->GOID)->GOName }}</td>
-				@endif
 			</tr>
 		@endforeach
 		</tbody>

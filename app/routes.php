@@ -59,8 +59,8 @@ Route::group(array('before' => 'auth'), function() {
 
 	Route::group(array('before' => 'sponsor'), function() {
 		Route::get('sponsor', 'SponsorController@showSponsors');
-		Route::get('sponsor/add', 'SponsorController@showAddForm');
-		Route::post('sponsor/add', 'SponsorController@doAddSponsor');
+		Route::get('sponsor/add', 'SponsorController@showAdd');
+		Route::post('sponsor/add', 'SponsorController@doAdd');
 	});
 
 	Route::group(array('before' => 'auth|admin', 'prefix' => 'admin'), function() {

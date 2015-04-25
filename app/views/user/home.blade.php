@@ -25,7 +25,7 @@ $pending_count = $auth->group->members()->where('USID', $pending->USID)->count()
 		<div class="authed">
 			<i class="fa fa-meh-o"></i>
 			<?php
-				$sponsors = $auth->sponsors()->where('Sponsor.GRID', $auth->group->GRID)->get();
+				$sponsors = $auth->sponsors()->get();
 				$sponsored = !$sponsors->isEmpty();
 			?>
 
@@ -35,7 +35,7 @@ $pending_count = $auth->group->members()->where('USID', $pending->USID)->count()
 					<p>Your account is linked to the SA account <strong>{{ e($auth->USACachedName) }}</strong>.</p>
 				@endif
 			@else
-				<h2>You were sponsored by {{ e($sponsors->UGoonID) }}.</h2>
+				<h2>You were sponsored by {{ e($sponsors->first()->UGoonID) }}.</h2>
 			@endif
 
 			<p>You are a member of the <strong>{{ $auth->group->GRName }}</strong> group.</p>

@@ -9,10 +9,12 @@
 		<title>Auth Landing</title>
 		{{ HTML::style('assets/css/bootstrap.min.css') }}
 		{{ HTML::style('assets/css/bootstrap-select.min.css') }}
+		{{ HTML::style('assets/css/bootstrap-datepicker3.min.css') }}
 		{{ HTML::style('assets/css/auth.css') }}
 		{{ HTML::script('assets/js/jquery-1.11.1.min.js') }}
 		{{ HTML::script('assets/js/bootstrap.min.js') }}
 		{{ HTML::script('assets/js/bootstrap-select.min.js') }}
+		{{ HTML::script('assets/js/bootstrap-datepicker.js') }}
 
 		<link href='//fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
 		<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
@@ -74,7 +76,7 @@
 								</ul>
 							</li>
 
-							@if (Sponsor::where('UID', Session::get('auth')->UID)->count() == 0)
+							@if (!is_null(Session::get('auth')->USAUserID))
 								<li{{ Request::is('sponsor') || Request::is('sponsor/*') ? ' class="active"' : '' }}><a href="{{ URL::to('sponsor') }}">Sponsor</a></li>
 							@endif
 						@endif

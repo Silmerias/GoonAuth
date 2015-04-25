@@ -5,22 +5,31 @@
 	<div class="col-md-12">
 	<p>Sponsoring a friend is easy assuming you/him are not complete idiots! Just follow the steps below to get them authed.</p>
 	<ol>
-		<li>Have them register an account on the <a href="http://aagoons.com" target="_blank">forums</a>.</li>
-		<li>Enter in their forum account name below.</li>
+		<li>Generate a sponsor code below.</li>
+		<li>Have your friend <a href="{{ URL::to('register/goon-sponsored') }}">register as a sponsored goon</a>.</li>
+		<li>Give your friend an unused sponsor code so they can use it.</li>
 	</ol>
-	<p>That's all you have to do! <strong>Remember! You are completely responsible for the actions of your friend. If the guy you sponsor fucks up, both you and him will be kicked from the guild. Make sure you trust who you sponsor!</strong></p>
+	<p>That's all you have to do!</p>
+	<p><strong>Remember! You are completely responsible for the actions of your friend. If the guy you sponsor fucks up, be prepared to take responsibility for their actions.</strong></p>
 	@if (Session::has('error'))
 	<div class="alert alert-danger">
 		{{ Session::get('error') }}
 	</div>
 	@endif
+	<h2>Available codes</h2>
+	<table class="table">
+		<thead>
+			<th>Code</th>
+		</thead>
+		@foreach (Sponsor::where('UID', $auth->UID)->whereNull('SSponsoredID')->get() as $sponsor)
+		<tr>
+			<td>{{ e($sponsor->SCode) }}</td>
+		</tr>
+		@endforeach
+	</table>
+
 	<form action="{{ URL::to('sponsor/add') }}" method="post" class="form">
-		<div class="form-group">
-			<input type="text" name="username" class="form-control" placeholder="Forum Username" required>
-		</div>
-		<div class="form-group">
-			<button type="submit" class="btn btn-primary">Sponsor Account</button>
-		</div>
+		<button type="submit" class="btn btn-primary">Generate Code</button>
 	</form>
 	</div>
 </div>

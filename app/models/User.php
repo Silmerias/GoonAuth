@@ -43,10 +43,25 @@ class User extends Eloquent {
 	}
 
 	public function sponsors() {
-		return $this->belongsToMany('User', 'Sponsor', 'UID', 'SSponsorID');
+		return $this->belongsToMany('User', 'Sponsor', 'SSponsoredID', 'UID');
 	}
 
 	public function sponsoring() {
-		return $this->belongsToMany('User', 'Sponsor', 'SSponsorID', 'UID');
+		return $this->belongsToMany('User', 'Sponsor', 'UID', 'SSponsoredID');
+	}
+
+	public function canSponsor() {
+		if (Config::get('goonauth.sponsors') == null)
+			return true;
+
+		if ($this->grouproles()->count() !== 0)
+			return true;
+		if ($this->gameorgroles()->count() !== 0)
+			return true;
+
+		if ($this->sponsoring->count() <= Config::get('goonauth.sponsors'))
+			return true;
+
+		return false;
 	}
 }

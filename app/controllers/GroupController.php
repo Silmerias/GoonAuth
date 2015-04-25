@@ -237,7 +237,7 @@ class GroupController extends BaseController
 			return Redirect::to('/');
 
 		$rejected = UserStatus::where('USCode', 'REJE')->first();
-		$members = $group->members()->orderBy('UGoonID');
+		$members = $group->members();
 
 		$get = array();
 		if (Input::has('goonid'))
@@ -275,6 +275,50 @@ class GroupController extends BaseController
 			$members = $members->whereIn('User.USID', $statuses);
 		}
 		else $members = $members->where('User.USID', '<>', $rejected->USID);
+
+		if (Input::has('regdate'))
+		{
+			$sys = NoteType::where('NTCode', 'SYS')->first();
+			$get['regdate'] = Input::get('regdate');
+			$get['regdate-by'] = Input::get('regdate-by');
+
+			$compare = '>=';
+			if ($get['regdate-by'] == 'lte') $compare = '<=';
+			if ($get['regdate-by'] == 'e') $compare = '=';
+
+			$members = $members->join('Note', function($j) use($sys, $compare, $get)
+			{
+				$j->on('Note.UID', '=', 'User.UID')
+					->where('Note.NTID', '=', $sys->NTID)
+					->where('Note.NSubject', 'like', '%registration%')
+					->where('Note.NTimestamp', $compare, $get['regdate']);
+			});
+		}
+
+		if (Input::has('orderby'))
+		{
+			$order = Input::get('orderby');
+			if ($order == 'goonid') $members = $members->orderBy('UGoonID');
+			if ($order == 'status') $members = $members->orderBy('USID');
+			if ($order == 'regdate')
+			{
+				if (!Input::has('regdate'))
+				{
+					$sys = NoteType::where('NTCode', 'SYS')->first();
+					$members = $members->join('Note', function($j) use($sys)
+					{
+						$j->on('Note.UID', '=', 'User.UID')
+							->where('Note.NTID', '=', $sys->NTID)
+							->where('Note.NSubject', 'like', '%registration%');
+					});
+				}
+				$members = $members->orderBy('NTimestamp', 'DESC');
+			}
+		}
+		else $members = $members->orderBy('UGoonID');
+
+		// Distinct.
+		$members = $members->distinct();
 
 		// Paginate!
 		$members = $members->paginate(15);

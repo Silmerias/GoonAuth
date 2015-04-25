@@ -5,26 +5,29 @@
 <h1>Sponsor List</h1>
 <div class="row">
 	<div class="col-md-12">
-	@if ($auth->sponsoring()->count() == 0)
-	<p>You have not sponsored anybody.</p>
-	<!-- <p><a href="{{ URL::to('sponsor/add') }}" class="btn btn-success">Sponsor a Friend</a></p> -->
-	@else
 	<p>Your sponsored members are below. You currently have <strong>{{ $auth->sponsoring->count() }}</strong> sponsors registered.</p>  
 	<table class="table">
 		<thead>
+			<th style="width: 75px;">Status</th>
 			<th>Member Name</th>
 		</thead>
 		@foreach ($auth->sponsoring()->get() as $sponsor)
 		<tr>
+			<?php $status = $sponsor->userstatus()->first() ?>
+			@if (strcmp($status->USCode, 'ACTI') == 0)
+				<td><span class="label label-primary">{{ $status->USStatus }}</span></td>
+			@else
+				<td><span class="label label-default">{{ $status->USStatus }}</span></td>
+			@endif
+
 			<td>{{ e($sponsor->UGoonID) }}</td>
 		</tr>
 		@endforeach
 	</table>
-	@if ($auth->sponsoring->count() >= Config::get('goonauth.sponsors'))
+	@if (!$auth->canSponsor())
 	<p><a href="#" class="btn btn-success" disabled>Max Sponsors Reached</a></p>
 	@else
-	<!-- <p><a href="{{ URL::to('sponsor/add') }}" class="btn btn-success">Add Sponsor</a></p> -->
-	@endif
+	<p><a href="{{ URL::to('sponsor/add') }}" class="btn btn-success">Sponsor a Friend</a></p>
 	@endif
 	</div>
 </div>

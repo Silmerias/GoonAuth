@@ -23,6 +23,11 @@ return array(
 	'forumUrl' => 'http://forums.goonrathi.com/',
 
 	/**
+	 * Max number of users you may sponsor.
+	 */
+	'maxSponsored' => null,
+
+	/**
 	 * LDAP settings
 	 */
 	'disableLDAP' => false,
