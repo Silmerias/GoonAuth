@@ -7,10 +7,10 @@ class FLJKOrg extends OrgModule
 		if ($this->game->GAbbr !== 'sc')
 			return;
 
-		// $query = '/api/orgs/invite';
-		// $body = '{"symbol":"FLJK","message":"Your application to Goonrathi.com has been approved!  Welcome to FLJK!","nickname":"'.$gameuser->GUCachedName.'"}';
-		$query = '/api/orgs/getOrgMembers';
-		$body = '{"symbol":"FLJK","search":"Nalin","admin_mode":"1"}';
+		$query = '/api/orgs/invite';
+		$body = '{"symbol":"FLJK","message":"Your application to Goonrathi.com has been approved!  Welcome to FLJK!","nickname":"'.$gameuser->GUCachedName.'"}';
+		// $query = '/api/orgs/getOrgMembers';
+		// $body = '{"symbol":"FLJK","search":"Nalin","admin_mode":"1"}';
 
 		// Submit our query.
 		$ret = $this->submit_rsi_query($query, $body);
