@@ -14,7 +14,6 @@ class FLJKOrg extends OrgModule
 
 		// Submit our query.
 		$ret = $this->submit_rsi_query($query, $body);
-		Log::error(implode("\n", $ret));
 		if (!isset($ret) || !is_array($ret))
 			return;
 
@@ -80,7 +79,6 @@ class FLJKOrg extends OrgModule
 		$content = curl_exec($ch);
 		if (curl_error($ch))
 		{
-			Log::error("1");
 			$ret = array('error' => curl_error($ch));
 			$close($ch, $cj);
 			return $ret;
@@ -107,7 +105,6 @@ class FLJKOrg extends OrgModule
 			$content = curl_exec($ch);
 			if (curl_error($ch))
 			{
-				Log::error("2");
 				$ret = array('error' => curl_error($ch));
 				$close($ch, $cj);
 				return $ret;
@@ -131,7 +128,6 @@ class FLJKOrg extends OrgModule
 		$content = curl_exec($ch);
 		if (curl_error($ch))
 		{
-			Log::error("3");
 			$ret = array('error' => curl_error($ch));
 			$close($ch, $cj);
 			return $ret;
