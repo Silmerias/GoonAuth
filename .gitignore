@@ -6,3 +6,4 @@ composer.phar
 .DS_Store
 Thumbs.db
 /app/config/goonauth.php
+/app/config/local

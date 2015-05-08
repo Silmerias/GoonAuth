@@ -32,29 +32,29 @@ Route::group(array('before' => 'auth'), function() {
 	Route::get('user/{id}', 'UserController@showUser');
 	Route::get('user/{id}/notes', 'UserController@showNotes');
 
-	Route::get('games', 'GameController@showGames');
-	Route::get('games/{abbr}', 'GameController@showGame');
-	Route::get('games/{abbr}/link', 'GameController@showGameLink');
-	Route::post('games/{abbr}/link', 'GameController@doGameLink');
-	Route::post('games/{abbr}/link/check-user', 'GameController@postCheckUser');
+	Route::get('games', 'GameController@getRoot');
+	Route::get('games/{abbr}', 'GameController@getGames');
+	Route::get('games/{abbr}/link', 'GameController@getGamesLink');
+	Route::post('games/{abbr}/link', 'GameController@postGamesLink');
+	Route::post('games/{abbr}/link/check-user', 'GameController@postGamesLinkCheckUser');
 
-	Route::get('games/{abbr}/{org}', 'GameController@showGameOrg');
-	Route::get('games/{abbr}/{org}/view', 'GameController@showGameOrgMembers');
-	Route::get('games/{abbr}/{org}/join', 'GameController@showGameOrgJoin');
-	Route::post('games/{abbr}/{org}/join', 'GameController@doGameOrgJoin');
+	Route::get('games/{abbr}/{org}', 'GameController@getGamesOrg');
+	Route::get('games/{abbr}/{org}/join', 'GameController@getGamesOrgJoin');
+	Route::post('games/{abbr}/{org}/join', 'GameController@postGamesOrgJoin');
 
-	Route::post('games/{abbr}/{org}/view', array('before' => 'auth|gameadmin', 'uses' => 'GameController@doGameOrgMembers'));
+	Route::get('games/{abbr}/{org}/view', 'GameController@getGamesOrgView');
+	Route::post('games/{abbr}/{org}/view', array('before' => 'auth|gameadmin', 'uses' => 'GameController@postGamesOrgView'));
+
+	Route::group(array('before' => 'auth|gameadmin', 'prefix' => 'auth'), function() {
+		Route::get('games/{abbr}/{org}', 'GameController@getAuthGamesOrg');
+		Route::post('games/{abbr}/{org}', 'GameController@postAuthGamesOrg');
+	});
 
 	Route::group(array('before' => 'auth|groupadmin', 'prefix' => 'auth'), function() {
 		Route::get('group/{grid}', 'GroupController@showAuth');
 		Route::post('group/{grid}', 'GroupController@doAuth');
 		Route::get('group/{grid}/view', 'GroupController@showGroupMembers');
 		Route::post('group/{grid}/view', 'GroupController@doGroupMembers');
-	});
-
-	Route::group(array('before' => 'auth|gameadmin', 'prefix' => 'auth'), function() {
-		Route::get('games/{abbr}/{org}', 'GameController@showAuth');
-		Route::post('games/{abbr}/{org}', 'GameController@doAuth');
 	});
 
 	Route::group(array('before' => 'sponsor'), function() {

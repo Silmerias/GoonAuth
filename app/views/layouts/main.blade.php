@@ -102,7 +102,6 @@
 			</div>
 		</div>
 
-
 		<div class="container">
 			@yield('content')
 		</div>
@@ -111,7 +110,7 @@
 			<div class="row">
 				<div class="col-md-12 footer">
 				GoonAuth originally created by {{ HTML::link('https://github.com/sct', 'sct', array('target' => '_blank')) }} - {{ HTML::link('https://github.com/sct/GoonAuth', 'GitHub', array('target' => '_blank')) }}<br>
-				v{{ AUTH_VERSION }} - Created by {{ HTML::link('https://github.com/LoneBoco', 'Nalin', array('target' => '_blank')) }} - {{ HTML::link('https://github.com/LoneBoco/GoonAuth', 'GitHub', array('target' => '_blank')) }}
+				FLJK v{{ AUTH_VERSION }} - Created by {{ HTML::link('https://github.com/LoneBoco', 'Nalin', array('target' => '_blank')) }} - {{ HTML::link('https://github.com/LoneBoco/GoonAuth', 'GitHub', array('target' => '_blank')) }}
 				</div>
 			</div>
 		</div>

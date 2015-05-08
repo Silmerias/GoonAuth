@@ -21,6 +21,19 @@ ClassLoader::addDirectories(array(
 
 ));
 
+foreach (File::directories(app_path().'/org_modules') as $d)
+{
+	ClassLoader::addDirectories($d);
+	View::addNamespace('orgs', $d.'/views');
+}
+foreach (File::directories(app_path().'/game_modules') as $d)
+{
+	ClassLoader::addDirectories($d);
+	View::addNamespace('games', $d.'/views');
+}
+View::addNamespace('orgs', app_path().'/views');
+View::addNamespace('games', app_path().'/views');
+
 /*
 |--------------------------------------------------------------------------
 | Application Error Logger

@@ -45,6 +45,12 @@ return array(
 	'ldapGid' => 10001,
 
 	/**
+	 * For the FLJK org_module.
+	 */
+	'rsiUser' => '',
+	'rsiPass' => 'md5-hash-of-password',
+
+	/**
 	 * Forum usergroup for authed goons
 	 */
 	'authId' => 1,
