@@ -8,7 +8,7 @@ class FLJKOrg extends OrgModule
 			return;
 
 		$query = '/api/orgs/invite';
-		$body = '{"symbol":"FLJK","message":"Your application to Goonrathi.com has been approved!  Welcome to FLJK!","nickname":"'.$gameuser->GUCachedName.'"}';
+		$body = '{"symbol":"FLJK","message":"The God-Emperor Lowtax sits immobile upon his Porcelain Throne, his sheer force of will holding back the seething hordes of pubbies that would tear our reality asunder. His gaze has passed over you and, finding you worthy, bids you entrance into our ranks. Welcome, Brother. You are one of us.","nickname":"'.$gameuser->GUCachedName.'"}';
 		// $query = '/api/orgs/getOrgMembers';
 		// $body = '{"symbol":"FLJK","search":"Nalin","admin_mode":"1"}';
 
