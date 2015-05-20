@@ -1,6 +1,9 @@
 <?php
 
-class User extends Eloquent {
+use \Illuminate\Auth\UserInterface;
+
+class User extends Eloquent implements UserInterface
+{
 	protected $table = "User";
 	protected $primaryKey = "UID";
 	public $timestamps = false;
@@ -63,5 +66,32 @@ class User extends Eloquent {
 			return true;
 
 		return false;
+	}
+
+	//-----------------------------------------------------------------------//
+
+	public function getAuthIdentifier()
+	{
+		return $this->UID;
+	}
+
+	public function getAuthPassword()
+	{
+		return null;
+	}
+
+	public function getRememberToken()
+	{
+		return $this->URememberToken;
+	}
+
+	public function setRememberToken($token)
+	{
+		$this->URememberToken = $token;
+	}
+
+	public function getRememberTokenName()
+	{
+		return "URememberToken";
 	}
 }

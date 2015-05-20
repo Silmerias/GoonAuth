@@ -7,23 +7,17 @@ class SponsorController extends BaseController
 {
 	public function showSponsors()
 	{
-		$auth = Session::get('auth');
-
-		$include = array('auth' => $auth);
-		return View::make('sponsor.list', $include);
+		return View::make('sponsor.list');
 	}
 
 	public function showAdd()
 	{
-		$auth = Session::get('auth');
-
-		$include = array('auth' => $auth);
-		return View::make('sponsor.add', $include);
+		return View::make('sponsor.add');
 	}
 
 	public function doAdd()
 	{
-		$auth = Session::get('auth');
+		$auth = Auth::user();
 
 		if (!$auth->canSponsor()) {
 			Session::flash('error', 'You have exceeded your sponsor limit.');

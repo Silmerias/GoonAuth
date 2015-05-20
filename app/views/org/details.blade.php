@@ -1,6 +1,8 @@
 @extends('layouts.main')
 @section('content')
 
+<?php $auth = Auth::user(); ?>
+
 <p><a class="label label-info" href="{{ URL::to('games/'.$game->GAbbr) }}">Back to {{ $game->GName }}</a></p>
 
 <!-- Organization navbar -->

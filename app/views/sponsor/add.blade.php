@@ -1,5 +1,8 @@
 @extends('layouts.main')
 @section('content')
+
+<?php $auth = Auth::user(); ?>
+
 <h1>Sponsor a Friend</h1>
 <div class="row">
 	<div class="col-md-12">

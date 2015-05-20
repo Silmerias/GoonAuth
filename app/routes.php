@@ -15,15 +15,15 @@ Route::controller('register', 'RegisterController');
 
 Route::get('/', array('before' => 'auth', 'uses' => 'UserController@showHome'));
 
+// Force https on production.
 Route::get('login', array('before' => 'secure', function() {
-	if (empty(Session::get('auth')))
-		Session::flush();
-
 	return View::make('user.login');
 }));
-Route::post('login', array('before' => 'secure', 'uses' => 'UserController@doLogin'));
+
+Route::post('login', array('before' => 'secure|csrf', 'uses' => 'UserController@doLogin'));
 
 Route::get('logout', function() {
+	Auth::logout();
 	Session::flush();
 	return Redirect::to('login');
 });

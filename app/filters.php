@@ -13,10 +13,7 @@
 
 App::before(function($request)
 {
-	if (Session::has('authenticated')) {
-		$auth = User::find(Session::get('userid'));
-		Session::put('auth', $auth);
-	}
+	//
 });
 
 
@@ -36,6 +33,7 @@ App::after(function($request, $response)
 |
 */
 
+// Force https on the production site.
 Route::filter('secure', function()
 {
 	if (App::environment('production') && !Request::secure())
@@ -44,13 +42,12 @@ Route::filter('secure', function()
 
 Route::filter('auth', function()
 {
-	if (!Session::has('authenticated'))
-		return Redirect::to('login');
+	if (!Auth::check())
+		return Redirect::guest('login');
 
-	if (empty(Session::has('auth')))
-		return Redirect::to('login');
-
-	if (Session::get('auth')->userstatus()->banned()->count()) {
+	if (Auth::user()->userstatus()->banned()->count())
+	{
+		Auth::logout();
 		Session::flush();
 		return Redirect::to('login')->with('banned', 1);
 	}
@@ -64,29 +61,30 @@ Route::filter('admin', function() {
 });
 
 Route::filter('groupadmin', function($route) {
-	$auth = Session::get('auth');
 	$grid = $route->getParameter('grid');
 	if (!isset($grid))
 		return Redirect::to('/');
 
-	if ($auth->grouproles()->where('GRID', $grid)->count() == 0)
+	if (Auth::user()->grouproles()->where('GRID', $grid)->count() == 0)
 		return Redirect::to('/');
 });
 
 Route::filter('gameadmin', function($route) {
-	$auth = Session::get('auth');
 	$abbr = $route->getParameter('abbr');
 	$org = $route->getParameter('org');
 	if (!isset($abbr) || !isset($org))
 		return Redirect::to('games');
 
 	$gameorg = GameOrg::where('GOAbbr', $org)->first();
-	if ($auth->gameorgroles()->where('GOID', $gameorg->GOID)->count() == 0)
+	if (Auth::user()->gameorgroles()->where('GOID', $gameorg->GOID)->count() == 0)
 		return Redirect::to('games/'.$abbr.'/'.$org);
 });
 
 Route::filter('sponsor', function() {
-	if (!Session::has('auth') || is_null(Session::get('auth')->USAUserID))
+	if (!Auth::check())
+		return Redirect::to('/');
+
+	if (is_null(Auth::user()->USAUserID))
 		return Redirect::to('/');
 });
 
@@ -104,7 +102,8 @@ Route::filter('sponsor', function() {
 
 Route::filter('guest', function()
 {
-	if (Auth::check()) return Redirect::to('/');
+	if (Auth::check())
+		return Redirect::guest('/');
 });
 
 /*

@@ -1,5 +1,8 @@
 @extends('layouts.main')
 @section('content')
+
+<?php $auth = Auth::user(); ?>
+
 <a class="label label-info" href="{{ URL::to('/') }}">Back to Home</a>
 
 <h1>Sponsor List</h1>

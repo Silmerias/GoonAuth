@@ -1,5 +1,8 @@
 @extends('layouts.main')
 @section('content')
+
+<?php $auth = Auth::user(); ?>
+
 <a class="label label-info" href="{{ URL::to('games/'.$game->GAbbr.'/'.$org->GOAbbr) }}">Back to {{ e($org->GOName) }}</a>
 
 <div class="row" style="margin-top: 20px">

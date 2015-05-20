@@ -4,23 +4,21 @@ class GroupController extends BaseController
 {
 	public function showGroup($grid)
 	{
-		$auth = Session::get('auth');
 		$group = Group::find($grid);
 		if (empty($group))
 			return Redirect::to('/');
 
-		$include = array('auth' => $auth, 'group' => $group);
+		$include = array('group' => $group);
 		return View::make('group.list', $include);
 	}
 
 	public function showAuth($grid)
 	{
-		$auth = Session::get('auth');
 		$group = Group::find($grid);
 		if (empty($group))
 			return Redirect::to('/');
 
-		$include = array('auth' => $auth, 'group' => $group);
+		$include = array('group' => $group);
 		return View::make('group.auth', $include);
 	}
 
@@ -35,7 +33,7 @@ class GroupController extends BaseController
 		if (empty($user))
 			return Response::json(array('success' => false, 'message' => 'Invalid data, please relog and try again.'));
 
-		$auth = Session::get('auth');
+		$auth = Auth::user();
 		$ntstatus = NoteType::where('NTCode', 'STAT')->first();
 
 		// Check for auth permission.
@@ -231,7 +229,6 @@ class GroupController extends BaseController
 
 	public function showGroupMembers($grid)
 	{
-		$auth = Session::get('auth');
 		$group = Group::find($grid);
 		if (empty($group))
 			return Redirect::to('/');
@@ -327,13 +324,12 @@ class GroupController extends BaseController
 		if (count($get) !== 0)
 			$members = $members->appends($get);
 
-		$include = array('auth' => $auth, 'group' => $group, 'members' => $members);
+		$include = array('group' => $group, 'members' => $members);
 		return View::make('group.viewmembers', $include);
 	}
 
 	public function doGroupMembers($grid)
 	{
-		$auth = Session::get('auth');
 		$group = Group::find($grid);
 		if (empty($group))
 			return Response::json(array('success' => false, 'message' => 'Invalid request.  Try logging off and back on.'));
@@ -356,7 +352,7 @@ class GroupController extends BaseController
 				{
 					NoteHelper::Add(array(
 						'user' => $user,
-						'createdby' => $auth,
+						'createdby' => Auth::user(),
 						'group' => ($global == true ? null : $group),
 						'type' => $type,
 						'subject' => $subject,

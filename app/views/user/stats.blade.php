@@ -115,8 +115,19 @@
 			<th>Organization</th>
 		</thead>
 		<tbody>
+		<?php
+			$MOD = null;
+			$game = null;
+		?>
 		@foreach ($gameusers as $gameuser)
 			<?php
+				// Create modules for the game.
+				if ($game == null || $game->GAbbr != $gameuser->game->GAbbr)
+				{
+					$MOD = GameModule::CreateInstance($gameuser->game);
+					$game = $gameuser->game;
+				}
+
 				$orgs = '';
 				foreach ($gameuser->gameorgs()->get() as $gameorg)
 					$orgs .= ', '.$gameorg->GOName;
@@ -124,7 +135,7 @@
 			?>
 			<tr>
 				<td>{{ $gameuser->game->GName }}
-				<td>{{ $gameuser->GUCachedName }}</td>
+				<td>{{ $MOD->memberProfile($gameuser) }}</td>
 				<td>{{ $orgs }}</td>
 			</tr>
 		@endforeach

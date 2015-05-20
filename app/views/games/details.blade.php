@@ -1,6 +1,8 @@
 @extends('layouts.main')
 @section('content')
 
+<?php $auth = Auth::user(); ?>
+
 <!-- default, info, warning, danger, success -->
 <p><a class="label label-info" href="{{ URL::to('games') }}">Back to Games</a></p>
 
@@ -27,12 +29,6 @@
 </div>
 
 <p>After you have added a character to this game, click an organization to join it.</p>
-
-<?php /*
-@if ($auth->gameorgroles()->where('GID', $game->GID)->count() != 0)
-<p style="margin-top: 20px"><a class="btn btn-danger" href="{{ URL::to('auth/'.Request::path()) }}">Authorize Members</a></p>
-@endif
-*/ ?>
 
 <h1>{{ e($game->GName) }} Character List</h1>
 <div class="row">

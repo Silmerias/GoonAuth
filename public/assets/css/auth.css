@@ -24,6 +24,14 @@ body {
   font-weight: normal;
 }
 
+.form-signin .persist {
+  padding: 0px 0px 20px 20px;
+}
+
+.form-signin .persist input {
+  margin-right: 10px;
+}
+
 .form-control {
   position: relative;
   -webkit-box-sizing: border-box;

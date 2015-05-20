@@ -4,28 +4,24 @@ class GameController extends BaseController
 {
 	public function getRoot()
 	{
-		$auth = Session::get('auth');
-
-		$include = array('auth' => $auth);
+		$include = array('auth' => Auth::user());
 		return View::make('games::games.list', $include);
 	}
 
 	public function getGames($abbr)
 	{
-		$auth = Session::get('auth');
 		$game = Game::where('GAbbr', $abbr)->first();
 		if (empty($game))
 			return Redirect::to('games');
 
 		$MOD = GameModule::CreateInstance($game);
 
-		$include = array('auth' => $auth, 'game' => $game);
+		$include = array('game' => $game);
 		return $MOD->makeView('games::games.details', $include);
 	}
 
 	public function getGamesLink($abbr)
 	{
-		$auth = Session::get('auth');
 		$game = Game::where('GAbbr', $abbr)->first();
 		if (empty($game))
 			return Redirect::to('games');
@@ -35,13 +31,13 @@ class GameController extends BaseController
 
 		$MOD = GameModule::CreateInstance($game);
 
-		$include = array('auth' => $auth, 'game' => $game, 'token' => $token);
+		$include = array('game' => $game, 'token' => $token);
 		return $MOD->makeView('games::games.link', $include);
 	}
 
 	public function postGamesLink($abbr)
 	{
-		$auth = Session::get('auth');
+		$auth = Auth::user();
 		$game = Game::where('GAbbr', $abbr)->first();
 		if (empty($game))
 			return Redirect::to('games');
@@ -81,13 +77,13 @@ class GameController extends BaseController
 		// Inform the GameModule that the user was added.
 		$MOD->memberAdded($user);
 
-		$include = array('auth' => $auth, 'game' => $game);
+		$include = array('game' => $game);
 		return $MOD->makeView('games::games.complete', $include);
 	}
 
 	public function postGamesLinkCheckUser($abbr)
 	{
-		$auth = Session::get('auth');
+		$auth = Auth::user();
 		$game = Game::where('GAbbr', $abbr)->first();
 		if (empty($game))
 			return array('valid' => 'false', 'message' => 'Invalid game.');
@@ -108,7 +104,6 @@ class GameController extends BaseController
 
 	public function getGamesOrg($abbr, $org)
 	{
-		$auth = Session::get('auth');
 		$game = Game::where('GAbbr', $abbr)->first();
 		$org = GameOrg::where('GOAbbr', $org)->first();
 		if (empty($game) || empty($org))
@@ -116,13 +111,12 @@ class GameController extends BaseController
 
 		$MOD = OrgModule::CreateInstance($org, $game);
 
-		$include = array('auth' => $auth, 'game' => $game, 'org' => $org);
+		$include = array('game' => $game, 'org' => $org);
 		return $MOD->makeView('orgs::org.details', $include);
 	}
 
 	public function getGamesOrgJoin($abbr, $org)
 	{
-		$auth = Session::get('auth');
 		$game = Game::where('GAbbr', $abbr)->first();
 		$org = GameOrg::where('GOAbbr', $org)->first();
 		if (empty($game) || empty($org))
@@ -130,13 +124,12 @@ class GameController extends BaseController
 
 		$MOD = OrgModule::CreateInstance($org, $game);
 
-		$include = array('auth' => $auth, 'game' => $game, 'org' => $org);
+		$include = array('game' => $game, 'org' => $org);
 		return $MOD->makeView('orgs::org.join', $include);
 	}
 
 	public function postGamesOrgJoin($abbr, $org)
 	{
-		$auth = Session::get('auth');
 		$game = Game::where('GAbbr', $abbr)->first();
 		$org = GameOrg::where('GOAbbr', $org)->first();
 		$gameuser = GameUser::find(Input::get('character'));
@@ -170,7 +163,6 @@ class GameController extends BaseController
 
 	public function getGamesOrgView($abbr, $org)
 	{
-		$auth = Session::get('auth');
 		$game = Game::where('GAbbr', $abbr)->first();
 		$org = GameOrg::where('GOAbbr', $org)->first();
 		if (empty($game) || empty($org))
@@ -227,13 +219,12 @@ class GameController extends BaseController
 
 		$MOD = OrgModule::CreateInstance($org, $game);
 
-		$include = array('auth' => $auth, 'game' => $game, 'org' => $org, 'members' => $members);
+		$include = array('game' => $game, 'org' => $org, 'members' => $members);
 		return $MOD->makeView('orgs::org.viewmembers', $include);
 	}
 
 	public function postGamesOrgView($abbr, $org)
 	{
-		$auth = Session::get('auth');
 		$game = Game::where('GAbbr', $abbr)->first();
 		$org = GameOrg::where('GOAbbr', $org)->first();
 		if (empty($game) || empty($org))
@@ -257,7 +248,7 @@ class GameController extends BaseController
 				{
 					NoteHelper::Add(array(
 						'user' => $user,
-						'createdby' => $auth,
+						'createdby' => Auth::user(),
 						'org' => ($global == true ? null : $org),
 						'type' => $type,
 						'subject' => $subject,
@@ -273,7 +264,6 @@ class GameController extends BaseController
 
 	public function getAuthGamesOrg($abbr, $org)
 	{
-		$auth = Session::get('auth');
 		$game = Game::where('GAbbr', $abbr)->first();
 		$org = GameOrg::where('GOAbbr', $org)->first();
 		if (empty($game) || empty($org))
@@ -281,7 +271,7 @@ class GameController extends BaseController
 
 		$MOD = OrgModule::CreateInstance($org, $game);
 
-		$include = array('auth' => $auth, 'game' => $game, 'org' => $org);
+		$include = array('game' => $game, 'org' => $org);
 		return $MOD->makeView('orgs::org.auth', $include);
 	}
 
@@ -293,7 +283,7 @@ class GameController extends BaseController
 		$gameuser = GameUser::find(Input::get('id'));
 		$user = User::find($gameuser->UID);
 
-		$auth = Session::get('auth');
+		$auth = Auth::user();
 		$ntstatus = NoteType::where('NTCode', 'STAT')->first();
 
 		$MOD = OrgModule::CreateInstance($org, $game);

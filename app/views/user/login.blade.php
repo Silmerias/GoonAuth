@@ -24,8 +24,10 @@
 		</div>
 	@endif
 
+	<input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
 	<input type="text" name="goonid" class="form-control" placeholder="Goon ID" required="" autofocus="">
 	<input type="password" name="password" class="form-control" placeholder="Password" required="">
+	<label class="persist"><input type="checkbox" name="persist">Remember me?</label>
 	<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
 </form>
 @stop

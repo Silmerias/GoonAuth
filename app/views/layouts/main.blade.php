@@ -56,7 +56,7 @@
 				</div>
 				<div class="top-nav-bar navbar-collapse collapse">
 					<ul class="nav navbar-nav">
-						@if (Session::has('authenticated'))
+						@if (Auth::check())
 							<li{{ Request::is('/') || Request::is('home') ? ' class="active"' : '' }}><a href="{{ URL::to('/') }}">Home</a></li>
 
 							<li class="dropdown{{ Request::is('games') || Request::is('games/*') ? ' active' : '' }}">
@@ -76,17 +76,17 @@
 								</ul>
 							</li>
 
-							@if (!is_null(Session::get('auth')->USAUserID))
+							@if (!is_null(Auth::user()->USAUserID))
 								<li{{ Request::is('sponsor') || Request::is('sponsor/*') ? ' class="active"' : '' }}><a href="{{ URL::to('sponsor') }}">Sponsor</a></li>
 							@endif
 						@endif
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
-						@if (Session::has('authenticated'))
+						@if (Auth::check())
 							<li class="dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ Session::get('displayUsername') }} <b class="caret"></b></a>
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ Auth::user()->UGoonID }} <b class="caret"></b></a>
 								<ul class="dropdown-menu">
-									@if (Session::get('auth')->is_admin)
+									@if (Auth::user()->is_admin)
 									<li><a href="{{ URL::to('admin') }}">Admin</a></li>
 									@endif
 									<li><a href="{{ URL::to('logout') }}">Logout</a></li>

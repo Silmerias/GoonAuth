@@ -104,6 +104,20 @@ App::down(function()
 
 require app_path().'/filters.php';
 
+
+/*
+|--------------------------------------------------------------------------
+| Extend the Authentication system
+|--------------------------------------------------------------------------
+|
+| Use our custom LDAP authentication system.
+|
+*/
+Auth::extend('LDAP', function($app) {
+	return new LDAPUserProvider;
+});
+
+
 /*
 | GoonAUth Version Constants
  */

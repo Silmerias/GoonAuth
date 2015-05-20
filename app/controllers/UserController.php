@@ -5,42 +5,31 @@ class UserController extends BaseController
 
 	public function showHome()
 	{
-		$auth = Session::get('auth');
-
-		$include = array('auth' => $auth);
-		return View::make('user.home', $include);
+		return View::make('user.home');
 	}
 
 	public function doLogin()
 	{
-		$valid = LDAP::PasswordCheck(Input::get('goonid'), Input::get('password'));
-		if ($valid === false)
-		{
-			Session::flash('error', 'Invalid username/password.');
-			return View::make('user.login');
-		}
+		$credentials = array(
+			'username' => Input::get('goonid'),
+			'password' => Input::get('password')
+		);
 
-		$user = User::where('UGoonID', Input::get('goonid'))->first();
-		if (!isset($user))
-		{
-			Session::flash('error', 'This user is not in our system.');
-			return View::make('user.login');
-		}
+		// Do the authentication!
+		if (Auth::attempt($credentials, Input::has('persist') ? true : false))
+			return Redirect::intended('/');
 
-		Session::put('authenticated', true);
-		Session::put('userid', $user->UID);
-		Session::put('displayUsername', Input::get('goonid'));
-
-		return Redirect::to('/');
+		// Uh oh.
+		Session::flash('error', 'Invalid username/password.');
+		return View::make('user.login');
 	}
 
 	public function showUser($id)
 	{
-		$auth = Session::get('auth');
 		$user = User::find($id);
 		$notes = $this->getNotes($user);
 
-		$include = array('auth' => $auth, 'user' => $user, 'notes' => $notes);
+		$include = array('user' => $user, 'notes' => $notes);
 		return View::make('user.stats', $include);
 	}
 
@@ -55,7 +44,7 @@ class UserController extends BaseController
 
 	public function getNotes($user)
 	{
-		$auth = Session::get('auth');
+		$auth = Auth::user();
 
 		// Get all groups the user has permissions in.
 		$groups = DB::table('Group')

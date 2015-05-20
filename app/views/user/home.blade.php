@@ -1,6 +1,8 @@
 @extends('layouts.main')
 @section('content')
 
+<?php $auth = Auth::user(); ?>
+
 <?php
 $perms = new UserPerm($auth);
 $pending = UserStatus::pending()->first();
