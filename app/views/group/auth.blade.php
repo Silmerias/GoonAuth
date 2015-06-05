@@ -28,6 +28,7 @@
 			<th>Sponsor</th>
 			<th style="width: 175px;">SA Reg Date</th>
 			<th style="width: 125px;">SA Post Count</th>
+			<th style="width: 40px;"></th>
 			<th style="width: 125px;">Actions</th>
 		</thead>
 		@foreach ($query->get() as $user)
@@ -43,6 +44,11 @@
 			@endif
 			<td>{{ $user->USARegDate }}</td>
 			<td>{{ $user->USACachedPostCount }}</td>
+			<td>
+				<button type="button" class="btn btn-note" data-toggle="popover" data-uid="{{ $user->UID }}">
+					<span class="glyphicon glyphicon-envelope" aria-hidden="true" style="color: goldenrod"></span>
+				</button>
+			</td>
 			<td>
 				<button type="button" class="btn btn-success" data-auth="true" data-uid="{{ $user->UID }}">Y</button>
 				<button type="button" class="btn btn-danger" data-auth="false" data-uid="{{ $user->UID }}">N</button>
@@ -217,6 +223,28 @@ $('#reject-btn').click(function (event) {
 	});
 
 	return false;
+});
+
+$('[data-toggle="popover"]').click(function() {
+	var d = $(this);
+	var uid = d.data('uid');
+
+	d.off('click');
+	d.off('mouseenter mouseleave');
+
+	$.ajax({
+		url: '/user/'+uid+'/notes',
+		type: 'get'
+	})
+	.done(function(ret) {
+		d.popover({
+			trigger: 'focus',
+			html: 'true',
+			placement: 'left',
+			template: '<div class="popover note-popover"><div class="popover-content"></div></div>',
+			content: ret
+		}).popover('show');
+	});
 });
 
 </script>
