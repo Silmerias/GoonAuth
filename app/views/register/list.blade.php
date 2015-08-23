@@ -10,5 +10,7 @@
 	Affiliate<br><span>(a member of an affiliated organization)</span>
 	<br><span>(not yet implemented)</span>
 	</a>
+	<div style="clear:both;"></div>
+	<p>Are you trying to <a href="register/reapply">reapply</a>?</p>
 </div>
 @stop

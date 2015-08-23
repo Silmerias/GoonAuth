@@ -18,6 +18,11 @@ class RegisterController extends BaseController
 		return View::make('register.goon');
 	}
 
+	public function getReapply()
+	{
+		return View::make('register.reapply');
+	}
+
 	public function getGoonSponsored()
 	{
 		return View::make('register.goon-sponsored');
@@ -41,7 +46,7 @@ class RegisterController extends BaseController
 		// See of the GoonID exists.
 		$count = User::join('UserStatus', 'UserStatus.USID', '=', 'User.USID')
 			->where('UGoonID', $goonid)
-			->where('USCode', '<>', 'REJE')
+			//->where('USCode', '<>', 'REJE')
 			->count();
 
 		if ($count !== 0)
@@ -147,6 +152,11 @@ class RegisterController extends BaseController
 		if (Input::has('goonid'))
 		{
 			$valid = $this->verifyGoonID(Input::get('goonid'));
+
+			// If we are reapplying, allow an in use error to go through.
+			if (Input::has('reapply') && $valid === -3)
+				$valid = 0;
+
 			switch ($valid)
 			{
 				case 0: return Response::json(array('valid' => 'true', 'message' => 'Goon ID is available.'));
@@ -154,13 +164,18 @@ class RegisterController extends BaseController
 				default:
 				case -1: return Response::json(array('valid' => 'false', 'message' => 'Invalid GoonID.'));
 				case -2: return Response::json(array('valid' => 'false', 'message' => 'Your GoonID may only contain alpha-numeric, underscore, and hyphen characters.'));
-				case -3: return Response::json(array('valid' => 'false', 'message' => 'That GoonID is already in use.'));
+				case -3: return Response::json(array('valid' => 'false', 'message' => 'That GoonID is already in use. Are you trying to <a href="reapply">reapply</a>?'));
 			}
 		}
 
 		if (Input::has('email'))
 		{
 			$valid = $this->verifyEmail(Input::get('email'));
+
+			// If we are reapplying, allow an in use error to go through.
+			if (Input::has('reapply') && $valid === -3)
+				$valid = 0;
+
 			switch ($valid)
 			{
 				case 0: return Response::json(array('valid' => 'true', 'message' => 'E-mail is acceptable.'));
@@ -168,7 +183,7 @@ class RegisterController extends BaseController
 				default:
 				case -1: return Response::json(array('valid' => 'false', 'message' => 'Invalid email.'));
 				case -2: return Response::json(array('valid' => 'false', 'message' => 'This is not a valid e-mail address.  Try again.'));
-				case -3: return Response::json(array('valid' => 'false', 'message' => 'That e-mail is already in use.'));
+				case -3: return Response::json(array('valid' => 'false', 'message' => 'That e-mail is already in use. Are you trying to <a href="reapply">reapply</a>?'));
 			}
 		}
 
@@ -197,6 +212,27 @@ class RegisterController extends BaseController
 
 		Session::put('register-goonid', Input::get('goonid'));
 		Session::put('register-email', Input::get('email'));
+		Session::forget('register-reapply');
+
+		$token = uniqid('FART');
+		Session::put('token', $token);
+
+		return View::make('register.link', array('token' => $token));
+	}
+
+	public function postReapply()
+	{
+		$goonid = $this->verifyGoonID(Input::get('goonid'));
+		if ($goonid !== 0 && $goonid !== -3)
+			return Redirect::back()->with('error', 'There was a problem with your entered GoonID');
+
+		$email = $this->verifyEmail(Input::get('email'));
+		if ($email !== 0 && $email !== -3)
+			return Redirect::back()->with('error', 'There was a problem with your entered email');
+
+		Session::put('register-goonid', Input::get('goonid'));
+		Session::put('register-email', Input::get('email'));
+		Session::put('register-reapply', 'true');
 
 		$token = uniqid('FART');
 		Session::put('token', $token);
@@ -232,6 +268,7 @@ class RegisterController extends BaseController
 	{
 		$goonid = Session::get('register-goonid');
 		$email = Session::get('register-email');
+		$reapply = Session::has('register-reapply');
 		$token = Session::get('token');
 		$sa_name = Input::get('sa_username');
 
@@ -241,7 +278,7 @@ class RegisterController extends BaseController
 		if (!isset($sa_name))
 			return Redirect::back()->with('error', 'You must enter your SA Username.');
 
-		if (User::where('USACachedName', $sa_name)->count() !== 0)
+		if (User::where('USACachedName', $sa_name)->count() !== 0 && $reapply === false)
 			return Redirect::back()->with('error', 'That SA Username has already been registered.');
 
 		$cookieJar = new ArrayCookieJar();
@@ -318,6 +355,7 @@ class RegisterController extends BaseController
 	private function createUser($email, $goonid, $sa_userid, $sa_regdate, $sa_name, $sa_postcount, $comment)
 	{
 		$group = Group::where('GRCode', 'SA')->first();
+		$reapply = Session::has('register-reapply');
 
 		// Grab IP.
 		$ip = inet_pton($_SERVER['REMOTE_ADDR']);
@@ -327,6 +365,12 @@ class RegisterController extends BaseController
 
 		// Success!  Let's create our user now.
 		$user = new User;
+
+		// If this is a reapply, our user already exists, so instead grab that.
+		if ($reapply === true)
+			$user = User::where('UGoonID', $goonid)->first();
+
+		// Save our values.
 		$user->USID = UserStatus::pending()->first()->USID;
 		$user->UIPAddress = $ip;
 		$user->UEmail = $email;
