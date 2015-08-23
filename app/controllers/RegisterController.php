@@ -52,7 +52,7 @@ class RegisterController extends BaseController
 			return 0;
 
 		// Check to see if they were rejected.
-		$rej = UserStatus::where('USCode', 'REJE')->first;
+		$rej = UserStatus::where('USCode', 'REJE')->first();
 		if ($user->USID == $rej->USID)
 			return -4;
 
@@ -135,7 +135,7 @@ class RegisterController extends BaseController
 			return 0;
 
 		// Check to see if they were rejected.
-		$rej = UserStatus::where('USCode', 'REJE')->first;
+		$rej = UserStatus::where('USCode', 'REJE')->first();
 		if ($user->USID == $rej->USID)
 			return -4;
 
