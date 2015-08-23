@@ -44,15 +44,20 @@ class RegisterController extends BaseController
 			return -2;
 
 		// See of the GoonID exists.
-		$count = User::join('UserStatus', 'UserStatus.USID', '=', 'User.USID')
-			->where('UGoonID', $goonid)
-			//->where('USCode', '<>', 'REJE')
-			->count();
+		$user = User::join('UserStatus', 'UserStatus.USID', '=', 'User.USID')
+			->where('UGoonID', $goonid)->first();
 
-		if ($count !== 0)
-			return -3;
+		// User doesn't exist.
+		if (empty($user))
+			return 0;
 
-		return 0;
+		// Check to see if they were rejected.
+		$rej = UserStatus::where('USCode', 'REJE')->first;
+		if ($user->USID == $rej->USID)
+			return -4;
+
+		// Exists and aren't rejected.
+		return -3;
 	}
 
 	private function verifyEmail($email)
@@ -122,14 +127,19 @@ class RegisterController extends BaseController
 			return -2;
 
 		// See of the email exists.
-		$count = User::join('UserStatus', 'UserStatus.USID', '=', 'User.USID')
-			->where('UEmail', $email)
-			->where('USCode', '<>', 'REJE')
-			->count();
+		$user = User::join('UserStatus', 'UserStatus.USID', '=', 'User.USID')
+			->where('UEmail', $email)->first;
 
-		if ($count !== 0)
-			return -3;
+		// User doesn't exist.
+		if (empty($user))
+			return 0;
 
+		// Check to see if they were rejected.
+		$rej = UserStatus::where('USCode', 'REJE')->first;
+		if ($user->USID == $rej->USID)
+			return -4;
+
+		// Exists and aren't rejected.
 		return 0;
 	}
 
@@ -154,7 +164,7 @@ class RegisterController extends BaseController
 			$valid = $this->verifyGoonID(Input::get('goonid'));
 
 			// If we are reapplying, allow an in use error to go through.
-			if (Input::has('reapply') && $valid === -3)
+			if (Input::has('reapply') && $valid === -4)
 				$valid = 0;
 
 			switch ($valid)
@@ -164,7 +174,8 @@ class RegisterController extends BaseController
 				default:
 				case -1: return Response::json(array('valid' => 'false', 'message' => 'Invalid GoonID.'));
 				case -2: return Response::json(array('valid' => 'false', 'message' => 'Your GoonID may only contain alpha-numeric, underscore, and hyphen characters.'));
-				case -3: return Response::json(array('valid' => 'false', 'message' => 'That GoonID is already in use. Are you trying to <a href="reapply">reapply</a>?'));
+				case -3: return Response::json(array('valid' => 'false', 'message' => 'That GoonID is already in use.'));
+				case -4: return Response::json(array('valid' => 'false', 'message' => 'That GoonID is already in use. Are you trying to <a href="reapply">reapply</a>?'));
 			}
 		}
 
@@ -173,7 +184,7 @@ class RegisterController extends BaseController
 			$valid = $this->verifyEmail(Input::get('email'));
 
 			// If we are reapplying, allow an in use error to go through.
-			if (Input::has('reapply') && $valid === -3)
+			if (Input::has('reapply') && $valid === -4)
 				$valid = 0;
 
 			switch ($valid)
@@ -183,7 +194,8 @@ class RegisterController extends BaseController
 				default:
 				case -1: return Response::json(array('valid' => 'false', 'message' => 'Invalid email.'));
 				case -2: return Response::json(array('valid' => 'false', 'message' => 'This is not a valid e-mail address.  Try again.'));
-				case -3: return Response::json(array('valid' => 'false', 'message' => 'That e-mail is already in use. Are you trying to <a href="reapply">reapply</a>?'));
+				case -3: return Response::json(array('valid' => 'false', 'message' => 'That e-mail is already in use.'));
+				case -4: return Response::json(array('valid' => 'false', 'message' => 'That e-mail is already in use. Are you trying to <a href="reapply">reapply</a>?'));
 			}
 		}
 
@@ -223,11 +235,11 @@ class RegisterController extends BaseController
 	public function postReapply()
 	{
 		$goonid = $this->verifyGoonID(Input::get('goonid'));
-		if ($goonid !== 0 && $goonid !== -3)
+		if ($goonid !== 0 && $goonid !== -4)
 			return Redirect::back()->with('error', 'There was a problem with your entered GoonID');
 
 		$email = $this->verifyEmail(Input::get('email'));
-		if ($email !== 0 && $email !== -3)
+		if ($email !== 0 && $email !== -4)
 			return Redirect::back()->with('error', 'There was a problem with your entered email');
 
 		Session::put('register-goonid', Input::get('goonid'));
