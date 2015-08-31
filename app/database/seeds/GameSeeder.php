@@ -14,7 +14,8 @@ class GameSeeder extends Seeder {
 			'GName' => 'Star Citizen',
 			'GLDAPGroup' => null,	// SC
 			'GEditProfileURL' => 'https://robertsspaceindustries.com/account/profile',
-			'GProfileURL' => 'https://robertsspaceindustries.com/citizens/%s'
+			'GProfileURL' => 'https://robertsspaceindustries.com/citizens/%s',
+			'GModulePHP' => 'StarCitizenGame'
 		));
 
 		$mwo = Game::create(array(
@@ -23,14 +24,15 @@ class GameSeeder extends Seeder {
 			'GLDAPGroup' => null,	// MWO
 			'GEditProfileURL' => 'http://mwomercs.com/forums/index.php?app=core&module=usercp&tab=core',
 			'GProfileURL' => 'http://mwomercs.com/forums/user/%d-%s',
-			'GRequireValidation' => false
+			'GModulePHP' => 'MWOGame'
 		));
 
 		$fljk = GameOrg::create(array(
 			'GOOwnerID' => $admin->UID,
 			'GOAbbr' => 'FLJK',
 			'GOName' => 'Goonrathi',
-			'GOLDAPGroup' => 'FLJK'
+			'GOLDAPGroup' => 'FLJK',
+			'GOModulePHP' => 'FLJKOrg'
 		));
 
 		$wol = GameOrg::create(array(
@@ -40,8 +42,8 @@ class GameSeeder extends Seeder {
 			'GOLDAPGroup' => 'WOL'
 		));
 
-		$sc->orgs()->attach($sc->GID);
-		$mwo->orgs()->attach($mwo->GID);
+		$sc->orgs()->attach($fljk->GOID);
+		$mwo->orgs()->attach($wol->GOID);
 
 		$admin->gameorgroles()->attach($roll, array('GOID' => $sc->GID));
 		$admin->gameorgroles()->attach($roll, array('GOID' => $mwo->GID));
