@@ -36,6 +36,29 @@ class GroupController extends BaseController
 		$auth = Auth::user();
 		$ntstatus = NoteType::where('NTCode', 'STAT')->first();
 
+		// Add note action.
+		if ($action === 'addnote')
+		{
+			$type = NoteType::find(Input::get('type'));
+			$subject = Input::get('subject');
+			$message = Input::get('message');
+			$global = Input::get('global');
+
+			if (strlen($message) != 0)
+			{
+				NoteHelper::Add(array(
+					'user' => $user,
+					'createdby' => Auth::user(),
+					'group' => ($global == true ? null : $group),
+					'type' => $type,
+					'subject' => $subject,
+					'message' => $message,
+				));
+			}
+
+			return Response::json(array('success' => true));
+		}
+
 		// Check for auth permission.
 		$perms = new UserPerm($auth);
 		if ($perms->group()->auth == false)

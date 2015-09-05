@@ -178,6 +178,7 @@ body {
 }
 
 .btn-note {
+  padding-left: 7px;
   width: 30px;
   height: 30px;
 }
