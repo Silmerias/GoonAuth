@@ -128,7 +128,7 @@ class RegisterController extends BaseController
 
 		// See of the email exists.
 		$user = User::join('UserStatus', 'UserStatus.USID', '=', 'User.USID')
-			->where('UEmail', $email)->first;
+			->where('UEmail', $email)->first();
 
 		// User doesn't exist.
 		if (empty($user))

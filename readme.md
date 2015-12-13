@@ -38,9 +38,12 @@ See the pre-existing modules for examples on how views and e-mails can be altere
 ## How to install
 
 ### Download dependencies
+* apache2
+* php5
 * php5-mcrypt
 * php5-curl
 * php5-ldap
+* libapache2-mod-php5
 * apache2 mod_rewrite
 * composer
 ```

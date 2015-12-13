@@ -1,6 +1,7 @@
 @extends('layouts.main')
 @section('content')
 
+<?php $auth = Auth::user(); ?>
 <?php $pending = UserStatus::pending()->first() ?>
 
 <!-- default, info, warning, danger, success -->
@@ -23,12 +24,12 @@
 
 	<table class="table">
 		<thead>
-			<th style="width: 150px;">Goon ID</th>
+			<th>Goon ID</th>
 			<th>SA Name</th>
 			<th>Sponsor</th>
 			<th style="width: 175px;">SA Reg Date</th>
 			<th style="width: 125px;">SA Post Count</th>
-			<th style="width: 40px;"></th>
+			<th style="width: 140px;"></th>
 			<th style="width: 125px;">Actions</th>
 		</thead>
 		@foreach ($query->get() as $user)
@@ -48,10 +49,11 @@
 				<button type="button" class="btn btn-note" data-toggle="popover" data-uid="{{ $user->UID }}">
 					<span class="glyphicon glyphicon-envelope" aria-hidden="true" style="color: goldenrod"></span>
 				</button>
+				<button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#modal-Note" data-goonid="{{ e($user->UGoonID) }}" data-uid="{{ $user->UID }}" data-url="{{ URL::to(Request::path()) }}">Add Note</button>
 			</td>
 			<td>
-				<button type="button" class="btn btn-success" data-auth="true" data-uid="{{ $user->UID }}">Y</button>
-				<button type="button" class="btn btn-danger" data-auth="false" data-uid="{{ $user->UID }}">N</button>
+				<button type="button" class="btn btn-auth btn-success" data-auth="true" data-uid="{{ $user->UID }}">Y</button>
+				<button type="button" class="btn btn-auth btn-danger" data-auth="false" data-uid="{{ $user->UID }}">N</button>
 			</td>
 		</tr>
 		@endforeach
@@ -107,6 +109,63 @@
 	</div>
 </div>
 
+<div class="modal fade" id="modal-Note" tabindex="-1" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Add Note</h4>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<label for="note-type" class="control-label">Note Type:</label>
+					<select id="note-type" class="form-control">
+					@foreach (NoteType::with(array('roles.groupusers' => function($q) use($auth, $group) { $q->where('GroupAdmin.UID', $auth->UID)->where('GroupAdmin.GRID', $group->GRID); }))->where('NTSystemUseOnly', 'false')->get() as $nt)
+						<option value="{{ $nt->NTID }}" color="{{ $nt->NTColor }}">{{ $nt->NTName }}</option>
+					@endforeach
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="note-subject" class="control-label">Subject:</label>
+					<input type="text" id="note-subject" class="form-control" placeholder="Note subject (optional)"></textarea>
+				</div>
+				<div class="form-group">
+					<label for="note-text" class="control-label">Message:</label>
+					<textarea id="note-text" class="form-control" placeholder="Type your note here"></textarea>
+				</div>
+				<div class="input-group">
+					<span class="input-group-addon">
+						<input id="note-global" type="checkbox">
+					</span>
+					<label for="note-global" class="form-control text-sm">Global note?</label>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div id="note-preview" class="note" style="background-color: white">
+					<p class="note-header">
+						<span class="note-type">General</span>
+						<span class="note-user">- System</span>
+						<span class="note-global">[Global]</span>
+					</p>
+					<p class="note-subject"></p>
+					<p class="note-comment"></p>
+					<p class="note-footer">By 
+						<a href="{{ URL::to('user/'.$auth->UID) }}" target="_blank">{{ e($auth->UGoonID) }}</a>
+						- {{ Carbon::now()->toDateTimeString() }}
+					</p>
+				</div>
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" id="note-add" class="btn btn-primary">Add Note</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+{{ HTML::script('assets/js/goonauth-addnote.js') }}
+
 <script>
 
 
@@ -131,7 +190,7 @@ $('#modal-Reject').on('show.bs.modal', function (event) {
 	modal.find('.modal-body textarea').val('');
 });
 
-$('.table button').click(function (event) {
+$('.table button.btn-auth').click(function (event) {
 	var btn = $(this);
 
 	var auth = btn.data('auth');
