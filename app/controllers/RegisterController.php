@@ -357,8 +357,10 @@ class RegisterController extends BaseController
 				return Redirect::back()->with('error', 'Could not find the token in your profile.');
 			}
 		}
-		catch (ClientErrorResponseException $ex)
+		catch (Exception $ex)
 		{
+			Log::error(str_repeat('-', 40));
+			Log::error($ex);
 			return Redirect::back()->with('error', 'An unknown error has occured. Please try again.');
 		}
 		return Redirect::back();
@@ -420,7 +422,7 @@ class RegisterController extends BaseController
 		}
 		catch (Exception $e)
 		{
-			error_log('E-mail error: '.$e->getMessage());
+			throw $e;
 		}
 
 		return $user;
