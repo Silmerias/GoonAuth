@@ -28,7 +28,15 @@ class StarCitizenGame extends GameModule
 		);
 
 		// Grab our site profile.
-		$page = file_get_contents('https://robertsspaceindustries.com/citizens/' . urlencode($username));
+		$page = FALSE;
+		try
+		{
+			$page = file_get_contents('https://robertsspaceindustries.com/citizens/' . urlencode($username));
+		}
+		catch (Exception $e)
+		{}
+
+		// Failure.  Was probably a 404.  Abort now.
 		if ($page === FALSE)
 			return $ret;
 
@@ -57,7 +65,15 @@ class StarCitizenGame extends GameModule
 			$ret['regdate'] = Carbon::createFromFormat('M j, Y', $matches[1]);
 
 		// Grab the forum profile now so we can get our post count.
-		$page = file_get_contents('https://forums.robertsspaceindustries.com/profile/' . urlencode($username));
+		$page = FALSE;
+		try
+		{
+			$page = file_get_contents('https://forums.robertsspaceindustries.com/profile/' . urlencode($username));
+		}
+		catch (Exception $e)
+		{}
+
+		// Failure.  Was probably a 404.  Abort now.
 		if ($page === FALSE)
 			return $ret;
 

@@ -12,7 +12,7 @@ class GameSeeder extends Seeder {
 		$sc = Game::create(array(
 			'GAbbr' => 'sc',
 			'GName' => 'Star Citizen',
-			'GLDAPGroup' => null,	// SC
+			'GLDAPGroup' => 'GameStarCitizen',	// SC
 			'GEditProfileURL' => 'https://robertsspaceindustries.com/account/profile',
 			'GProfileURL' => 'https://robertsspaceindustries.com/citizens/%s',
 			'GModulePHP' => 'StarCitizenGame'
@@ -21,7 +21,7 @@ class GameSeeder extends Seeder {
 		$mwo = Game::create(array(
 			'GAbbr' => 'mwo',
 			'GName' => 'MechWarrior Online',
-			'GLDAPGroup' => null,	// MWO
+			'GLDAPGroup' => 'GameMechWarriorOnline',	// MWO
 			'GEditProfileURL' => 'http://mwomercs.com/forums/index.php?app=core&module=usercp&tab=core',
 			'GProfileURL' => 'http://mwomercs.com/forums/user/%d-%s',
 			'GModulePHP' => 'MWOGame'
@@ -31,7 +31,7 @@ class GameSeeder extends Seeder {
 			'GOOwnerID' => $admin->UID,
 			'GOAbbr' => 'FLJK',
 			'GOName' => 'Goonrathi',
-			'GOLDAPGroup' => 'FLJK',
+			'GOLDAPGroup' => 'OrgFLJK',
 			'GOModulePHP' => 'FLJKOrg'
 		));
 
@@ -39,7 +39,7 @@ class GameSeeder extends Seeder {
 			'GOOwnerID' => $admin->UID,
 			'GOAbbr' => 'WoL',
 			'GOName' => 'Word of Lowtax',
-			'GOLDAPGroup' => 'WOL'
+			'GOLDAPGroup' => 'OrgWOL'
 		));
 
 		$sc->orgs()->attach($fljk->GOID);

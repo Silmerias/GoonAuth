@@ -121,6 +121,8 @@ Route::filter('csrf', function()
 {
 	if (Session::token() != Input::get('_token'))
 	{
-		throw new Illuminate\Session\TokenMismatchException;
+		Auth::logout();
+		Session::flush();
+		return Redirect::guest('login');
 	}
 });

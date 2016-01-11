@@ -33,6 +33,14 @@ class RegisterController extends BaseController
 		return View::make('register.affiliate');
 	}
 
+	public function getLink()
+	{
+		$token = Session::get('token');
+		if (!isset($token) || $token === null)
+			return Redirect::to('/register/goon');
+		return View::make('register.link', array('token' => $token));
+	}
+
 	private function verifyGoonID($goonid)
 	{
 		if (!isset($goonid) || strlen($goonid) == 0)
@@ -322,6 +330,10 @@ class RegisterController extends BaseController
 		$client->addSubscriber($cookiePlugin);
 		$request = $client->get(null, array(), array('allow_redirects' => false));
 
+		$sa_userid = null;
+		$sa_regdate = null;
+		$sa_postcount = null;
+		$body = '';
 		try
 		{
 			$response = $request->send();
@@ -339,7 +351,14 @@ class RegisterController extends BaseController
 			// Post Count
 			preg_match("/<dt>Post Count<\/dt>[\s]*<dd>(\d+)<\/dd>/i", $body, $matches);
 			$sa_postcount = intval($matches[1]);
+		}
+		catch (Exception $e)
+		{
+			return Redirect::back()->with('error', 'An unknown error has occured. Please try again.');
+		}
 
+		try
+		{
 			// Check if we have the token.
 			if (stristr($body, $token) !== false/* && $sa_regdate < $subTime*/)
 			{
@@ -357,10 +376,10 @@ class RegisterController extends BaseController
 				return Redirect::back()->with('error', 'Could not find the token in your profile.');
 			}
 		}
-		catch (Exception $ex)
+		catch (Exception $e)
 		{
 			Log::error(str_repeat('-', 40));
-			Log::error($ex);
+			Log::error($e);
 			return Redirect::back()->with('error', 'An unknown error has occured. Please try again.');
 		}
 		return Redirect::back();
