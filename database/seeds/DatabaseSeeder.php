@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Database\Seeder;
+use Illuminate\Database\Eloquent\Model;
+
 class DatabaseSeeder extends Seeder {
 
 	/**
@@ -9,21 +12,19 @@ class DatabaseSeeder extends Seeder {
 	 */
 	public function run()
 	{
-		Eloquent::unguard();
+		$this->call(App\NoteTypeSeeder::class);
+		$this->call(App\UserStatusSeeder::class);
+		$this->call(App\RoleSeeder::class);
+		$this->call(App\GroupSeeder::class);
 
-		$this->call('NoteTypeSeeder');
-		$this->call('UserStatusSeeder');
-		$this->call('RoleSeeder');
-		$this->call('GroupSeeder');
+		$this->call(App\UserSeeder::class);
 
-		$this->call('UserSeeder');
-
-		$this->call('GameSeeder');
+		$this->call(App\GameSeeder::class);
 
 		if (App::environment('local'))
 		{
-			$this->call('NoteSeeder');
-			$this->call('GameUserSeeder');
+			$this->call(App\NoteSeeder::class);
+			$this->call(App\GameUserSeeder::class);
 		}
 	}
 

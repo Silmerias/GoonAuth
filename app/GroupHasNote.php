@@ -1,16 +1,21 @@
 <?php
 
-class GroupHasNote extends Eloquent {
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class GroupHasNote extends Model
+{
 	protected $table = "GroupHasNote";
 	protected $primaryKey = "GRHNID";
 	public $timestamps = false;
 
 
 	public function group() {
-		return $this->belongsTo('Group', 'GRID');
+		return $this->belongsTo(Group::class, 'GRID');
 	}
 
 	public function note() {
-		return $this->belongsTo('Note', 'NID');
+		return $this->belongsTo(Note::class, 'NID');
 	}
 }

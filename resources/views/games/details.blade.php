@@ -1,6 +1,12 @@
 @extends('layouts.main')
 @section('content')
 
+<?php
+use App\Game;
+use App\User;
+use App\UserStatus;
+?>
+
 <?php $auth = Auth::user(); ?>
 
 <!-- default, info, warning, danger, success -->

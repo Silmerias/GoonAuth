@@ -1,4 +1,9 @@
 <div id="note-list">
+
+<?php
+use App\Note;
+?>
+
 @foreach ($notes as $note)
 	<div class="note" style="background-color: {{ $note->NTColor }}">
 		<p class="note-header">
@@ -16,7 +21,7 @@
 			@else
 				<a href="{{ URL::to('user/'.$note->CreatedUID) }}" target="_blank">{{ e($note->CreatedGoonID) }}</a>
 			@endif
-			- {{ with(new Carbon($note->NTimestamp))->toDateTimeString() }}
+			- {{ with(new Carbon\Carbon($note->NTimestamp))->toDateTimeString() }}
 		</p>
 	</div>
 @endforeach

@@ -1,17 +1,19 @@
 <?php
 
+namespace App\Extensions\LDAP;
+
 class LDAP
 {
 	public static function Execute($func)
 	{
-		if (Config::get('goonauth.disableLDAP'))
+		if (!config('ldap.enabled'))
 			return;
 
-		$ldaphost = Config::get('goonauth.ldapHost');
-		$ldapport = Config::get('goonauth.ldapPort');
+		$ldaphost = config('ldap.host');
+		$ldapport = config('ldap.port');
 
 		// Connect to our LDAP server.
-		$ldap = ldap_connect($ldaphost, $ldapport);
+		$ldap = @ldap_connect($ldaphost, $ldapport);
 		if (!$ldap)
 		{
 			error_log("[ldap] Could not connect to $ldaphost");
@@ -23,18 +25,17 @@ class LDAP
 		ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 
 		// Grab some settings.
-		$ldapuser = Config::get('goonauth.ldapUser');
-		$ldappass = Config::get('goonauth.ldapPassword');
+		$ldapuser = config('ldap.admin.user');
+		$ldappass = config('ldap.admin.password');
 
 		// If nothing was entered, use NULL so we do an anonymous bind.
 		if (strlen($ldapuser) === 0)
 			$ldapuser = NULL;
-		else $ldapuser = "cn=" . $ldapuser . "," . Config::get('goonauth.ldapDN');
 		if (strlen($ldappass) === 0)
 			$ldappass = NULL;
 
 		// Attempt to bind now.
-		if (ldap_bind($ldap, $ldapuser, $ldappass))
+		if (@ldap_bind($ldap, $ldapuser, $ldappass))
 		{
 			// Execute our function.
 			$func($ldap);
@@ -49,17 +50,17 @@ class LDAP
 
 	public static function PasswordCheck($username, $password)
 	{
-		if (Config::get('goonauth.disableLDAP'))
+		if (!config('ldap.enabled'))
 			return true;
 
 		if (!isset($username) || !isset($password) || strlen($password) == 0)
 			return false;
 
-		$ldaphost = Config::get('goonauth.ldapHost');
-		$ldapport = Config::get('goonauth.ldapPort');
+		$ldaphost = config('ldap.host');
+		$ldapport = config('ldap.port');
 
 		// Connect to our LDAP server.
-		$ldap = ldap_connect($ldaphost, $ldapport);
+		$ldap = @ldap_connect($ldaphost, $ldapport);
 		if (!$ldap)
 		{
 			error_log("[ldap] Could not connect to $ldaphost");
@@ -71,14 +72,14 @@ class LDAP
 		ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 
 		// Grab some settings.
-		$ldapuser = "cn=" . $username . "," . Config::get('goonauth.ldapDN');
+		$ldapuser = "cn=" . $username . "," . config('ldap.dn.users');
 		$ldappass = $password;
 
 		// Attempt to bind now.
 		$ret = false;
 		try
 		{
-			if (ldap_bind($ldap, $ldapuser, $ldappass))
+			if (@ldap_bind($ldap, $ldapuser, $ldappass))
 				$ret = true;
 		}
 		catch (Exception $e) {}

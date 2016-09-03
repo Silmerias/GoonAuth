@@ -1,6 +1,19 @@
 <?php
 
-class UserController extends BaseController
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+
+use Auth;
+use DB;
+use Input;
+use Redirect;
+use Session;
+use View;
+
+use App\User;
+
+class UserController extends Controller
 {
 
 	public function showHome()

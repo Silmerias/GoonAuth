@@ -1,5 +1,17 @@
 <?php
 
+namespace App;
+
+// use App\Game;
+// use App\GameOrg;
+// use App\GameUser;
+// use App\User;
+// use App\UserStatus;
+
+use DB;
+use Illuminate\Database\Seeder;
+use Illuminate\Database\Eloquent\Model;
+
 class GameUserSeeder extends Seeder {
 
 	public function run()
@@ -7,7 +19,7 @@ class GameUserSeeder extends Seeder {
 		DB::table('GameUser')->delete();
 
 		$active = UserStatus::active()->first();
-		$admin = User::where('UGoonID', Config::get('goonauth.adminAccount'))->first();
+		$admin = User::where('UGoonID', 'admin')->first();
 		$mwo = Game::where('GAbbr', 'mwo')->first();
 		$wol = GameOrg::where('GOAbbr', 'WoL')->first();
 

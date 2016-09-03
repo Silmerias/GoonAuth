@@ -1,5 +1,9 @@
 <?php
 
+namespace App\Extensions\Permissions;
+
+use DB;
+
 class UserPerm
 {
 	private $perms = array();

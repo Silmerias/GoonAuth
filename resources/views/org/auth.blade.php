@@ -1,6 +1,14 @@
 @extends('layouts.main')
 @section('content')
 
+<?php
+use App\Http\Controllers\GameController;
+use App\Game;
+use App\GameOrg;
+use App\User;
+use App\UserStatus;
+?>
+
 <?php $pending = UserStatus::pending()->first() ?>
 
 <a class="label label-info" href="{{ URL::to('games/'.$game->GAbbr.'/'.$org->GOAbbr) }}">Back to {{ e($org->GOName) }}</a>
@@ -32,7 +40,7 @@
 		<tr id="ID_{{ $gameuser->GUID }}">
 			<td><a href="{{ URL::to('user/'.$gameuser->user->UID) }}" target="_blank">{{ e($gameuser->user->UGoonID) }}</a></td>
 			<td class="progress-bar-here">
-				{{ GameController::buildGameProfile($game, $gameuser) }}
+				{!! GameController::buildGameProfile($game, $gameuser) !!}
 			</td>
 			<td>{{ $gameuser->GURegDate }}</td>
 			<td>{{ $gameuser->GUCachedPostCount }}</td>

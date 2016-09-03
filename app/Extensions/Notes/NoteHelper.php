@@ -1,5 +1,9 @@
 <?php
 
+namespace App\Extensions\Notes;
+
+use App\Note;
+
 class NoteHelper
 {
 	public static function Add($arr)

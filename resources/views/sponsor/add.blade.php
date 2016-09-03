@@ -1,6 +1,11 @@
 @extends('layouts.main')
 @section('content')
 
+<?php
+use App\Sponsor;
+use App\User;
+?>
+
 <?php $auth = Auth::user(); ?>
 
 <h1>Sponsor a Friend</h1>

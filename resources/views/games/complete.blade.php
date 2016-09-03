@@ -1,5 +1,10 @@
 @extends('layouts.main')
 @section('content')
+
+<?php
+use App\Game;
+?>
+
 <div class="row">
 	<div class="col-md-12">
 		<p>Wow, good job!</p>

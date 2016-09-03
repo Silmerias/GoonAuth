@@ -1,6 +1,11 @@
 <?php
 
-class MWOGame extends GameModule
+namespace Modules\Games;
+use App\Extensions\Modules\GameModule;
+
+use Carbon\Carbon;
+
+class MWO extends GameModule
 {
 	public function memberVerify($username, $token)
 	{
@@ -19,7 +24,7 @@ class MWOGame extends GameModule
 		);
 
 		// Search for our member.
-		$page = file_get_contents('http://mwomercs.com/forums/index.php?app=members&module=list&name_box=begins&name=' . urlencode($username));
+		$page = @file_get_contents('http://mwomercs.com/forums/index.php?app=members&module=list&name_box=begins&name=' . urlencode($username));
 		if ($page === FALSE)
 			return $ret;
 
@@ -41,7 +46,7 @@ class MWOGame extends GameModule
 
 		// Grab the profile page.
 		$profileURL = $matches[1];
-		$page = file_get_contents($profileURL);
+		$page = @file_get_contents($profileURL);
 		if ($page === FALSE)
 			return $ret;
 
@@ -74,5 +79,3 @@ class MWOGame extends GameModule
 		return $ret;
 	}
 }
-
-?>

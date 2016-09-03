@@ -1,5 +1,14 @@
 <?php
 
+namespace App\Extensions\Modules;
+
+use Illuminate\Support\ClassLoader;
+
+use Log;
+use View;
+
+use App\Game;
+
 class GameModule
 {
 	protected $game;
@@ -10,13 +19,12 @@ class GameModule
 
 	public static function CreateInstance($game)
 	{
-		$class = $game->GModulePHP;
+		$class = 'Modules\\Games\\' . $game->GModulePHP;
 
-		ClassLoader::load($class);
-		if (!class_exists($class, false))
+		if (!class_exists($class, true))
 			return new GameModule($game);
 
-		$reflect = new ReflectionClass($class);
+		$reflect = new \ReflectionClass($class);
 		return $reflect->newInstance($game);
 	}
 
@@ -24,22 +32,21 @@ class GameModule
 
 	public function makeView($v, $args)
 	{
-		$v = str_replace('games::', '', $v);
-
 		if (empty($this->game))
-			return View::make('games::'.$v, $args);
+			return View::make($v, $args);
 
-		$str = 'games::'.$this->game->GAbbr.'.'.$v;
+		$str = $this->game->GAbbr.'.'.$v;
 		if (View::exists($str))
 			return View::make($str, $args);
 
-		return View::make('games::'.$v, $args);
+		return View::make($v, $args);
 	}
 
 	//////////////////////////////////////////////////
 
 	public function memberAdded($gameuser)
 	{
+		return true;
 	}
 
 	public function memberKicked($gameuser)

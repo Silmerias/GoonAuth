@@ -1,12 +1,34 @@
 <?php
 
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+
 use Guzzle\Http\Client;
 use Guzzle\Http\Exception\ClientErrorResponseException;
 use Guzzle\Plugin\Cookie\CookieJar\ArrayCookieJar;
 use Guzzle\Plugin\Cookie\Cookie;
 use Guzzle\Plugin\Cookie\CookiePlugin;
 
-class RegisterController extends BaseController
+use Carbon\Carbon;
+
+use Input;
+use Log;
+use Mail;
+use Redirect;
+use Response;
+use Session;
+use View;
+
+use App\Group;
+use App\NoteType;
+use App\Sponsor;
+use App\User;
+use App\UserStatus;
+
+use App\Extensions\Notes\NoteHelper;
+
+class RegisterController extends Controller
 {
 	public function getIndex()
 	{
@@ -301,86 +323,97 @@ class RegisterController extends BaseController
 		if (User::where('USACachedName', $sa_name)->count() !== 0 && $reapply === false)
 			return Redirect::back()->with('error', 'That SA Username has already been registered.');
 
-		$cookieJar = new ArrayCookieJar();
-
-		$bbpCookie = new Cookie();
-		$bbpCookie->setName('bbpassword');
-		$bbpCookie->setDomain('.forums.somethingawful.com');
-		$bbpCookie->setValue(Config::get('goonauth.bbpassword'));
-
-		$bbidCookie = new Cookie();
-		$bbidCookie->setName('bbuserid');
-		$bbidCookie->setDomain('.forums.somethingawful.com');
-		$bbidCookie->setValue(Config::get('goonauth.bbuserid'));
-
-		$cookieJar->add($bbpCookie);
-		$cookieJar->add($bbidCookie);
-
-		$cookiePlugin = new CookiePlugin($cookieJar);
-
-		$client = new Client('http://forums.somethingawful.com/member.php', array(
-			'request.options' => array(
-				'query' => array(
-					'action' => 'getinfo',
-					'username' => $sa_name,
-				),
-			),
-		));
-
-		$client->addSubscriber($cookiePlugin);
-		$request = $client->get(null, array(), array('allow_redirects' => false));
-
 		$sa_userid = null;
 		$sa_regdate = null;
 		$sa_postcount = null;
-		$body = '';
-		try
+
+		// Do verification.
+		$verified = !config('goonauth.sa.verify');
+		if ($verified === false)
 		{
-			$response = $request->send();
-			$body = $response->getBody(true);
+			$cookieJar = new ArrayCookieJar();
 
-			// User ID
-			preg_match("/<input type=\"hidden\" name=\"userid\" value=\"(\d+)\">/i", $body, $matches);
-			$sa_userid = intval($matches[1]);
+			$bbpCookie = new Cookie();
+			$bbpCookie->setName('bbpassword');
+			$bbpCookie->setDomain('.forums.somethingawful.com');
+			$bbpCookie->setValue(config('goonauth.sa.bbpassword'));
 
-			// Member Since
-			preg_match("/<dt>Member Since<\/dt>[\s]*<dd>([A-Za-z,0-9\s]+)<\/dd>/i", $body, $matches);
-			$sa_regdate = $matches[1];
-			// $subTime = time() - (60 * 60 * 24 * 90);
+			$bbidCookie = new Cookie();
+			$bbidCookie->setName('bbuserid');
+			$bbidCookie->setDomain('.forums.somethingawful.com');
+			$bbidCookie->setValue(config('goonauth.sa.bbuserid'));
 
-			// Post Count
-			preg_match("/<dt>Post Count<\/dt>[\s]*<dd>(\d+)<\/dd>/i", $body, $matches);
-			$sa_postcount = intval($matches[1]);
-		}
-		catch (Exception $e)
-		{
-			return Redirect::back()->with('error', 'An unknown error has occured. Please try again.');
-		}
+			$cookieJar->add($bbpCookie);
+			$cookieJar->add($bbidCookie);
 
-		try
-		{
-			// Check if we have the token.
-			if (stristr($body, $token) !== false/* && $sa_regdate < $subTime*/)
+			$cookiePlugin = new CookiePlugin($cookieJar);
+
+			$client = new Client('http://forums.somethingawful.com/member.php', array(
+				'request.options' => array(
+					'query' => array(
+						'action' => 'getinfo',
+						'username' => $sa_name,
+					),
+				),
+			));
+
+			$client->addSubscriber($cookiePlugin);
+			$request = $client->get(null, array(), array('allow_redirects' => false));
+
+
+			$body = '';
+			try
 			{
-				$comment = Input::get('comment');
-				if (!isset($comment) || empty($comment) || strlen($comment) == 0)
-					$comment = '';
+				$response = $request->send();
+				$body = $response->getBody(true);
 
-				$this->createUser($email, $goonid, $sa_userid, $sa_regdate, $sa_name, $sa_postcount, $comment);
+				// User ID
+				preg_match("/<input type=\"hidden\" name=\"userid\" value=\"(\d+)\">/i", $body, $matches);
+				$sa_userid = intval($matches[1]);
 
-				return View::make('register.complete');
+				// Member Since
+				preg_match("/<dt>Member Since<\/dt>[\s]*<dd>([A-Za-z,0-9\s]+)<\/dd>/i", $body, $matches);
+				$sa_regdate = $matches[1];
+				// $subTime = time() - (60 * 60 * 24 * 90);
+
+				// Post Count
+				preg_match("/<dt>Post Count<\/dt>[\s]*<dd>(\d+)<\/dd>/i", $body, $matches);
+				$sa_postcount = intval($matches[1]);
 			}
-			else
+			catch (Exception $e)
 			{
-				// Session::flash('error', 'Could not find token in profile or you have not been a member for at least 90 days.');
-				return Redirect::back()->with('error', 'Could not find the token in your profile.');
+				return Redirect::back()->with('error', 'An unknown error has occured. Please try again.');
+			}
+
+			try
+			{
+				// Check if we have the token.
+				if (stristr($body, $token) !== false/* && $sa_regdate < $subTime*/)
+					$verified = true;
+			}
+			catch (Exception $e)
+			{
+				Log::error(str_repeat('-', 40));
+				Log::error($e);
+				return Redirect::back()->with('error', 'An unknown error has occured. Please try again.');
 			}
 		}
-		catch (Exception $e)
+
+		// Check if we succeeded.
+		if ($verified === true)
 		{
-			Log::error(str_repeat('-', 40));
-			Log::error($e);
-			return Redirect::back()->with('error', 'An unknown error has occured. Please try again.');
+			$comment = Input::get('comment');
+			if (!isset($comment) || empty($comment) || strlen($comment) == 0)
+				$comment = '';
+
+			$this->createUser($email, $goonid, $sa_userid, $sa_regdate, $sa_name, $sa_postcount, $comment);
+
+			return View::make('register.complete');
+		}
+		else
+		{
+			// Session::flash('error', 'Could not find token in profile or you have not been a member for at least 90 days.');
+			return Redirect::back()->with('error', 'Could not find the token in your profile.');
 		}
 		return Redirect::back();
 	}

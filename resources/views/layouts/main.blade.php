@@ -1,3 +1,6 @@
+<?php
+use App\Game;
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -92,10 +95,10 @@
 									<li><a href="{{ URL::to('logout') }}">Logout</a></li>
 								</ul>
 							</li>
-							<li><a href="{{ Config::get('goonauth.forumUrl') }}">Forum</a></li>
+							<li><a href="{{ config('goonauth.forum_url') }}">Forum</a></li>
 						@else
 							<li><a href="{{ URL::to('login') }}">Login</a></li>
-							<li><a href="{{ Config::get('goonauth.forumUrl') }}">Forum</a></li>
+							<li><a href="{{ config('goonauth.forum_url') }}">Forum</a></li>
 						@endif
 					</ul>
 				</div><!--/.nav-collapse -->
@@ -110,7 +113,7 @@
 			<div class="row">
 				<div class="col-md-12 footer">
 				GoonAuth originally created by {{ HTML::link('https://github.com/sct', 'sct', array('target' => '_blank')) }} - {{ HTML::link('https://github.com/sct/GoonAuth', 'GitHub', array('target' => '_blank')) }}<br>
-				FLJK v{{ AUTH_VERSION }} - Created by {{ HTML::link('https://github.com/LoneBoco', 'Nalin', array('target' => '_blank')) }} - {{ HTML::link('https://github.com/LoneBoco/GoonAuth', 'GitHub', array('target' => '_blank')) }}
+				FLJK v{{ config('goonauth.version') }} - Created by {{ HTML::link('https://github.com/LoneBoco', 'Nalin', array('target' => '_blank')) }} - {{ HTML::link('https://github.com/LoneBoco/GoonAuth', 'GitHub', array('target' => '_blank')) }}
 				</div>
 			</div>
 		</div>

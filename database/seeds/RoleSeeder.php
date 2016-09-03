@@ -1,5 +1,11 @@
 <?php
 
+namespace App;
+
+use DB;
+use Illuminate\Database\Seeder;
+use Illuminate\Database\Eloquent\Model;
+
 class RoleSeeder extends Seeder {
 
 	public function run()

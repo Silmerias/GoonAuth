@@ -1,6 +1,15 @@
 @extends('layouts.main')
 @section('content')
 
+<?php
+use App\Http\Controllers\GameController;
+use App\Game;
+use App\GameOrg;
+use App\NoteType;
+use App\User;
+use App\UserStatus;
+?>
+
 <?php $auth = Auth::user(); ?>
 
 <a class="label label-info" href="{{ URL::to('games/'.$game->GAbbr.'/'.$org->GOAbbr) }}">Back to {{ e($org->GOName) }}</a>
@@ -97,7 +106,7 @@
 				{{ e($statuses[$gameuser->pivot->USID - 1]->USStatus) }}
 			</td>
 			<td><a href="{{ URL::to('user/'.$gameuser->user->UID) }}" target="_blank">{{ e($gameuser->user->UGoonID) }}</a></td>
-			<td>{{ GameController::buildGameProfile($game, $gameuser) }}</td>
+			<td>{!! GameController::buildGameProfile($game, $gameuser) !!}</td>
 			<td>
 				<button type="button" class="btn btn-note" data-toggle="popover" data-uid="{{ $gameuser->user->UID }}">
 					<span class="glyphicon glyphicon-envelope" aria-hidden="true" style="color: goldenrod"></span>
@@ -111,7 +120,7 @@
 		@endforeach
 	</table>
 
-	{{ $members->links(); }}
+	{{ $members->render() }}
 
 	@endif
 
@@ -182,7 +191,7 @@
 					<p class="note-comment"></p>
 					<p class="note-footer">By 
 						<a href="{{ URL::to('user/'.$auth->UID) }}" target="_blank">{{ e($auth->UGoonID) }}</a>
-						- {{ Carbon::now()->toDateTimeString() }}
+						- {{ Carbon\Carbon::now()->toDateTimeString() }}
 					</p>
 				</div>
 			</div>

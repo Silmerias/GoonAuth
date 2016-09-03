@@ -1,11 +1,39 @@
 <?php
 
-class GameController extends BaseController
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+
+use Carbon\Carbon;
+
+use Auth;
+use Input;
+use Log;
+use Mail;
+use Redirect;
+use Response;
+use Session;
+use View;
+
+use App\Game;
+use App\GameOrg;
+use App\GameUser;
+use App\NoteType;
+use App\User;
+use App\UserStatus;
+
+use App\Extensions\LDAP\LDAP;
+use App\Extensions\Modules\GameModule;
+use App\Extensions\Modules\OrgModule;
+use App\Extensions\Notes\NoteHelper;
+use App\Extensions\Permissions\UserPerm;
+
+class GameController extends Controller
 {
 	public function getRoot()
 	{
 		$include = array('auth' => Auth::user());
-		return View::make('games::games.list', $include);
+		return View::make('games.list', $include);
 	}
 
 	public function getGames($abbr)
@@ -17,7 +45,7 @@ class GameController extends BaseController
 		$MOD = GameModule::CreateInstance($game);
 
 		$include = array('game' => $game);
-		return $MOD->makeView('games::games.details', $include);
+		return $MOD->makeView('games.details', $include);
 	}
 
 	public function getGamesLink($abbr)
@@ -32,7 +60,7 @@ class GameController extends BaseController
 		$MOD = GameModule::CreateInstance($game);
 
 		$include = array('game' => $game, 'token' => $token);
-		return $MOD->makeView('games::games.link', $include);
+		return $MOD->makeView('games.link', $include);
 	}
 
 	public function postGamesLink($abbr)
@@ -60,6 +88,11 @@ class GameController extends BaseController
 		if (!isset($ret) || $ret === false || $ret['ret'] === false)
 			return Redirect::back()->with('error', 'Verification failed.');
 
+		// Run the GameModule.
+		$success = $MOD->memberAdded($user);
+		if (isset($success) && $success === false)
+			return Redirect::back()->with('error', 'Linking error.  Contact Adeptus for assistance.');
+
 		// Success!  Let's create our user now.
 		$user = new GameUser;
 		$user->GID = $game->GID;
@@ -74,11 +107,8 @@ class GameController extends BaseController
 		}
 		$user->save();
 
-		// Inform the GameModule that the user was added.
-		$MOD->memberAdded($user);
-
 		$include = array('game' => $game);
-		return $MOD->makeView('games::games.complete', $include);
+		return $MOD->makeView('games.complete', $include);
 	}
 
 	public function postGamesLinkCheckUser($abbr)
@@ -112,7 +142,7 @@ class GameController extends BaseController
 		$MOD = OrgModule::CreateInstance($org, $game);
 
 		$include = array('game' => $game, 'org' => $org);
-		return $MOD->makeView('orgs::org.details', $include);
+		return $MOD->makeView('org.details', $include);
 	}
 
 	public function getGamesOrgJoin($abbr, $org)
@@ -125,7 +155,7 @@ class GameController extends BaseController
 		$MOD = OrgModule::CreateInstance($org, $game);
 
 		$include = array('game' => $game, 'org' => $org);
-		return $MOD->makeView('orgs::org.join', $include);
+		return $MOD->makeView('org.join', $include);
 	}
 
 	public function postGamesOrgJoin($abbr, $org)
@@ -220,7 +250,7 @@ class GameController extends BaseController
 		$MOD = OrgModule::CreateInstance($org, $game);
 
 		$include = array('game' => $game, 'org' => $org, 'members' => $members);
-		return $MOD->makeView('orgs::org.viewmembers', $include);
+		return $MOD->makeView('org.viewmembers', $include);
 	}
 
 	public function postGamesOrgView($abbr, $org)
@@ -272,7 +302,7 @@ class GameController extends BaseController
 		$MOD = OrgModule::CreateInstance($org, $game);
 
 		$include = array('game' => $game, 'org' => $org);
-		return $MOD->makeView('orgs::org.auth', $include);
+		return $MOD->makeView('org.auth', $include);
 	}
 
 	public function postAuthGamesOrg($abbr, $org)
@@ -300,10 +330,20 @@ class GameController extends BaseController
 
 		if (strcasecmp($action, "approve") == 0)
 		{
+			// Run the OrgModule now.
+			$success = $MOD->memberAdded($gameuser);
+			if (isset($success) && $success === false)
+			{
+				return Response::json(array(
+					'success' => false,
+					'message' => 'Could not finish authorization.  Contact Adeptus for assistance.'
+				));
+			}
+
 			LDAP::Execute(function($ldap) use($user, $org) {
 				// Add the user to the organizations's LDAP group.
-				$userdn = "cn=" . $user->UGoonID . "," . Config::get('goonauth.ldapDN');
-				$dn = "cn=" . $org->GOLDAPGroup . "," . Config::get('goonauth.ldapGroupDN');
+				$userdn = "cn=" . $user->UGoonID . "," . config('ldap.dn.users');
+				$dn = "cn=" . $org->GOLDAPGroup . "," . config('ldap.dn.groups');
 
 				// Delete first.
 				@ldap_mod_del($ldap, $dn, array('member' => $userdn));
@@ -362,9 +402,6 @@ class GameController extends BaseController
 					'message' => 'User accepted into organization '.$org->GOName.'.',
 				));
 			}
-
-			// Inform the OrgModule that the user was added.
-			$MOD->memberAdded($gameuser);
 		}
 		else
 		{

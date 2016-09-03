@@ -1,9 +1,18 @@
 <?php
 
+namespace App;
+
+// use App\UserStatus;
+
+use DB;
+use Illuminate\Database\Seeder;
+use Illuminate\Database\Eloquent\Model;
+
 class UserStatusSeeder extends Seeder {
 
 	public function run()
 	{
+		DB::table('User')->delete();
 		DB::table('UserStatus')->delete();
 
 		UserStatus::create(array('USCode' => 'UNKN', 'USStatus' => 'Unknown'));

@@ -7,20 +7,22 @@
 |
 | Here is where you can register all of the routes for an application.
 | It's a breeze. Simply tell Laravel the URIs it should respond to
-| and give it the Closure to execute when that URI is requested.
+| and give it the controller to call when that URI is requested.
 |
+*/
+
+/*
+Route::get('/', function () {
+    return view('welcome');
+});
 */
 
 Route::controller('register', 'RegisterController');
 
-Route::get('/', array('before' => 'auth', 'uses' => 'UserController@showHome'));
-
-// Force https on production.
-Route::get('login', array('before' => 'secure', function() {
+Route::post('login', ['middleware' => 'csrf', 'uses' => 'UserController@doLogin']);
+Route::get('login', ['middleware' => 'csrf', function() {
 	return View::make('user.login');
-}));
-
-Route::post('login', array('before' => 'secure|csrf', 'uses' => 'UserController@doLogin'));
+}]);
 
 Route::get('logout', function() {
 	Auth::logout();
@@ -28,7 +30,9 @@ Route::get('logout', function() {
 	return Redirect::to('login');
 });
 
-Route::group(array('before' => 'auth'), function() {
+Route::group(['middleware' => 'auth'], function() {
+	Route::get('/', ['uses' => 'UserController@showHome']);
+
 	Route::get('user/{id}', 'UserController@showUser');
 	Route::get('user/{id}/notes', 'UserController@showNotes');
 

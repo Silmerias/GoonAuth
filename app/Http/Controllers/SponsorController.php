@@ -1,9 +1,20 @@
 <?php
 
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+
 use Guzzle\Http\Client;
 use Guzzle\Http\Exception\ClientErrorResponseException;
 
-class SponsorController extends BaseController
+use Auth;
+use Redirect;
+use Session;
+use View;
+
+use App\Sponsor;
+
+class SponsorController extends Controller
 {
 	public function showSponsors()
 	{

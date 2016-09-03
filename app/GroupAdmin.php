@@ -1,20 +1,25 @@
 <?php
 
-class GroupAdmin extends Eloquent {
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class GroupAdmin extends Model
+{
 	protected $table = "GroupAdmin";
 	protected $primaryKey = "GRAID";
 	public $timestamps = false;
 
 
 	public function group() {
-		return $this->belongsTo('Group', 'GRID');
+		return $this->belongsTo(Group::class, 'GRID');
 	}
 
 	public function user() {
-		return $this->belongsTo('User', 'UID');
+		return $this->belongsTo(User::class, 'UID');
 	}
 
 	public function role() {
-		return $this->belongsTo('Role', 'RID');
+		return $this->belongsTo(Role::class, 'RID');
 	}
 }

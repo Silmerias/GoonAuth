@@ -1,5 +1,14 @@
 <?php
 
+namespace App\Extensions\Modules;
+
+use Illuminate\Support\ClassLoader;
+
+use View;
+
+use App\Game;
+use App\GameOrg;
+
 class OrgModule
 {
 	protected $org;
@@ -12,13 +21,12 @@ class OrgModule
 
 	public static function CreateInstance($org, $game)
 	{
-		$class = $org->GOModulePHP;
+		$class = 'Modules\\Organizations\\' . $org->GOModulePHP;
 
-		ClassLoader::load($class);
-		if (!class_exists($class, false))
+		if (!class_exists($class, true))
 			return new OrgModule($org, $game);
 
-		$reflect = new ReflectionClass($class);
+		$reflect = new \ReflectionClass($class);
 		return $reflect->newInstance($org, $game);
 	}
 
@@ -26,20 +34,18 @@ class OrgModule
 
 	public function makeView($v, $args)
 	{
-		$v = str_replace('orgs::', '', $v);
-
 		if (empty($this->game) && empty($this->org))
-			return View::make('orgs::'.$v, $args);
+			return View::make($v, $args);
 
-		$str = 'orgs::'.$this->game->GAbbr.'.'.$this->org->GOAbbr.'.'.$v;
+		$str = $this->game->GAbbr.'.'.$this->org->GOAbbr.'.'.$v;
 		if (View::exists($str))
 			return View::make($str, $args);
 
-		$str = 'orgs::'.$this->org->GOAbbr.'.'.$v;
+		$str = $this->org->GOAbbr.'.'.$v;
 		if (View::exists($str))
 			return View::make($str, $args);
 
-		return View::make('orgs::'.$v, $args);
+		return View::make($v, $args);
 	}
 
 	//////////////////////////////////////////////////

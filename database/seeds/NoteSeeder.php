@@ -1,12 +1,25 @@
 <?php
 
+namespace App;
+
+// use App\GameOrg;
+// use App\Group;
+// use App\Note;
+// use App\NoteType;
+// use App\Role;
+// use App\User;
+
+use DB;
+use Illuminate\Database\Seeder;
+use Illuminate\Database\Eloquent\Model;
+
 class NoteSeeder extends Seeder {
 
 	public function run()
 	{
 		DB::table('Note')->delete();
 
-		$admin = User::where('UGoonID', Config::get('goonauth.adminAccount'))->first();
+		$admin = User::where('UGoonID', 'admin')->first();
 		$roll = Role::where('RName', 'Admin')->first();
 
 		$sa = Group::where('GRCode', 'SA')->first();

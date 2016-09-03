@@ -1,11 +1,19 @@
 <?php
 
-class FLJKOrg extends OrgModule
+namespace Modules\Organizations;
+use App\Extensions\Modules\OrgModule;
+
+use App\GameUser;
+
+class FLJK extends OrgModule
 {
 	public function memberAdded($gameuser)
 	{
 		if ($this->game->GAbbr !== 'sc')
-			return;
+			return false;
+
+		if (config('goonauth.rsi.verify') == false)
+			return true;
 
 		$query = '/api/orgs/invite';
 		$body = '{"symbol":"FLJK","message":"The God-Emperor Lowtax sits immobile upon his Porcelain Throne, his sheer force of will holding back the seething hordes of pubbies that would tear our reality asunder. His gaze has passed over you and, finding you worthy, bids you entrance into our ranks. Welcome, Initiate. You are one of us.","nickname":"'.$gameuser->GUCachedName.'"}';
@@ -15,7 +23,7 @@ class FLJKOrg extends OrgModule
 		// Submit our query.
 		$ret = $this->submit_rsi_query($query, $body);
 		if (!isset($ret) || !is_array($ret))
-			return;
+			return false;
 
 		// Record an error.
 		if (isset($ret['success']) && $ret['success'] == 0)
@@ -23,9 +31,11 @@ class FLJKOrg extends OrgModule
 			switch ($ret['code'])
 			{
 				case "ErrNotOrgReady":
-					break;
+					return false;
 			}
 		}
+
+		return true;
 	}
 
 	public function memberRejected($gameuser)
@@ -58,8 +68,8 @@ class FLJKOrg extends OrgModule
 			unlink($b);
 		};
 
-		$user = Config::get('goonauth.rsiUser');
-		$pass = Config::get('goonauth.rsiPass');
+		$user = config('goonauth.rsi.user');
+		$pass = config('goonauth.rsi.pass');
 
 		// Set up our cookie jar file.
 		$cj = tempnam("/tmp", "rsi-cookiejar");

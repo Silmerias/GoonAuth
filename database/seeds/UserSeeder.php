@@ -1,5 +1,16 @@
 <?php
 
+namespace App;
+
+// use App\Group;
+// use App\Role;
+// use App\User;
+// use App\UserStatus;
+
+use DB;
+use Illuminate\Database\Seeder;
+use Illuminate\Database\Eloquent\Model;
+
 class UserSeeder extends Seeder {
 
 	public function run()
@@ -13,9 +24,9 @@ class UserSeeder extends Seeder {
 		$user = User::create(array(
 			'USID' => $active->USID,
 			'UEmail' => 'example@example.com',
-			'UGoonID' => Config::get('goonauth.adminAccount'),
+			'UGoonID' => 'admin',
 			'UGroup' => $sa->GRID,
-			'ULDAPLogin' => Config::get('goonauth.adminAccount'),
+			'ULDAPLogin' => 'admin',
 			'USACachedName' => '<Admin Account>',
 			'USAUserID' => 0
 		));

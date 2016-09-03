@@ -1,12 +1,25 @@
 <?php
 
+namespace App;
+
+/*
+use App\Game;
+use App\GameOrg;
+use App\Role;
+use App\User;
+*/
+
+use DB;
+use Illuminate\Database\Seeder;
+use Illuminate\Database\Eloquent\Model;
+
 class GameSeeder extends Seeder {
 
 	public function run()
 	{
 		DB::table('Game')->delete();
 
-		$admin = User::where('UGoonID', Config::get('goonauth.adminAccount'))->first();
+		$admin = User::where('UGoonID', 'admin')->first();
 		$roll = Role::where('RName', 'Admin')->first();
 
 		$sc = Game::create(array(
@@ -15,7 +28,7 @@ class GameSeeder extends Seeder {
 			'GLDAPGroup' => 'GameStarCitizen',	// SC
 			'GEditProfileURL' => 'https://robertsspaceindustries.com/account/profile',
 			'GProfileURL' => 'https://robertsspaceindustries.com/citizens/%s',
-			'GModulePHP' => 'StarCitizenGame'
+			'GModulePHP' => 'StarCitizen'
 		));
 
 		$mwo = Game::create(array(
@@ -24,7 +37,7 @@ class GameSeeder extends Seeder {
 			'GLDAPGroup' => 'GameMechWarriorOnline',	// MWO
 			'GEditProfileURL' => 'http://mwomercs.com/forums/index.php?app=core&module=usercp&tab=core',
 			'GProfileURL' => 'http://mwomercs.com/forums/user/%d-%s',
-			'GModulePHP' => 'MWOGame'
+			'GModulePHP' => 'MWO'
 		));
 
 		$fljk = GameOrg::create(array(
@@ -32,7 +45,7 @@ class GameSeeder extends Seeder {
 			'GOAbbr' => 'FLJK',
 			'GOName' => 'Goonrathi',
 			'GOLDAPGroup' => 'OrgFLJK',
-			'GOModulePHP' => 'FLJKOrg'
+			'GOModulePHP' => 'FLJK'
 		));
 
 		$wol = GameOrg::create(array(

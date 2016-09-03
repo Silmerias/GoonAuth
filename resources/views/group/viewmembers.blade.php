@@ -1,6 +1,13 @@
 @extends('layouts.main')
 @section('content')
 
+<?php
+use App\Group;
+use App\NoteType;
+use App\User;
+use App\UserStatus;
+?>
+
 <?php $auth = Auth::user(); ?>
 
 <a class="label label-info" href="{{ URL::to('/') }}">Back to Home</a>
@@ -152,7 +159,7 @@
 		@endforeach
 	</table>
 
-	{{ $members->links(); }}
+	{{ $members->render() }}
 
 	@endif
 
@@ -223,7 +230,7 @@
 					<p class="note-comment"></p>
 					<p class="note-footer">By 
 						<a href="{{ URL::to('user/'.$auth->UID) }}" target="_blank">{{ e($auth->UGoonID) }}</a>
-						- {{ Carbon::now()->toDateTimeString() }}
+						- {{ Carbon\Carbon::now()->toDateTimeString() }}
 					</p>
 				</div>
 			</div>

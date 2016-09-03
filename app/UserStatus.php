@@ -1,13 +1,18 @@
 <?php
 
-class UserStatus extends Eloquent {
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class UserStatus extends Model
+{
 	protected $table = "UserStatus";
 	protected $primaryKey = "USID";
 	public $timestamps = false;
 
 
 	public function users() {
-		return $this->hasMany('User', 'USID');
+		return $this->hasMany(User::class, 'USID');
 	}
 
 	public function scopeActive($query) {

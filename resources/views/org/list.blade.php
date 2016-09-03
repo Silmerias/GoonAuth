@@ -1,5 +1,11 @@
 @extends('layouts.main')
 @section('content')
+
+<?php
+use App\Game;
+use App\GameOrg;
+?>
+
 <a class="label label-info" href="{{ URL::to('games/'.$game->GAbbr) }}">Back to {{ e($game->GName) }}</a>
 
 <div class="row">

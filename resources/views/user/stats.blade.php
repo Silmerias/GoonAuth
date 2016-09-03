@@ -1,5 +1,11 @@
 @extends('layouts.main')
 @section('content')
+
+<?php
+use App\User;
+use App\Extensions\Modules\GameModule;
+?>
+
 <!-- default, info, warning, danger, success -->
 <a class="label label-info" href="{{ URL::previous() }}">Back</a>
 
@@ -164,7 +170,7 @@
 				@else
 					<a href="{{ URL::to('user/'.$note->CreatedUID) }}" target="_blank">{{ e($note->CreatedGoonID) }}</a>
 				@endif
-				- {{ with(new Carbon($note->NTimestamp))->toDateTimeString() }}
+				- {{ with(new Carbon\Carbon($note->NTimestamp))->toDateTimeString() }}
 			</p>
 		</div>
 	@endforeach

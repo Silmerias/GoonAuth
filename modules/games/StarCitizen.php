@@ -1,9 +1,17 @@
 <?php
 
-class StarCitizenGame extends GameModule
+namespace Modules\Games;
+use App\Extensions\Modules\GameModule;
+
+use Carbon\Carbon;
+
+use App\GameUser;
+
+class StarCitizen extends GameModule
 {
 	public function memberAdded($gameuser)
 	{
+		return true;
 	}
 
 	public function memberRejected($gameuser)
@@ -31,7 +39,7 @@ class StarCitizenGame extends GameModule
 		$page = FALSE;
 		try
 		{
-			$page = file_get_contents('https://robertsspaceindustries.com/citizens/' . urlencode($username));
+			$page = @file_get_contents('https://robertsspaceindustries.com/citizens/' . urlencode($username));
 		}
 		catch (Exception $e)
 		{}
@@ -68,7 +76,7 @@ class StarCitizenGame extends GameModule
 		$page = FALSE;
 		try
 		{
-			$page = file_get_contents('https://forums.robertsspaceindustries.com/profile/' . urlencode($username));
+			$page = @file_get_contents('https://forums.robertsspaceindustries.com/profile/' . urlencode($username));
 		}
 		catch (Exception $e)
 		{}

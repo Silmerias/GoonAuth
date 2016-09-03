@@ -1,5 +1,13 @@
 <?php
 
+namespace App;
+
+// use App\NoteType;
+
+use DB;
+use Illuminate\Database\Seeder;
+use Illuminate\Database\Eloquent\Model;
+
 class NoteTypeSeeder extends Seeder {
 
 	public function run()

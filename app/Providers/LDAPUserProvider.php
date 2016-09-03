@@ -1,10 +1,20 @@
 <?php
 
-use \Illuminate\Auth\UserInterface;
-use \Illuminate\Auth\UserProviderInterface;
+namespace App\Providers;
 
-class LDAPUserProvider implements UserProviderInterface
+use App\User;
+use App\Extensions\LDAP\LDAP;
+
+use \Illuminate\Contracts\Auth;
+use Illuminate\Support\ServiceProvider as ServiceProvider;
+
+class LDAPUserProvider extends ServiceProvider implements Auth\UserProvider
 {
+    public function register()
+    {
+        //
+    }
+
 	public function retrieveById($identifier)
 	{
 		return User::find($identifier);
@@ -15,7 +25,7 @@ class LDAPUserProvider implements UserProviderInterface
 		return User::where('UID', $identifier)->where('URememberToken', $token)->first();
 	}
 
-	public function updateRememberToken(UserInterface $user, $token)
+	public function updateRememberToken(Auth\Authenticatable $user, $token)
 	{
 		$user->URememberToken = $token;
 		$user->save();
@@ -26,7 +36,7 @@ class LDAPUserProvider implements UserProviderInterface
 		return User::where('UGoonID', $credentials['username'])->first();
 	}
 
-	public function validateCredentials(UserInterface $user, array $credentials)
+	public function validateCredentials(Auth\Authenticatable $user, array $credentials)
 	{
 		return LDAP::PasswordCheck($user->UGoonID, $credentials['password']);
 	}

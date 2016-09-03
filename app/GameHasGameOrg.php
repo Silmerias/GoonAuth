@@ -1,16 +1,21 @@
 <?php
 
-class GameHasGameOrg extends Eloquent {
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class GameHasGameOrg extends Model
+{
 	protected $table = "GameHasGameOrg";
 	protected $primaryKey = "GHGOID";
 	public $timestamps = false;
 
 
 	public function game() {
-		return $this->belongsTo('Game', 'GID');
+		return $this->belongsTo(Game::class, 'GID');
 	}
 
 	public function gameorg() {
-		return $this->belongsTo('GameOrg', 'GOID');
+		return $this->belongsTo(GameOrg::class, 'GOID');
 	}
 }

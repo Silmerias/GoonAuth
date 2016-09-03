@@ -1,6 +1,12 @@
 @extends('layouts.main')
 @section('content')
 
+<?php
+use App\User;
+use App\UserStatus;
+use App\Extensions\Permissions\UserPerm;
+?>
+
 <?php $auth = Auth::user(); ?>
 
 <?php

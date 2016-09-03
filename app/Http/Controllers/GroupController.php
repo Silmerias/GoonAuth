@@ -1,6 +1,27 @@
 <?php
 
-class GroupController extends BaseController
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+
+use Auth;
+use Input;
+use Log;
+use Mail;
+use Redirect;
+use Response;
+use View;
+
+use App\Group;
+use App\NoteType;
+use App\User;
+use App\UserStatus;
+
+use App\Extensions\LDAP\LDAP;
+use App\Extensions\Notes\NoteHelper;
+use App\Extensions\Permissions\UserPerm;
+
+class GroupController extends Controller
 {
 	public function showGroup($grid)
 	{
@@ -91,8 +112,8 @@ class GroupController extends BaseController
 
 			LDAP::Execute(function($ldap) use($password, $user, $group)
 			{
-				$uid = intval(Config::get('goonauth.ldapUidStart'));
-				$gid = intval(Config::get('goonauth.ldapGid'));
+				$uid = config('ldap.uid_start');
+				$gid = config('ldap.gid_start');
 
 				// Generate a salt.
 				$salt = md5(uniqid(rand(), TRUE));
@@ -117,7 +138,7 @@ class GroupController extends BaseController
 				$info['objectClass'][2] = "posixAccount";
 
 				// Add the user!
-				$userdn = "cn=" . $user->UGoonID . "," . Config::get('goonauth.ldapDN');
+				$userdn = "cn=" . $user->UGoonID . "," . config('ldap.dn.users');
 				if (@ldap_add($ldap, $userdn, $info) == false)
 				{
 					if (@ldap_modify($ldap, $userdn, $info) == false)
@@ -133,21 +154,24 @@ class GroupController extends BaseController
 				// Delete the user from the group first, just in case.
 				@ldap_mod_del($ldap, $forumdn, array('member' => $userdn));
 
-				// Add the user to the forums LDAP group.
-				$forumdn = "cn=ForumMembers" . "," . Config::get('goonauth.ldapGroupDN');
-				if (@ldap_mod_add($ldap, $forumdn, array('member' => $userdn)) == false)
+				// Add the user to the default LDAP group.
+				if (strlen(config('ldap.default_group')) != 0)
 				{
-					error_log("[ldap] Failed to add user to forum group.");
-					return Response::json(array(
-						'success' => false,
-						'message' => 'Unable to add user to forum group.  Contact Adeptus for assistance.'
-					));
+					$forumdn = "cn=" . config('ldap.default_group') . "," . config('ldap.dn.groups');
+					if (@ldap_mod_add($ldap, $forumdn, array('member' => $userdn)) == false)
+					{
+						error_log("[ldap] Failed to add user to the default group.");
+						return Response::json(array(
+							'success' => false,
+							'message' => 'Unable to add user to the default group.  Contact Adeptus for assistance.'
+						));
+					}
 				}
 
 				// Add the user to the LDAP group for their group.
 				if (!is_null($group->GRLDAPGroup))
 				{
-					$forumdn = "cn=". $group->GRLDAPGroup . "," . Config::get('goonauth.ldapGroupDN');
+					$forumdn = "cn=". $group->GRLDAPGroup . "," . config('ldap.dn.groups');
 
 					// Delete first.
 					@ldap_mod_del($ldap, $forumdn, array('member' => $userdn));
@@ -200,7 +224,7 @@ class GroupController extends BaseController
 			}
 
 			// Connect to IPB to create the forum entry.
-			file_get_contents("https://forums.goonrathi.com/index.php?app=core&module=global&section=login&do=process&auth_key=880ea6a14ea49e853634fbdc5015a024&ips_username={$user->UGoonID}&ips_password={$password}");
+			@file_get_contents("https://forums.goonrathi.com/index.php?app=core&module=global&section=login&do=process&auth_key=880ea6a14ea49e853634fbdc5015a024&ips_username={$user->UGoonID}&ips_password={$password}");
 		}
 		else
 		{

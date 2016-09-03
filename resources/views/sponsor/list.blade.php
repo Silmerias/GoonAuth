@@ -1,6 +1,10 @@
 @extends('layouts.main')
 @section('content')
 
+<?php
+use App\User;
+?>
+
 <?php $auth = Auth::user(); ?>
 
 <a class="label label-info" href="{{ URL::to('/') }}">Back to Home</a>
@@ -8,7 +12,7 @@
 <h1>Sponsor List</h1>
 <div class="row">
 	<div class="col-md-12">
-	<p>Your sponsored members are below. You currently have <strong>{{ $auth->sponsoring->count() }}</strong> sponsors registered.</p>  
+	<p>Your sponsored members are below. You currently have <strong>{{ $auth->sponsoring->count() }}</strong> sponsors registered.</p>
 	<table class="table">
 		<thead>
 			<th style="width: 75px;">Status</th>
