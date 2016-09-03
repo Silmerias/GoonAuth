@@ -39,18 +39,20 @@ See the pre-existing modules for examples on how views and e-mails can be altere
 
 ### Download dependencies
 * apache2
-* php5
-* php5-mcrypt
-* php5-curl
-* php5-ldap
-* libapache2-mod-php5
+* php
+* php-mcrypt
+* php-gd
+* php-curl
+* php-ldap
+* libapache2-mod-php
 * apache2 mod_rewrite
 * composer
 ```
-sudo php5enmod mcrypt && sudo service apache2 restart
-sudo php5enmod curl && sudo service apache2 restart
-sudo php5enmod ldap && sudo service apache2 restart
-sudo a2enmod rewrite && sudo service apache2 restart
+sudo phpenmod mcrypt
+sudo phpenmod curl
+sudo phpenmod ldap
+sudo a2enmod rewrite
+sudo service apache2 restart
 curl -sS https://getcomposer.org/installer | php -- --filename=composer --install-dir=/usr/bin
 ```
 
@@ -76,23 +78,8 @@ sudo composer install
 
 ### Set up the configuration files
 ```
-cd app/config
-mkdir production
-cp app.php database.php mail.php production
-cp goonauth-sample.php production/goonauth.php
-
-cd production
-joe app.php
-joe database.php
-joe mail.php
-joe goonauth.php
-
-cd ../../../bootstrap
-hostname (remember what this returns)
-joe start.php
-(in the environment detection, add the production environment:
-    'production' => array('hostname goes here')
-)
+cp .env.example .env
+joe .env
 ```
 
 ### Set up write access

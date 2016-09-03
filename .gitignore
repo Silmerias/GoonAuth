@@ -1,9 +1,6 @@
-/bootstrap/compiled.php
 /vendor
-composer.phar
-.env.*.php
-.env.php
-.DS_Store
-Thumbs.db
-/app/config/goonauth.php
-/app/config/local
+/node_modules
+/public/storage
+Homestead.yaml
+Homestead.json
+.env
