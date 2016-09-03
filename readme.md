@@ -16,22 +16,23 @@ Each GameUser can belong to an Organization.
 ## Modules
 The module system was developed to provide custom functionality for Games and Organizations.
 
-* app/game_modules
-* app/org_modules
+* modules/games
+* modules/organizations
 
-GoonAuth comes with game modules for MechWarrior Online and Star Citizen.
-GoonAuth comes with an org module for the FLJK Goonrathi.
+GoonAuth comes with modules for:
+* MechWarrior Online
+* Star Citizen
 
 Modules can override views.  For game modules, this is the search path:
 
-* app/game_modules/**&lt;module&gt;**/views/**&lt;game abbr in DB&gt;**/...
-* app/views/...
+* modules/games/views/**&lt;game abbr in DB&gt;**/...
+* resources/views/...
 
 For org modules, this is the search path:
 
-* app/org_modules/**&lt;module&gt;**/views/**&lt;game abbr in DB&gt;**/**&lt;org abbr in DB&gt;**/...
-* app/org_modules/**&lt;module&gt;**/views/**&lt;org abbr in DB&gt;**/...
-* app/views/...
+* modules/organizations/views/**&lt;game abbr in DB&gt;**/**&lt;org abbr in DB&gt;**/...
+* modules/organizations/views/**&lt;org abbr in DB&gt;**/...
+* resources/views/...
 
 See the pre-existing modules for examples on how views and e-mails can be altered.
 
@@ -45,7 +46,6 @@ See the pre-existing modules for examples on how views and e-mails can be altere
 * php-curl
 * php-ldap
 * libapache2-mod-php
-* apache2 mod_rewrite
 * composer
 ```
 sudo phpenmod mcrypt
@@ -65,7 +65,7 @@ echo -e "\nPATH=\"\$HOME/.composer/vendor/bin:\$PATH\"" >> .profile
 ```
 
 ### Install the Laravel installer
-`sudo composer global require "laravel/installer=~1.1"`
+`sudo composer global require "laravel/installer"`
 
 ### Grab the GoonAuth code
 `git clone https://github.com/LoneBoco/GoonAuth.git`
@@ -79,22 +79,27 @@ sudo composer install
 ### Set up the configuration files
 ```
 cp .env.example .env
-joe .env
+vim .env
 ```
 
+### Generate your encryption key
+`php artisan key:generate`
+
+
 ### Set up write access
-`chmod -R g+w app/storage`
+```
+chmod -R g+w storage
+chmod -R g+w bootstrap/cache
+```
 
 ### Set up the classes
 ```
-cd GoonAuth
 php composer dump-autoload
-php artisan dump-autoload
+php artisan optimize
 ```
 
 ### Set up the database
 ```
-cd GoonAuth
 php artisan migrate:install
 php artisan migrate
 php artisan db:seed
@@ -102,7 +107,6 @@ php artisan db:seed
 
 ### Wipe the database (if needed)
 ```
-cd GoonAuth
 php artisan migrate:rollback
 php artisan migrate
 php artisan db:seed
