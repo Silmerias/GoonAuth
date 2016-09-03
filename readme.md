@@ -94,7 +94,7 @@ chmod -R g+w bootstrap/cache
 
 ### Set up the classes
 ```
-php composer dump-autoload
+composer dump-autoload
 php artisan optimize
 ```
 
