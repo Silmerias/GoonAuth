@@ -12,7 +12,7 @@ use App\User;
 	<p>Sponsoring a friend is easy assuming you/him are not complete idiots! Just follow the steps below to get them authed.</p>
 	<ol>
 		<li>Generate a sponsor code below.</li>
-		<li>Have your friend <a href="{{ URL::to('register/goon-sponsored') }}">register as a sponsored goon</a>.</li>
+		<li>Have your friend <a href="{{ URL::to('register/sponsored') }}">register as a sponsored member</a>.</li>
 		<li>Give your friend an unused sponsor code so they can use it.</li>
 	</ol>
 	<p>That's all you have to do!</p>

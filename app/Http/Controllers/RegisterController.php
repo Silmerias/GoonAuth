@@ -32,7 +32,12 @@ class RegisterController extends Controller
 {
 	public function getIndex()
 	{
-		return view('register.list');
+		return view('register.start');
+	}
+
+	public function getType()
+	{
+		return view('register.type');
 	}
 
 	public function getGoon()
@@ -45,9 +50,9 @@ class RegisterController extends Controller
 		return view('register.reapply');
 	}
 
-	public function getGoonSponsored()
+	public function getSponsored()
 	{
-		return view('register.goon-sponsored');
+		return view('register.sponsored');
 	}
 
 	public function getAffiliate()
@@ -195,18 +200,24 @@ class RegisterController extends Controller
 			$valid = $this->verifyGoonID(Input::get('goonid'));
 
 			// If we are reapplying, allow an in use error to go through.
-			if (Input::has('reapply') && $valid === -4)
-				$valid = 0;
+			if (Input::has('reapply'))
+			{
+				switch ($valid)
+				{
+					case -4: return Response::json(array('valid' => 'true', 'message' => 'Goon ID available for reapplication.'));
+					default: return Response::json(array('valid' => 'false', 'message' => 'Goon ID is not valid for reapplication.'));
+				}
+			}
 
 			switch ($valid)
 			{
 				case 0: return Response::json(array('valid' => 'true', 'message' => 'Goon ID is available.'));
 
 				default:
-				case -1: return Response::json(array('valid' => 'false', 'message' => 'Invalid GoonID.'));
-				case -2: return Response::json(array('valid' => 'false', 'message' => 'Your GoonID may only contain alpha-numeric, underscore, and hyphen characters.'));
-				case -3: return Response::json(array('valid' => 'false', 'message' => 'That GoonID is already in use.'));
-				case -4: return Response::json(array('valid' => 'false', 'message' => 'That GoonID is already in use. Are you trying to <a href="reapply">reapply</a>?'));
+				case -1: return Response::json(array('valid' => 'false', 'message' => 'Invalid Goon ID.'));
+				case -2: return Response::json(array('valid' => 'false', 'message' => 'Your Goon ID may only contain alpha-numeric, underscore, and hyphen characters.'));
+				case -3: return Response::json(array('valid' => 'false', 'message' => 'That Goon ID is already in use.'));
+				case -4: return Response::json(array('valid' => 'false', 'message' => 'That Goon ID is already in use. Are you trying to <a href="reapply">reapply</a>?'));
 			}
 		}
 
@@ -255,7 +266,6 @@ class RegisterController extends Controller
 
 		Session::put('register-goonid', Input::get('goonid'));
 		Session::put('register-email', Input::get('email'));
-		Session::forget('register-reapply');
 
 		$token = uniqid('FART');
 		Session::put('token', $token);
@@ -266,24 +276,21 @@ class RegisterController extends Controller
 	public function postReapply()
 	{
 		$goonid = $this->verifyGoonID(Input::get('goonid'));
-		if ($goonid !== 0 && $goonid !== -4)
+		if ($goonid !== -4)
 			return Redirect::back()->with('error', 'There was a problem with your entered GoonID');
 
 		$email = $this->verifyEmail(Input::get('email'));
 		if ($email !== 0 && $email !== -4)
 			return Redirect::back()->with('error', 'There was a problem with your entered email');
 
-		Session::put('register-goonid', Input::get('goonid'));
-		Session::put('register-email', Input::get('email'));
-		Session::put('register-reapply', 'true');
+		$user = $this->reapplyUser(Input::get('email'), Input::get('goonid'), null, null, null, null, Input::get('comment'));
+		if ($user === null)
+			return Redirect::back()->with('error', 'There was an unexpected error. Contact Adeptus for support.');
 
-		$token = uniqid('FART');
-		Session::put('token', $token);
-
-		return view('register.link', array('token' => $token));
+		return view('register.complete');
 	}
 
-	public function postGoonSponsored()
+	public function postSponsored()
 	{
 		$goonid = $this->verifyGoonID(Input::get('goonid'));
 		if ($goonid !== 0)
@@ -311,7 +318,6 @@ class RegisterController extends Controller
 	{
 		$goonid = Session::get('register-goonid');
 		$email = Session::get('register-email');
-		$reapply = Session::has('register-reapply');
 		$token = Session::get('token');
 		$sa_name = Input::get('sa_username');
 
@@ -321,7 +327,7 @@ class RegisterController extends Controller
 		if (!isset($sa_name))
 			return Redirect::back()->with('error', 'You must enter your SA Username.');
 
-		if (User::where('USACachedName', $sa_name)->count() !== 0 && $reapply === false)
+		if (User::where('USACachedName', $sa_name)->count() !== 0)
 			return Redirect::back()->with('error', 'That SA Username has already been registered.');
 
 		$sa_userid = null;
@@ -360,7 +366,6 @@ class RegisterController extends Controller
 
 			$client->addSubscriber($cookiePlugin);
 			$request = $client->get(null, array(), array('allow_redirects' => false));
-
 
 			$body = '';
 			try
@@ -422,7 +427,6 @@ class RegisterController extends Controller
 	private function createUser($email, $goonid, $sa_userid, $sa_regdate, $sa_name, $sa_postcount, $comment)
 	{
 		$group = Group::where('GRCode', 'SA')->first();
-		$reapply = Session::has('register-reapply');
 
 		// Grab IP.
 		$ip = inet_pton($_SERVER['REMOTE_ADDR']);
@@ -430,14 +434,8 @@ class RegisterController extends Controller
 			$ip = null;
 		else $ip = bin2hex($ip);
 
-		// Success!  Let's create our user now.
-		$user = new User;
-
-		// If this is a reapply, our user already exists, so instead grab that.
-		if ($reapply === true)
-			$user = User::where('UGoonID', $goonid)->first();
-
 		// Save our values.
+		$user = new User;
 		$user->USID = UserStatus::pending()->USID;
 		$user->UIPAddress = $ip;
 		$user->UEmail = $email;
@@ -470,6 +468,78 @@ class RegisterController extends Controller
 			$maildata = [];
 			Mail::send('emails.register-complete', $maildata, function($msg) use($user) {
 				$msg->subject('Your Goonrathi / Word of Lowtax membership request has been submitted for review.');
+				$msg->to($user->UEmail);
+			});
+		}
+		catch (Exception $e)
+		{
+			throw $e;
+		}
+
+		return $user;
+	}
+
+	private function reapplyUser($email, $goonid, $sa_userid, $sa_regdate, $sa_name, $sa_postcount, $comment)
+	{
+		// Grab IP.
+		$ip = inet_pton($_SERVER['REMOTE_ADDR']);
+		if ($ip === false)
+			$ip = null;
+		else $ip = bin2hex($ip);
+
+		// Grab our user
+		$user = User::where('UGoonID', $goonid)->first();
+		if (empty($user))
+			return null;
+
+		// Get our old status so we can save it in the comment.
+		$oldstatus = UserStatus::find($user->USID);
+		$group = Group::find($user->UGroup);
+
+		// Save our values.
+		$user->USID = UserStatus::pending()->USID;
+		$user->UIPAddress = $ip;
+		$user->UEmail = $email;
+		$user->save();
+
+		// Fix comment just in case.
+		if (!isset($comment) || empty($comment) || strlen($comment) == 0)
+			$comment = '';
+
+		// Create a registration note.
+		$reg = NoteType::where('NTCode', 'SYS')->first();
+		if (!empty($reg))
+		{
+			NoteHelper::Add(array(
+				'user' => $user,
+				'createdby' => null,
+				'group' => $group,
+				'type' => $reg,
+				'subject' => $group->GRName.' reapplication',
+				'message' => $comment,
+			));
+		}
+
+		// Create the status change note.
+		$stat = NoteType::where('NTCode', 'STAT')->first();
+		if (!empty($stat))
+		{
+			NoteHelper::Add(array(
+				'user' => $user,
+				'createdby' => null,
+				'group' => $group,
+				'type' => $stat,
+				'subject' => 'Reapplication',
+				'message' => 'Old status: '.$oldstatus->USStatus."\n".'New status: '.UserStatus::pending()->USStatus,
+			));
+		}
+
+		// Send out the registration e-mail.
+		try
+		{
+			$maildata = [];
+			Mail::send('emails.register-complete', $maildata, function($msg) use($user) {
+				$msg->subject('Your Goonrathi / Word of Lowtax reapplication request has been submitted for review.');
 				$msg->to($user->UEmail);
 			});
 		}

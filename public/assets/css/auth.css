@@ -2,6 +2,10 @@ body {
   font-family: 'Open Sans', sans-serif;
 }
 
+.bg-notimplemented {
+  background-color: #b4b4b4;
+}
+
 .form-signin {
   max-width: 430px;
   padding: 15px;
@@ -94,16 +98,18 @@ body {
   height: 200px;
   border: 1px solid darkgray;
   margin: 12px 5px;
-  padding-top: 50px;
+  padding: 50px 10px 0px 10px;
   font-size: 1.8em;
   font-weight: bold;
   text-align: center;
   line-height: 0.9em;
+  text-decoration: none !important;
 }
 
 .register-choice span {
   font-size: 0.6em;
   font-weight: normal;
+  line-height: 0em;
 }
 
 .form-register {

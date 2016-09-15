@@ -1,15 +1,12 @@
 @extends('layouts.main')
 @section('content')
-<div class="row">
-	<div class="col-md-12">
-		<p>Please follow the instructions below.</p>
-	</div>
+
+<a class="label label-info" href="{{ URL::to('register/type') }}">Back to Registration Type</a>
+<div class="row center-block text-center">
+	<p>Please follow the instructions below.</p>
 </div>
 
 <form class="form-register" role="form" action="{{ URL::action('RegisterController@postGoon') }}" method="post">
-	<h2 class="form-register-heading">Are you being sponsored?</h2>
-	<p>{{ HTML::link(URL::to('register/goon-sponsored'), "Click here") }} to access the sponsor form.</p>
-
 	{{ csrf_field() }}
 	<h2 class="form-register-heading">Fill out the following</h2>
 	<p>Your Goon ID is your login name. Your Display Name can be changed later, but remember that your Goon ID is always visible.</p>

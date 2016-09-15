@@ -1,9 +1,9 @@
 @extends('layouts.main')
 @section('content')
-<div class="row">
-	<div class="col-md-12">
-		<p>Please follow the instructions below.</p>
-	</div>
+
+<a class="label label-info" href="{{ URL::to('register/type') }}">Back to Start</a>
+<div class="row center-block text-center">
+	<p>Please follow the instructions below.</p>
 </div>
 
 <form class="form-register" role="form" action="{{ URL::action('RegisterController@postReapply') }}" method="post">
@@ -25,7 +25,7 @@
 
 	<input type="text" name="goonid" class="form-control" placeholder="Goon ID" required="" autofocus="" onblur="validate(this)" data-type="goonid">
 	<input type="email" name="email" class="form-control" placeholder="E-Mail Address" required="" autofocus="" onblur="validate(this)" data-type="email">
-	<button class="btn btn-lg btn-primary btn-block" type="submit">Next</button>
+	<button class="btn btn-lg btn-primary btn-block" type="submit">Finish</button>
 </form>
 
 <script>

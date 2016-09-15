@@ -1,9 +1,9 @@
 @extends('layouts.main')
 @section('content')
-<div class="row">
-	<div class="col-md-12">
-		<p>Please follow the instructions below to verify your SA account.</p>
-	</div>
+
+<a class="label label-info" href="{{ URL::previous() }}">Back to Application</a>
+<div class="row center-block text-center">
+	<p>Please follow the instructions below to verify your SA account.</p>
 </div>
 
 <form class="form-register" role="form" action="{{ URL::action('RegisterController@postLink') }}" method="post">
