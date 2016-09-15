@@ -79,7 +79,7 @@ use App\Game;
 								</ul>
 							</li>
 
-							@if (!is_null(Auth::user()->USAUserID))
+							@if (!is_null($auth->USAUserID))
 								<li{{ Request::is('sponsor') || Request::is('sponsor/*') ? ' class="active"' : '' }}><a href="{{ URL::to('sponsor') }}">Sponsor</a></li>
 							@endif
 						@endif
@@ -87,9 +87,9 @@ use App\Game;
 					<ul class="nav navbar-nav navbar-right">
 						@if (Auth::check())
 							<li class="dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ Auth::user()->UGoonID }} <b class="caret"></b></a>
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ $auth->UGoonID }} <b class="caret"></b></a>
 								<ul class="dropdown-menu">
-									@if (Auth::user()->is_admin)
+									@if ($auth->is_admin)
 									<li><a href="{{ URL::to('admin') }}">Admin</a></li>
 									@endif
 									<li><a href="{{ URL::to('logout') }}">Logout</a></li>

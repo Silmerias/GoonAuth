@@ -6,8 +6,6 @@ use App\Sponsor;
 use App\User;
 ?>
 
-<?php $auth = Auth::user(); ?>
-
 <h1>Sponsor a Friend</h1>
 <div class="row">
 	<div class="col-md-12">

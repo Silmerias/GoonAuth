@@ -160,10 +160,11 @@ return [
          */
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
+        App\Providers\ComposerServiceProvider::class,
         App\Providers\EventServiceProvider::class,
+        App\Providers\LDAPUserProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\UserServiceProvider::class,
-        App\Providers\LDAPUserProvider::class,
     ],
 
     /*

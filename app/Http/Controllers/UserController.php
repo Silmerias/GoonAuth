@@ -18,7 +18,7 @@ class UserController extends Controller
 
 	public function showHome()
 	{
-		return View::make('user.home');
+		return view('user.home');
 	}
 
 	public function doLogin()
@@ -34,7 +34,7 @@ class UserController extends Controller
 
 		// Uh oh.
 		Session::flash('error', 'Invalid username/password.');
-		return View::make('user.login');
+		return view('user.login');
 	}
 
 	public function showUser($id)
@@ -43,7 +43,7 @@ class UserController extends Controller
 		$notes = $this->getNotes($user);
 
 		$include = array('user' => $user, 'notes' => $notes);
-		return View::make('user.stats', $include);
+		return view('user.stats', $include);
 	}
 
 	public function showNotes($id)
@@ -52,7 +52,7 @@ class UserController extends Controller
 		$notes = $this->getNotes($user);
 
 		$include = array('notes' => $notes);
-		return View::make('user.notes', $include);
+		return view('user.notes', $include);
 	}
 
 	public function getNotes($user)

@@ -32,8 +32,7 @@ class GameController extends Controller
 {
 	public function getRoot()
 	{
-		$include = array('auth' => Auth::user());
-		return View::make('games.list', $include);
+		return view('games.list');
 	}
 
 	public function getGames($abbr)

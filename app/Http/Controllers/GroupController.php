@@ -30,7 +30,7 @@ class GroupController extends Controller
 			return Redirect::to('/');
 
 		$include = array('group' => $group);
-		return View::make('group.list', $include);
+		return view('group.list', $include);
 	}
 
 	public function showAuth($grid)
@@ -40,7 +40,7 @@ class GroupController extends Controller
 			return Redirect::to('/');
 
 		$include = array('group' => $group);
-		return View::make('group.auth', $include);
+		return view('group.auth', $include);
 	}
 
 	public function doAuth($grid)
@@ -372,7 +372,7 @@ class GroupController extends Controller
 			$members = $members->appends($get);
 
 		$include = array('group' => $group, 'members' => $members);
-		return View::make('group.viewmembers', $include);
+		return view('group.viewmembers', $include);
 	}
 
 	public function doGroupMembers($grid)

@@ -18,12 +18,12 @@ class SponsorController extends Controller
 {
 	public function showSponsors()
 	{
-		return View::make('sponsor.list');
+		return view('sponsor.list');
 	}
 
 	public function showAdd()
 	{
-		return View::make('sponsor.add');
+		return view('sponsor.add');
 	}
 
 	public function doAdd()

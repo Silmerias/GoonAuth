@@ -8,8 +8,6 @@ use App\User;
 use App\UserStatus;
 ?>
 
-<?php $auth = Auth::user(); ?>
-
 <a class="label label-info" href="{{ URL::to('/') }}">Back to Home</a>
 
 <h1>Group Member List</h1>

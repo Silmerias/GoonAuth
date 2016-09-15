@@ -10,8 +10,6 @@ use App\User;
 use App\UserStatus;
 ?>
 
-<?php $auth = Auth::user(); ?>
-
 <a class="label label-info" href="{{ URL::to('games/'.$game->GAbbr.'/'.$org->GOAbbr) }}">Back to {{ e($org->GOName) }}</a>
 
 <h1>Organization Member List</h1>

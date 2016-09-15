@@ -8,7 +8,6 @@ use App\User;
 use App\UserStatus;
 ?>
 
-<?php $auth = Auth::user(); ?>
 <?php $pending = UserStatus::pending()->first() ?>
 
 <!-- default, info, warning, danger, success -->

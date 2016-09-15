@@ -32,27 +32,27 @@ class RegisterController extends Controller
 {
 	public function getIndex()
 	{
-		return View::make('register.list');
+		return view('register.list');
 	}
 
 	public function getGoon()
 	{
-		return View::make('register.goon');
+		return view('register.goon');
 	}
 
 	public function getReapply()
 	{
-		return View::make('register.reapply');
+		return view('register.reapply');
 	}
 
 	public function getGoonSponsored()
 	{
-		return View::make('register.goon-sponsored');
+		return view('register.goon-sponsored');
 	}
 
 	public function getAffiliate()
 	{
-		return View::make('register.affiliate');
+		return view('register.affiliate');
 	}
 
 	public function getLink()
@@ -60,7 +60,7 @@ class RegisterController extends Controller
 		$token = Session::get('token');
 		if (!isset($token) || $token === null)
 			return Redirect::to('/register/goon');
-		return View::make('register.link', array('token' => $token));
+		return view('register.link', array('token' => $token));
 	}
 
 	private function verifyGoonID($goonid)
@@ -259,7 +259,7 @@ class RegisterController extends Controller
 		$token = uniqid('FART');
 		Session::put('token', $token);
 
-		return View::make('register.link', array('token' => $token));
+		return view('register.link', array('token' => $token));
 	}
 
 	public function postReapply()
@@ -279,7 +279,7 @@ class RegisterController extends Controller
 		$token = uniqid('FART');
 		Session::put('token', $token);
 
-		return View::make('register.link', array('token' => $token));
+		return view('register.link', array('token' => $token));
 	}
 
 	public function postGoonSponsored()
@@ -303,7 +303,7 @@ class RegisterController extends Controller
 		$sponsor->sponsored()->associate($user);
 		$sponsor->save();
 
-		return View::make('register.complete', array('sponsored' => true));
+		return view('register.complete', array('sponsored' => true));
 	}
 
 	public function postLink()
@@ -408,7 +408,7 @@ class RegisterController extends Controller
 
 			$this->createUser($email, $goonid, $sa_userid, $sa_regdate, $sa_name, $sa_postcount, $comment);
 
-			return View::make('register.complete');
+			return view('register.complete');
 		}
 		else
 		{

@@ -7,8 +7,6 @@ use App\User;
 use App\UserStatus;
 ?>
 
-<?php $auth = Auth::user(); ?>
-
 <!-- default, info, warning, danger, success -->
 <p><a class="label label-info" href="{{ URL::to('games') }}">Back to Games</a></p>
 

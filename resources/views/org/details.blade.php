@@ -10,8 +10,6 @@ use App\UserStatus;
 use App\Extensions\Permissions\UserPerm;
 ?>
 
-<?php $auth = Auth::user(); ?>
-
 <p><a class="label label-info" href="{{ URL::to('games/'.$game->GAbbr) }}">Back to {{ $game->GName }}</a></p>
 
 <!-- Organization navbar -->

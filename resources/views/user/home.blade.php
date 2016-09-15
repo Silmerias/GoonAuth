@@ -7,8 +7,6 @@ use App\UserStatus;
 use App\Extensions\Permissions\UserPerm;
 ?>
 
-<?php $auth = Auth::user(); ?>
-
 <?php
 $perms = new UserPerm($auth);
 $pending = UserStatus::pending()->first();
