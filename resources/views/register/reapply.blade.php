@@ -7,6 +7,7 @@
 </div>
 
 <form class="form-register" role="form" action="{{ URL::action('RegisterController@postReapply') }}" method="post">
+	{{ csrf_field() }}
 	<h2 class="form-register-heading">Reapplication Form</h2>
 	<p>Use the same Goon ID as you used the first time you tried to apply.</p>
 	<p>Make sure your e-mail is valid as you will receive your acceptance information through it.</p>

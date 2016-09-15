@@ -7,6 +7,7 @@
 </div>
 
 <form class="form-register" role="form" action="{{ URL::action('RegisterController@postLink') }}" method="post">
+	{{ csrf_field() }}
 	<h2 class="form-register-heading">Add your Verification Token</h2>
 	<div class="col-md-12">
 		<p>Go <a href="http://forums.somethingawful.com/member.php?action=editprofile" target="_blank">edit your profile</a> on SA and place the token below in any of the public fields (e.g., about me, location, interests, etc). Once you've done that, enter your username and click the Verify button.</p>

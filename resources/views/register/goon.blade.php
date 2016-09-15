@@ -10,6 +10,7 @@
 	<h2 class="form-register-heading">Are you being sponsored?</h2>
 	<p>{{ HTML::link(URL::to('register/goon-sponsored'), "Click here") }} to access the sponsor form.</p>
 
+	{{ csrf_field() }}
 	<h2 class="form-register-heading">Fill out the following</h2>
 	<p>Your Goon ID is your login name. Your Display Name can be changed later, but remember that your Goon ID is always visible.</p>
 	<p>Make sure your e-mail is valid as you will receive your acceptance information through it.</p>

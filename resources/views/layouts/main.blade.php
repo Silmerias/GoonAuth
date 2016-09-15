@@ -1,23 +1,22 @@
-<?php
-use App\Game;
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<meta name="csrf_token" content="{{ $encrypted_csrf_token }}">
 
 		<title>Auth Landing</title>
 		{{ HTML::style('assets/css/bootstrap.min.css') }}
 		{{ HTML::style('assets/css/bootstrap-select.min.css') }}
 		{{ HTML::style('assets/css/bootstrap-datepicker3.min.css') }}
 		{{ HTML::style('assets/css/auth.css') }}
+		@stack('css')
 		{{ HTML::script('assets/js/jquery-1.11.1.min.js') }}
 		{{ HTML::script('assets/js/bootstrap.min.js') }}
 		{{ HTML::script('assets/js/bootstrap-select.min.js') }}
 		{{ HTML::script('assets/js/bootstrap-datepicker.js') }}
+		@stack('scripts')
 
 		<link href='//fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
 		<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
@@ -29,6 +28,13 @@ use App\Game;
 		<![endif]-->
 
 		<script>
+			$.ajaxPrefilter(function(options, originalOptions, xhr) {
+				  var token = $('meta[name="csrf_token"]').attr('content');
+				  if (token) {
+						return xhr.setRequestHeader('X-XSRF-TOKEN', token);
+				  }
+			});
+
 			function getQueryParams(qs) {
 				qs = qs.split("+").join(" ");
 
@@ -66,7 +72,7 @@ use App\Game;
 								<a href="{{ URL::to('games') }}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Games <span class="caret"></span></a>
 								<ul class="dropdown-menu" role="menu">
 								<?php $count = 0; ?>
-								@foreach (Game::get() as $game)
+								@foreach (App\Game::get() as $game)
 									@if ($count > 0)
 										<li role="presentation" class="divider"></li>
 									@endif

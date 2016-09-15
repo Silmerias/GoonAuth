@@ -7,6 +7,7 @@
 </div>
 
 <form class="form-signin" role="form" action="{{ URL::to('login') }}" method="post">
+	{{ csrf_field() }}
 	<h2 class="form-signin-heading">Login using your Goon ID</h2>
 	<p>If you don't have an account yet, {{ HTML::link(URL::to('register'), "click here") }} to start your auth process.</p>
 	@if (Session::has('banned'))

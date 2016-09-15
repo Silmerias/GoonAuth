@@ -6,6 +6,7 @@
 <div class="row">
     <div class="col-md-3">
         <form action="{{ URL::to('admin') }}" method="post" class="form">
+            {{ csrf_field() }}
             <div class="input-group">
               <input type="text" name="search" class="form-control" value="{{ $search }}">
               <span class="input-group-btn">

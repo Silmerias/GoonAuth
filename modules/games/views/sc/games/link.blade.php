@@ -14,6 +14,8 @@ use App\Game;
 </div>
 
 <form class="form-register" role="form" action="{{ URL::to(Request::path()) }}" method="post">
+	{{ csrf_field() }}
+
 @if ($game->GRequireValidation == true)
 	<h2 class="form-register-heading">Add your Verification Token</h2>
 @else

@@ -35,6 +35,7 @@ use App\User;
 	</table>
 
 	<form action="{{ URL::to('sponsor/add') }}" method="post" class="form">
+		{{ csrf_field() }}
 		<button type="submit" class="btn btn-primary">Generate Code</button>
 	</form>
 	</div>

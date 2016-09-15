@@ -57,6 +57,7 @@
     @endforeach
     </ul>
     <form action="{{ URL::to('admin/note') }}" method="post">
+        {{ csrf_field() }}
         <input type="hidden" name="auth_id" value="{{ $user->id }}">
         <div class="input-group">
             <input type="text" class="form-control" id="note" name="note" placeholder="Add a new note...">

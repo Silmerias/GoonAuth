@@ -5,6 +5,7 @@ namespace App\Http\ViewComposers;
 use Illuminate\View\View;
 
 use Auth;
+use Crypt;
 
 class AuthenticatedComposer
 {
@@ -14,6 +15,7 @@ class AuthenticatedComposer
 
     public function compose(View $view)
     {
-        $view->with('auth', Auth::user());
+        $view->with('auth', Auth::user())
+        	->withEncryptedCsrfToken(Crypt::encrypt(csrf_token()));
     }
 }

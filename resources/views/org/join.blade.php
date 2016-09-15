@@ -25,6 +25,7 @@ foreach ($auth->gameusers()->where('GID', $game->GID)->get() as $character)
 ?>
 
 <form class="form-register" role="form" action="{{ URL::to(Request::path()) }}" method="post">
+	{{ csrf_field() }}
 	<h2 class="form-register-heading">Add Character</h2>
 	<div class="col-md-12">
 		<p>Select your character then click the Join button to request membership.</p>
