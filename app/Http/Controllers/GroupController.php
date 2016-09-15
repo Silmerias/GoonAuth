@@ -91,7 +91,7 @@ class GroupController extends Controller
 		}
 
 		// Check to see if the user is already active.
-		$active = UserStatus::where('USCode', 'ACTI')->first();
+		$active = UserStatus::active();
 		if ($user->USID === $active->USID)
 		{
 			return Response::json(array(
@@ -251,7 +251,7 @@ class GroupController extends Controller
 			}
 
 			// Reject the user.
-			$rejected = UserStatus::where('USCode', 'REJE')->first();
+			$rejected = UserStatus::rejected();
 			$user->USID = $rejected->USID;
 			$user->save();
 
@@ -280,7 +280,7 @@ class GroupController extends Controller
 		if (empty($group))
 			return Redirect::to('/');
 
-		$rejected = UserStatus::where('USCode', 'REJE')->first();
+		$rejected = UserStatus::rejected();
 		$members = $group->members();
 
 		$get = array();

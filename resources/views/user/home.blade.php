@@ -9,7 +9,7 @@ use App\Extensions\Permissions\UserPerm;
 
 <?php
 $perms = new UserPerm($auth);
-$pending = UserStatus::pending()->first();
+$pending = UserStatus::pending();
 $pending_count = $auth->group->members()->where('USID', $pending->USID)->count();
 ?>
 

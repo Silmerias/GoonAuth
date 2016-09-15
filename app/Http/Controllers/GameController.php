@@ -165,7 +165,7 @@ class GameController extends Controller
 		if (empty($game) || empty($org) || empty($gameuser))
 			return Redirect::to('games/'.$game->GAbbr.'/'.$org->GOAbbr);
 
-		$pending = UserStatus::where('USCode', 'PEND')->first();
+		$pending = UserStatus::pending();
 		$gameuser->gameorgs()->attach($org, array('USID' => $pending->USID));
 
 		// Create a note.
@@ -197,7 +197,7 @@ class GameController extends Controller
 		if (empty($game) || empty($org))
 			return Redirect::to('games');
 
-		$rejected = UserStatus::where('USCode', 'REJE')->first();
+		$rejected = UserStatus::rejected();
 		$members = $org->gameusers()
 			->join('User', 'GameUser.UID', '=', 'User.UID')
 			->orderBy('UGoonID');
@@ -385,7 +385,7 @@ class GameController extends Controller
 			}
 
 			// Add the user.
-			$active = UserStatus::where('USCode', 'ACTI')->first();
+			$active = UserStatus::active();
 			$gameuser->gameorgs()->updateExistingPivot($org->GOID,
 				array('USID' => $active->USID), false);
 
@@ -432,7 +432,7 @@ class GameController extends Controller
 			}
 
 			// Reject the user.
-			$rejected = UserStatus::where('USCode', 'REJE')->first();
+			$rejected = UserStatus::rejected();
 			$gameuser->gameorgs()->updateExistingPivot($org->GOID,
 				array('USID' => $rejected->USID), false);
 

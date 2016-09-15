@@ -18,7 +18,7 @@ class GameUserSeeder extends Seeder {
 	{
 		DB::table('GameUser')->delete();
 
-		$active = UserStatus::active()->first();
+		$active = UserStatus::active();
 		$admin = User::where('UGoonID', 'admin')->first();
 		$mwo = Game::where('GAbbr', 'mwo')->first();
 		$wol = GameOrg::where('GOAbbr', 'WoL')->first();

@@ -81,9 +81,10 @@ class RegisterController extends Controller
 		if (empty($user))
 			return 0;
 
-		// Check to see if they were rejected.
-		$rej = UserStatus::where('USCode', 'REJE')->first();
-		if ($user->USID == $rej->USID)
+		// Check to see if they were rejected or banned.
+		$rej = UserStatus::rejected();
+		$ban = UserStatus::banned();
+		if ($user->USID == $rej->USID || $user->USID == $ban->USID)
 			return -4;
 
 		// Exists and aren't rejected.
@@ -165,7 +166,7 @@ class RegisterController extends Controller
 			return 0;
 
 		// Check to see if they were rejected.
-		$rej = UserStatus::where('USCode', 'REJE')->first();
+		$rej = UserStatus::rejected();
 		if ($user->USID == $rej->USID)
 			return -4;
 
@@ -437,7 +438,7 @@ class RegisterController extends Controller
 			$user = User::where('UGoonID', $goonid)->first();
 
 		// Save our values.
-		$user->USID = UserStatus::pending()->first()->USID;
+		$user->USID = UserStatus::pending()->USID;
 		$user->UIPAddress = $ip;
 		$user->UEmail = $email;
 		$user->UGoonID = $goonid;

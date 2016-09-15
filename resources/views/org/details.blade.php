@@ -36,7 +36,7 @@ use App\Extensions\Permissions\UserPerm;
 
 <?php
 $perms = new UserPerm($auth);
-$pending = UserStatus::pending()->first();
+$pending = UserStatus::pending();
 $pending_count = $org->gameusers()->where('GameOrgHasGameUser.USID', $pending->USID)->count();
 ?>
 

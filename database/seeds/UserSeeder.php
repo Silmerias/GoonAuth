@@ -17,7 +17,7 @@ class UserSeeder extends Seeder {
 	{
 		DB::table('User')->delete();
 
-		$active = UserStatus::active()->first();
+		$active = UserStatus::active();
 		$roll = Role::where('RName', 'Admin')->first();
 		$sa = Group::first();
 

@@ -9,7 +9,7 @@ use App\User;
 use App\UserStatus;
 ?>
 
-<?php $pending = UserStatus::pending()->first() ?>
+<?php $pending = UserStatus::pending() ?>
 
 <a class="label label-info" href="{{ URL::to('games/'.$game->GAbbr.'/'.$org->GOAbbr) }}">Back to {{ e($org->GOName) }}</a>
 

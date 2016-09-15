@@ -15,24 +15,36 @@ class UserStatus extends Model
 		return $this->hasMany(User::class, 'USID');
 	}
 
-	public function scopeActive($query) {
-		return $query->where('USCode', 'ACTI');
-	}
-
 	public function scopeInactive($query) {
 		return $query->where('USCode', '<>', 'ACTI')
 			>where('USCode', '<>', 'VACA');
 	}
 
-	public function scopePending($query) {
-		return $query->where('USCode', 'PEND');
+	public static function unknown() {
+		return UserStatus::where('USCode', 'UNKN')->first();
 	}
 
-	public function scopeVacation($query) {
-		return $query->where('USCode', 'VACA');
+	public static function pending() {
+		return UserStatus::where('USCode', 'PEND')->first();
 	}
 
-	public function scopeBanned($query) {
-		return $query->where('USCode', 'BAN');
+	public static function rejected() {
+		return UserStatus::where('USCode', 'REJE')->first();
+	}
+
+	public static function active() {
+		return UserStatus::where('USCode', 'ACTI')->first();
+	}
+
+	public static function vacation() {
+		return UserStatus::where('USCode', 'VACA')->first();
+	}
+
+	public static function probation() {
+		return UserStatus::where('USCode', 'PROB')->first();
+	}
+
+	public static function banned() {
+		return UserStatus::where('USCode', 'BAN')->first();
 	}
 }

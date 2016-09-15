@@ -8,7 +8,7 @@ use App\User;
 use App\UserStatus;
 ?>
 
-<?php $pending = UserStatus::pending()->first() ?>
+<?php $pending = UserStatus::pending() ?>
 
 <!-- default, info, warning, danger, success -->
 <!-- <a class="label label-info" href="{{ URL::to('group/'.$group->GRID) }}">Back to {{ $group->GRName }}</a> -->
