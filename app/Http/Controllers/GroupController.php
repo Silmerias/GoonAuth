@@ -341,6 +341,8 @@ class GroupController extends Controller
 
 		if (Input::has('orderby'))
 		{
+			$get['orderby'] = Input::get('orderby');
+
 			$order = Input::get('orderby');
 			if ($order == 'goonid') $members = $members->orderBy('UGoonID');
 			if ($order == 'status') $members = $members->orderBy('USID');
