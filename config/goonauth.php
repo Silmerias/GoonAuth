@@ -2,7 +2,7 @@
 
 return [
 
-	'version' => '2.1',
+	'version' => '2.1.20160914',
 
 	/**
 	 * Your SA bbuserid and bbpassword cookie values. Required to auth accounts.
