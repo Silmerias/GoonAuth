@@ -13,8 +13,8 @@ use App\Note;
 				<span class="note-global">[Global]</span>
 			@endif
 		</p>
-		<p class="note-subject">{{ str_replace("\n", '<br>', e($note->NSubject)) }}</p>
-		<p class="note-comment">{{ str_replace("\n", '<br>', e($note->NMessage)) }}</p>
+		<p class="note-subject">{!! str_replace("\n", '<br>', e($note->NSubject)) !!}</p>
+		<p class="note-comment">{!! str_replace("\n", '<br>', e($note->NMessage)) !!}</p>
 		<p class="note-footer">By
 			@if (is_null($note->CreatedGoonID))
 				System
