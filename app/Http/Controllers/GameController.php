@@ -92,11 +92,6 @@ class GameController extends Controller
 		if (!isset($ret) || $ret === false || $ret['ret'] === false)
 			return Redirect::back()->with('error', 'Verification failed.');
 
-		// Run the GameModule.
-		$success = $MOD->memberAdded($user);
-		if (isset($success) && $success === false)
-			return Redirect::back()->with('error', 'Linking error.  Contact Adeptus for assistance.');
-
 		// Success!  Let's create our user now.
 		$user = new GameUser;
 		$user->GID = $game->GID;
@@ -110,6 +105,14 @@ class GameController extends Controller
 			$user->GUCachedPostCount = $ret['postcount'];
 		}
 		$user->save();
+
+		// Run the GameModule.
+		$success = $MOD->memberAdded($user);
+		if (isset($success) && $success === false)
+		{
+			$user->delete();
+			return Redirect::back()->with('error', 'Linking error.  Contact Adeptus for assistance.');
+		}
 
 		$include = array('game' => $game);
 		return $MOD->makeView('games.complete', $include);
