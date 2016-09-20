@@ -6,6 +6,10 @@ use App\Sponsor;
 use App\User;
 ?>
 
+<?php
+$code = Sponsor::where('UID', $auth->UID)->whereNull('SSponsoredID')->first();
+?>
+
 <h1>Sponsor a Friend</h1>
 <div class="row">
 	<div class="col-md-12">
@@ -22,22 +26,16 @@ use App\User;
 		{{ Session::get('error') }}
 	</div>
 	@endif
-	<h2>Available codes</h2>
-	<table class="table">
-		<thead>
-			<th>Code</th>
-		</thead>
-		@foreach (Sponsor::where('UID', $auth->UID)->whereNull('SSponsoredID')->get() as $sponsor)
-		<tr>
-			<td>{{ e($sponsor->SCode) }}</td>
-		</tr>
-		@endforeach
-	</table>
+	<h3>Your Sponsor Code</h3>
 
+	@if (empty($code))
 	<form action="{{ URL::to('sponsor/add') }}" method="post" class="form">
 		{{ csrf_field() }}
 		<button type="submit" class="btn btn-primary">Generate Code</button>
 	</form>
+	@else
+	<kbd>{{ $code->SCode }}</kbd>
+	@endif
 	</div>
 </div>
 @stop
