@@ -41,6 +41,9 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::get('games/{abbr}/link', 'GameController@getGamesLink');
 	Route::post('games/{abbr}/link', 'GameController@postGamesLink');
 	Route::post('games/{abbr}/link/check-user', 'GameController@postGamesLinkCheckUser');
+	Route::get('games/{abbr}/simple-link', 'GameController@getGamesSimpleLink');
+	Route::post('games/{abbr}/simple-link', 'GameController@postGamesSimpleLink');
+	Route::post('games/{abbr}/simple-link/check-user', 'GameController@postGamesLinkCheckUser');
 
 	Route::get('games/{abbr}/{org}', 'GameController@getGamesOrg');
 	Route::get('games/{abbr}/{org}/join', 'GameController@getGamesOrgJoin');

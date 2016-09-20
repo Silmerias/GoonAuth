@@ -18,4 +18,9 @@ class Game extends Model
 	public function orgs() {
 		return $this->belongsToMany(GameOrg::class, 'GameHasGameOrg', 'GID', 'GOID');
 	}
+
+	public function hasSingleOrg()
+	{
+		return $this->orgs()->count() == 1;
+	}
 }

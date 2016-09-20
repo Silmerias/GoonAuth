@@ -41,10 +41,15 @@ class GameController extends Controller
 		if (empty($game))
 			return Redirect::to('games');
 
-		$MOD = GameModule::CreateInstance($game);
-
 		$include = array('game' => $game);
-		return $MOD->makeView('games.details', $include);
+
+		$MOD = GameModule::CreateInstance($game);
+		$gameorg = $game->orgs()->first();
+		$ORG = OrgModule::CreateInstance($gameorg, $game);
+
+		if ($game->hasSingleOrg() && $ORG->simpleRegistration())
+			return $MOD->makeView('games.details-simple', $include);
+		else return $MOD->makeView('games.details', $include);
 	}
 
 	public function getGamesLink($abbr)
@@ -110,6 +115,106 @@ class GameController extends Controller
 		return $MOD->makeView('games.complete', $include);
 	}
 
+	public function getGamesSimpleLink($abbr)
+	{
+		$game = Game::where('GAbbr', $abbr)->first();
+		if (empty($game) || !$game->hasSingleOrg())
+			return Redirect::to('games');
+
+		$gameorg = $game->orgs()->first();
+
+		$token = uniqid('FART');
+		Session::put('token', $token);
+
+		$MOD = GameModule::CreateInstance($game);
+
+		$include = array('game' => $game, 'gameorg' => $gameorg, 'token' => $token);
+		return $MOD->makeView('games.link-simple', $include);
+	}
+
+	public function postGamesSimpleLink($abbr)
+	{
+		$auth = Auth::user();
+		$game = Game::where('GAbbr', $abbr)->first();
+		if (empty($game) || !$game->hasSingleOrg())
+			return Redirect::to('games');
+
+		$username = Input::get('username');
+		$token = Session::get('token');
+
+		// Check if the user exists.
+		$count = GameUser::where('UID', $auth->UID)->where('GID', $game->GID)->where('GUCachedName', $username)->count();
+		if ($count !== 0)
+			return Redirect::back()->with('error', 'This game user is already linked to your account.');
+
+		if (!isset($username))
+			return Redirect::back()->with('error', 'You must enter your Game Username.');
+
+		$MOD = GameModule::CreateInstance($game);
+
+		// Attempt a verification via the GameModule.
+		$ret = $MOD->memberVerify($username, $token);
+		if (!isset($ret) || $ret === false || $ret['ret'] === false)
+			return Redirect::back()->with('error', 'Verification failed.');
+
+		// Success!  Let's create our user now.
+		$gameuser = new GameUser;
+		$gameuser->GID = $game->GID;
+		$gameuser->UID = $auth->UID;
+		$gameuser->GUCacheDate = Carbon::now();
+		$gameuser->GUCachedName = $username;
+		if (isset($ret) && is_array($ret))
+		{
+			$gameuser->GUUserID = $ret['userid'];
+			$gameuser->GURegDate = $ret['regdate'];
+			$gameuser->GUCachedPostCount = $ret['postcount'];
+		}
+		$gameuser->save();
+
+		// Run the GameModule.
+		$success = $MOD->memberAdded($gameuser);
+		if (isset($success) && $success === false)
+		{
+			$gameuser->delete();
+			return Redirect::back()->with('error', 'Linking error.  Contact Adeptus for assistance.');
+		}
+
+		// Get our OrgModule and sanity check it.
+		$gameorg = $game->orgs()->first();
+		$ORG = OrgModule::CreateInstance($gameorg, $game);
+		if (!$ORG->simpleRegistration())
+		{
+			$gameuser->delete();
+			return Redirect::back()->with('error', 'This organization doesn\'t support simple registration.');
+		}
+
+		// Set to pending.
+		$pending = UserStatus::pending();
+		$gameuser->gameorgs()->attach($gameorg, array('USID' => $pending->USID));
+
+		// Create a note.
+		$sys = NoteType::where('NTCode', 'SYS')->first();
+		if (!empty($sys))
+		{
+			NoteHelper::Add(array(
+				'user' => $gameuser->user,
+				'createdby' => null,
+				'org' => $gameorg,
+				'type' => $sys,
+				'subject' => $gameorg->GOName.' auto registration',
+				'message' => '',
+			));
+		}
+
+		// Attempt a verification via the OrgModule.
+		$ret = $this->OrgApproved($ORG, null, $gameuser);
+		if ($ret != null)
+			return $ret;
+
+		$include = array('game' => $game);
+		return $MOD->makeView('games.complete-simple', $include);
+	}
+
 	public function postGamesLinkCheckUser($abbr)
 	{
 		$auth = Auth::user();
@@ -151,7 +256,14 @@ class GameController extends Controller
 		if (empty($game) || empty($org))
 			return Redirect::to('games');
 
-		$MOD = OrgModule::CreateInstance($org, $game);
+		$MOD = GameModule::CreateInstance($game);
+		$gameorg = $game->orgs()->first();
+		$ORG = OrgModule::CreateInstance($gameorg, $game);
+
+		// Check if we are in simple registration mode.
+		// If so, redirect to the correct page.
+		if ($game->hasSingleOrg() && $ORG->simpleRegistration())
+			return Redirect::to('games/'.$game->GAbbr.'/simple-link');
 
 		$include = array('game' => $game, 'org' => $org);
 		return $MOD->makeView('org.join', $include);
@@ -307,17 +419,14 @@ class GameController extends Controller
 	public function postAuthGamesOrg($abbr, $org)
 	{
 		$action = Input::get('action');
+		$gameuser = GameUser::find(Input::get('id'));
 		$game = Game::where('GAbbr', $abbr)->first();
 		$org = GameOrg::where('GOAbbr', $org)->first();
-		$gameuser = GameUser::find(Input::get('id'));
-		$user = User::find($gameuser->UID);
-
-		$auth = Auth::user();
-		$ntstatus = NoteType::where('NTCode', 'STAT')->first();
 
 		$MOD = OrgModule::CreateInstance($org, $game);
 
 		// Check for auth permission.
+		$auth = Auth::user();
 		$perms = new UserPerm($auth);
 		if ($perms->gameOrg($org->GOID)->auth == false)
 		{
@@ -329,133 +438,158 @@ class GameController extends Controller
 
 		if (strcasecmp($action, "approve") == 0)
 		{
-			// Run the OrgModule now.
-			$success = $MOD->memberAdded($gameuser);
-			if (isset($success) && $success === false)
-			{
-				return Response::json(array(
-					'success' => false,
-					'message' => 'Could not finish authorization.  Contact Adeptus for assistance.'
-				));
-			}
-
-			LDAP::Execute(function($ldap) use($user, $org) {
-				// Add the user to the organizations's LDAP group.
-				$userdn = "cn=" . $user->UGoonID . "," . config('ldap.dn.users');
-				$dn = "cn=" . $org->GOLDAPGroup . "," . config('ldap.dn.groups');
-
-				// Delete first.
-				@ldap_mod_del($ldap, $dn, array('member' => $userdn));
-
-				// Add to the LDAP group.
-				if (@ldap_mod_add($ldap, $dn, array('member' => $userdn)) == false)
-				{
-					error_log("[ldap] Failed to add user to organization group.");
-					error_log("[ldap] Failed to add user to org group: {$org->GOLDAPGroup}.");
-					return Response::json(array(
-						'success' => false,
-						'message' => 'Unable to add user to organization group.  Contact Adeptus for assistance.'
-					));
-				}
-			});
-
-			// Send out the e-mail.
-			try
-			{
-				// Assemble the data required for the e-mail.
-				$maildata = [];
-				$maildata = array_add($maildata, 'goonid', $user->UGoonID);
-				$maildata = array_add($maildata, 'org', $org->GOName);
-
-				$body = $MOD->makeView('emails.game-register-approve', $maildata)->render();
-
-				// Send out the onboarding e-mail.
-				Mail::send('emails.echo', ['content' => $body], function($msg) use($org, $user) {
-					$msg->subject('Your ' . $org->GOName . ' organization membership request was approved!');
-					$msg->to($user->UEmail);
-				});
-			}
-			catch (Exception $e)
-			{
-				error_log('E-mail error: '.var_dump($e));
-				return Response::json(array(
-					'success' => false,
-					'message' => 'Unable to send e-mail.  Contact Adeptus for assistance.'
-				));
-			}
-
-			// Add the user.
-			$active = UserStatus::active();
-			$gameuser->gameorgs()->updateExistingPivot($org->GOID,
-				array('USID' => $active->USID), false);
-
-			// Create note about the authorization.
-			if (!empty($ntstatus))
-			{
-				NoteHelper::Add(array(
-					'user' => $gameuser->user,
-					'createdby' => $auth,
-					'org' => $org,
-					'type' => $ntstatus,
-					'subject' => 'Authorization',
-					'message' => 'User accepted into organization '.$org->GOName.'.',
-				));
-			}
+			$ret = $this->OrgApproved($MOD, $auth, $gameuser);
+			if ($ret != null)
+				return $ret;
 		}
 		else
 		{
 			$reason = Input::get('text');
-
-			// Try sending the e-mail out first.
-			// If this fails, we want to stop the process until it can be fixed.
-			try
-			{
-				$maildata = [];
-				$maildata = array_add($maildata, 'org', $org->GOName);
-				$maildata = array_add($maildata, 'reason', $reason);
-
-				$body = $MOD->makeView('emails.game-register-deny', $maildata)->render();
-
-				// Send out the rejection e-mail.
-				Mail::send('emails.echo', ['content' => $body], function($msg) use($org, $user) {
-					$msg->subject('Your ' . $org->GOName . ' organization membership request was DENIED!');
-					$msg->to($user->UEmail);
-				});
-			}
-			catch (Exception $e)
-			{
-				error_log('E-mail error: '.var_dump($e));
-				return Response::json(array(
-					'success' => false,
-					'message' => 'Unable to send e-mail.  Contact Adeptus for assistance.'
-				));
-			}
-
-			// Reject the user.
-			$rejected = UserStatus::rejected();
-			$gameuser->gameorgs()->updateExistingPivot($org->GOID,
-				array('USID' => $rejected->USID), false);
-
-			// Create note about the rejection.
-			if (!empty($ntstatus))
-			{
-				NoteHelper::Add(array(
-					'user' => $gameuser->user,
-					'createdby' => $auth,
-					'org' => $org,
-					'type' => $ntstatus,
-					'subject' => 'Authorization',
-					'message' => 'User rejected from joining organization '.$org->GOName.".\nReason: ".$reason,
-				));
-			}
-
-			// Inform the OrgModule that the user was rejected.
-			$MOD->memberRejected($gameuser);
+			$ret = $this->OrgRejected($MOD, $auth, $gameuser, $reason);
+			if ($ret != null)
+				return $ret;
 		}
 
 		return Response::json(array(
 			'success' => true
 		));
+	}
+
+	protected function OrgApproved($MOD, $auth $gameuser)
+	{
+		$org = $MOD->getOrg();
+		$user = User::find($gameuser->UID);
+
+		// Run the OrgModule now.
+		$success = $MOD->memberAdded($gameuser);
+		if (isset($success) && $success === false)
+		{
+			return Response::json(array(
+				'success' => false,
+				'message' => 'Could not finish authorization.  Contact Adeptus for assistance.'
+			));
+		}
+
+		LDAP::Execute(function($ldap) use($user, $org) {
+			// Add the user to the organizations's LDAP group.
+			$userdn = "cn=" . $user->UGoonID . "," . config('ldap.dn.users');
+			$dn = "cn=" . $org->GOLDAPGroup . "," . config('ldap.dn.groups');
+
+			// Delete first.
+			@ldap_mod_del($ldap, $dn, array('member' => $userdn));
+
+			// Add to the LDAP group.
+			if (@ldap_mod_add($ldap, $dn, array('member' => $userdn)) == false)
+			{
+				error_log("[ldap] Failed to add user to organization group.");
+				error_log("[ldap] Failed to add user to org group: {$org->GOLDAPGroup}.");
+				return Response::json(array(
+					'success' => false,
+					'message' => 'Unable to add user to organization group.  Contact Adeptus for assistance.'
+				));
+			}
+		});
+
+		// Send out the e-mail.
+		try
+		{
+			// Assemble the data required for the e-mail.
+			$maildata = [];
+			$maildata = array_add($maildata, 'goonid', $user->UGoonID);
+			$maildata = array_add($maildata, 'org', $org->GOName);
+
+			$body = $MOD->makeView('emails.game-register-approve', $maildata)->render();
+
+			// Send out the onboarding e-mail.
+			Mail::send('emails.echo', ['content' => $body], function($msg) use($org, $user) {
+				$msg->subject('Your ' . $org->GOName . ' organization membership request was approved!');
+				$msg->to($user->UEmail);
+			});
+		}
+		catch (Exception $e)
+		{
+			error_log('E-mail error: '.var_dump($e));
+			return Response::json(array(
+				'success' => false,
+				'message' => 'Unable to send e-mail.  Contact Adeptus for assistance.'
+			));
+		}
+
+		// Add the user.
+		$active = UserStatus::active();
+		$gameuser->gameorgs()->updateExistingPivot($org->GOID,
+			array('USID' => $active->USID), false);
+
+		// Create note about the authorization.
+		$ntstatus = NoteType::where('NTCode', 'STAT')->first();
+		if (!empty($ntstatus))
+		{
+			NoteHelper::Add(array(
+				'user' => $gameuser->user,
+				'createdby' => $auth,
+				'org' => $org,
+				'type' => $ntstatus,
+				'subject' => 'Authorization',
+				'message' => 'User accepted into organization '.$org->GOName.'.',
+			));
+		}
+
+		return null;
+	}
+
+	protected function OrgRejected($MOD, $auth, $gameuser, $reason)
+	{
+		$org = $MOD->getOrg();
+		$user = User::find($gameuser->UID);
+
+		// Try sending the e-mail out first.
+		// If this fails, we want to stop the process until it can be fixed.
+		try
+		{
+			$maildata = [];
+			$maildata = array_add($maildata, 'org', $org->GOName);
+			$maildata = array_add($maildata, 'reason', $reason);
+
+			$body = $MOD->makeView('emails.game-register-deny', $maildata)->render();
+
+			// Send out the rejection e-mail.
+			Mail::send('emails.echo', ['content' => $body], function($msg) use($org, $user) {
+				$msg->subject('Your ' . $org->GOName . ' organization membership request was DENIED!');
+				$msg->to($user->UEmail);
+			});
+		}
+		catch (Exception $e)
+		{
+			error_log('E-mail error: '.var_dump($e));
+			return Response::json(array(
+				'success' => false,
+				'message' => 'Unable to send e-mail.  Contact Adeptus for assistance.'
+			));
+		}
+
+		// Reject the user.
+		$rejected = UserStatus::rejected();
+		$gameuser->gameorgs()->updateExistingPivot($org->GOID,
+			array('USID' => $rejected->USID), false);
+
+		// Create note about the rejection.
+		$ntstatus = NoteType::where('NTCode', 'STAT')->first();
+		if (!empty($ntstatus))
+		{
+			NoteHelper::Add(array(
+				'user' => $gameuser->user,
+				'createdby' => $auth,
+				'org' => $org,
+				'type' => $ntstatus,
+				'subject' => 'Authorization',
+				'message' => 'User rejected from joining organization '.$org->GOName.".\nReason: ".$reason,
+			));
+		}
+
+		// Inform the OrgModule that the user was rejected.
+		$MOD->memberRejected($gameuser);
+
+		return null;
 	}
 
 	public static function buildGameProfile($game, $gameuser)

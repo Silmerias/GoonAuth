@@ -30,7 +30,25 @@ class OrgModule
 		return $reflect->newInstance($org, $game);
 	}
 
+	public function getOrg()
+	{
+		return $this->org;
+	}
+
+	public function getGame()
+	{
+		return $this->game;
+	}
+
 	//////////////////////////////////////////////////
+
+	public function simpleRegistration()
+	{
+		// If true, and this is the only org attached to a game, integrate
+		// the join process.  If we require seperate authentication, then set
+		// this to FALSE!  This will automatically approve memberships.
+		return true;
+	}
 
 	public function makeView($v, $args)
 	{

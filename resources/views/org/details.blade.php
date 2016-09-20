@@ -54,14 +54,25 @@ $pending_count = $org->gameusers()->where('GameOrgHasGameUser.USID', $pending->U
 @endif
 </p>
 
+<?php
+$gamecharacters = $game->gameusers()->where('UID', $auth->UID)->count();
+$characters = $org->gameusers()->where('UID', $auth->UID)->get();
+?>
+
 <h1>{{ e($org->GOName) }} Character List</h1>
 <div class="row">
 	<div class="col-md-12">
 
-	@if ($org->gameusers()->where('UID', $auth->UID)->count() == 0)
+	@if ($characters->count() == 0)
 
-	<h4>You are currently not a part of this organization.</p>
+	<h4>You are currently not a part of this organization.</h4>
+
+	@if ($gamecharacters == 0)
+	<h4>You also have not registered any characters.</h4>
+	<p style="margin-top: 30px"><a href="{{ URL::to('games/'.$game->GAbbr.'/link') }}" class="btn btn-success">Add Character</a></p>
+	@else
 	<p style="margin-top: 30px"><a href="{{ URL::to(Request::path().'/join') }}" class="btn btn-success">Join Organization</a></p>
+	@endif
 
 	@else
 
@@ -72,7 +83,7 @@ $pending_count = $org->gameusers()->where('GameOrgHasGameUser.USID', $pending->U
 			<th style="width: 75px;">Status</th>
 			<th>Character Name</th>
 		</thead>
-		@foreach ($org->gameusers()->where('UID', $auth->UID)->get() as $character)
+		@foreach ($characters as $character)
 		<tr>
 			<?php $status = UserStatus::find(GameOrgHasGameUser::where('GOID', $org->GOID)->where('GUID', $character->GUID)->first()->USID) ?>
 			@if (strcmp($status->USCode, 'ACTI') == 0)

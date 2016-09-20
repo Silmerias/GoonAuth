@@ -7,6 +7,11 @@ use App\GameUser;
 
 class FLJK extends OrgModule
 {
+	public function simpleRegistration()
+	{
+		return false;
+	}
+
 	public function memberAdded($gameuser)
 	{
 		if ($this->game->GAbbr !== 'sc')
