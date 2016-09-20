@@ -8,7 +8,7 @@ use App\Game;
 <a class="label label-info" href="{{ URL::to('games/'.$game->GAbbr) }}">Back to {{ e($game->GName) }}</a>
 
 <div class="row" style="margin-top: 20px">
-	<div class="col-md-12">
+	<div class="center-block text-center">
 		<p>Please follow the instructions below to add your game account.</p>
 	</div>
 </div>
