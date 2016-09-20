@@ -24,9 +24,9 @@ class UserSeeder extends Seeder {
 		$user = User::create(array(
 			'USID' => $active->USID,
 			'UEmail' => 'example@example.com',
-			'UGoonID' => 'admin',
+			'UGoonID' => config('goonauth.admin'),
 			'UGroup' => $sa->GRID,
-			'ULDAPLogin' => 'admin',
+			'ULDAPLogin' => config('goonauth.admin'),
 			'USACachedName' => '<Admin Account>',
 			'USAUserID' => 0
 		));

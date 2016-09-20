@@ -5,6 +5,11 @@ return [
 	'version' => '2.1.20160914',
 
 	/**
+	 * The default admin account for GoonAuth.
+	 */
+	'admin' => env('GOONAUTH_ADMIN', 'admin'),
+
+	/**
 	 * Your SA bbuserid and bbpassword cookie values. Required to auth accounts.
 	 */
 	'sa' => [

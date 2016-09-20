@@ -19,7 +19,7 @@ class GameSeeder extends Seeder {
 	{
 		DB::table('Game')->delete();
 
-		$admin = User::where('UGoonID', 'admin')->first();
+		$admin = User::where('UGoonID', config('goonauth.admin'))->first();
 		$roll = Role::where('RName', 'Admin')->first();
 
 		$sc = Game::create(array(

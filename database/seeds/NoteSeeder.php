@@ -19,7 +19,7 @@ class NoteSeeder extends Seeder {
 	{
 		DB::table('Note')->delete();
 
-		$admin = User::where('UGoonID', 'admin')->first();
+		$admin = User::where('UGoonID', config('goonauth.admin'))->first();
 		$roll = Role::where('RName', 'Admin')->first();
 
 		$sa = Group::where('GRCode', 'SA')->first();
