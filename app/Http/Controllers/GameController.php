@@ -458,7 +458,7 @@ class GameController extends Controller
 		));
 	}
 
-	protected function OrgApproved($MOD, $auth $gameuser)
+	protected function OrgApproved($MOD, $auth, $gameuser)
 	{
 		$org = $MOD->getOrg();
 		$user = User::find($gameuser->UID);
