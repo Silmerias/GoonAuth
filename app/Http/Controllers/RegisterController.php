@@ -4,11 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 
-use Guzzle\Http\Client;
-use Guzzle\Http\Exception\ClientErrorResponseException;
-use Guzzle\Plugin\Cookie\CookieJar\ArrayCookieJar;
-use Guzzle\Plugin\Cookie\Cookie;
-use Guzzle\Plugin\Cookie\CookiePlugin;
+use GuzzleHttp\Client;
+use GuzzleHttp\Cookie\CookieJar;
+use GuzzleHttp\Cookie\SetCookie;
+use GuzzleHttp\Exception\ClientException;
 
 use Carbon\Carbon;
 
@@ -45,6 +44,14 @@ class RegisterController extends Controller
 		return view('register.goon');
 	}
 
+	public function getLink()
+	{
+		$token = uniqid('FART');
+		Session::put('token', $token);
+
+		return view('register.link', array('token' => $token));
+	}
+
 	public function getReapply()
 	{
 		return view('register.reapply');
@@ -58,14 +65,6 @@ class RegisterController extends Controller
 	public function getAffiliate()
 	{
 		return view('register.affiliate');
-	}
-
-	public function getLink()
-	{
-		$token = Session::get('token');
-		if (!isset($token) || $token === null)
-			return Redirect::to('/register/goon');
-		return view('register.link', array('token' => $token));
 	}
 
 	private function verifyGoonID($goonid)
@@ -267,10 +266,7 @@ class RegisterController extends Controller
 		Session::put('register-goonid', Input::get('goonid'));
 		Session::put('register-email', Input::get('email'));
 
-		$token = uniqid('FART');
-		Session::put('token', $token);
-
-		return view('register.link', array('token' => $token));
+		return redirect()->to('register/link');
 	}
 
 	public function postReapply()
@@ -322,7 +318,7 @@ class RegisterController extends Controller
 		$sa_name = Input::get('sa_username');
 
 		if (!isset($goonid) || !isset($email) || !isset($token))
-			return Redirect::to('register')->with('error', 'An unknown error has occured.');
+			return redirect()->to('register')->with('error', 'An unknown error has occured.');
 
 		if (!isset($sa_name))
 			return Redirect::back()->with('error', 'You must enter your SA Username.');
@@ -338,40 +334,33 @@ class RegisterController extends Controller
 		$verified = !config('goonauth.sa.verify');
 		if ($verified === false)
 		{
-			$cookieJar = new ArrayCookieJar();
+			$cookieJar = new CookieJar();
 
-			$bbpCookie = new Cookie();
+			$bbpCookie = new SetCookie();
 			$bbpCookie->setName('bbpassword');
 			$bbpCookie->setDomain('.forums.somethingawful.com');
 			$bbpCookie->setValue(config('goonauth.sa.bbpassword'));
 
-			$bbidCookie = new Cookie();
+			$bbidCookie = new SetCookie();
 			$bbidCookie->setName('bbuserid');
 			$bbidCookie->setDomain('.forums.somethingawful.com');
 			$bbidCookie->setValue(config('goonauth.sa.bbuserid'));
 
-			$cookieJar->add($bbpCookie);
-			$cookieJar->add($bbidCookie);
+			$cookieJar->setCookie($bbpCookie);
+			$cookieJar->setCookie($bbidCookie);
 
-			$cookiePlugin = new CookiePlugin($cookieJar);
-
-			$client = new Client('http://forums.somethingawful.com/member.php', array(
-				'request.options' => array(
-					'query' => array(
-						'action' => 'getinfo',
-						'username' => $sa_name,
-					),
-				),
-			));
-
-			$client->addSubscriber($cookiePlugin);
-			$request = $client->get(null, array(), array('allow_redirects' => false));
+			$client = new Client([
+				'base_uri' => 'http://forums.somethingawful.com/',
+				'allow_redirects' => false,
+				'cookies' => $cookieJar,
+			]);
 
 			$body = '';
 			try
 			{
-				$response = $request->send();
-				$body = $response->getBody(true);
+				$response = $client->request('GET', 'member.php', ['query' => ['action' => 'getinfo', 'username' => $sa_name]]);
+
+				$body = $response->getBody();
 
 				// User ID
 				preg_match("/<input type=\"hidden\" name=\"userid\" value=\"(\d+)\">/i", $body, $matches);
