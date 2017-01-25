@@ -350,7 +350,7 @@ class RegisterController extends Controller
 			$cookieJar->setCookie($bbidCookie);
 
 			$client = new Client([
-				'base_uri' => 'http://forums.somethingawful.com/',
+				'base_uri' => 'https://forums.somethingawful.com/',
 				'allow_redirects' => false,
 				'cookies' => $cookieJar,
 			]);
@@ -359,6 +359,9 @@ class RegisterController extends Controller
 			try
 			{
 				$response = $client->request('GET', 'member.php', ['query' => ['action' => 'getinfo', 'username' => $sa_name]]);
+				$code = $response->getStatusCode();
+				if ($code !== 200)
+					throw new \RuntimeException('SA member profile page did not return HTTP status 200.  Returned: '.$code);
 
 				$body = $response->getBody();
 
