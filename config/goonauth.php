@@ -2,7 +2,7 @@
 
 return [
 
-	'version' => '2.1.20160919',
+	'version' => '2.1.20170209',
 
 	/**
 	 * The default admin account for GoonAuth.

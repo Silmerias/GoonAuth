@@ -465,12 +465,22 @@ class GameController extends Controller
 
 		// Run the OrgModule now.
 		$success = $MOD->memberAdded($gameuser);
-		if (isset($success) && $success === false)
+		if (isset($success) && ((!is_array($success) && $success === false) || (is_array($success) && $success['ret'] == false)))
 		{
-			return Response::json(array(
-				'success' => false,
-				'message' => 'Could not finish authorization.  Contact Adeptus for assistance.'
-			));
+			if (!is_array($success))
+			{
+				return Response::json(array(
+					'success' => false,
+					'message' => 'Could not finish authorization.  Contact Adeptus for assistance.'
+				));
+			}
+			else
+			{
+				return Response::json(array(
+					'success' => false,
+					'message' => $success['message']
+				));
+			}
 		}
 
 		LDAP::Execute(function($ldap) use($user, $org) {

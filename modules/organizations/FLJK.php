@@ -33,11 +33,7 @@ class FLJK extends OrgModule
 		// Record an error.
 		if (isset($ret['success']) && $ret['success'] == 0)
 		{
-			switch ($ret['code'])
-			{
-				case "ErrNotOrgReady":
-					return false;
-			}
+			return ['ret' => false, 'message' => '' . $ret['code'] . ': ' . $ret['msg']];
 		}
 
 		return true;
@@ -121,6 +117,14 @@ class FLJK extends OrgModule
 			if (curl_error($ch))
 			{
 				$ret = array('error' => curl_error($ch));
+				$close($ch, $cj);
+				return $ret;
+			}
+
+			// Check for login error.
+			$ret = json_decode(utf8_encode($content), true);
+			if (isset($ret['success']) && $ret['success'] == 0)
+			{
 				$close($ch, $cj);
 				return $ret;
 			}
