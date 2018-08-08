@@ -45,27 +45,22 @@ See the pre-existing modules for examples on how views and e-mails can be altere
 * php-gd
 * php-curl
 * php-ldap
+* php-mbstring
+* php-dom
 * libapache2-mod-php
 * composer
 ```
 sudo phpenmod mcrypt
 sudo phpenmod curl
 sudo phpenmod ldap
+sudo phpenmod mbstring
+sudo phpenmod dom
 sudo a2enmod rewrite
 sudo service apache2 restart
-curl -sS https://getcomposer.org/installer | php -- --filename=composer --install-dir=/usr/bin
-```
-
-### Set up composer
-```
-mkdir ~/.composer/vendor/bin
-cd ~
-echo -e "\nPATH=\"\$HOME/.composer/vendor/bin:\$PATH\"" >> .profile
-***relog***
 ```
 
 ### Install the Laravel installer
-`sudo composer global require "laravel/installer"`
+`composer global require "laravel/installer"`
 
 ### Grab the GoonAuth code
 `git clone https://github.com/LoneBoco/GoonAuth.git`
@@ -73,7 +68,7 @@ echo -e "\nPATH=\"\$HOME/.composer/vendor/bin:\$PATH\"" >> .profile
 ### Install the vendor projects
 ```
 cd GoonAuth
-sudo composer install
+composer install
 ```
 
 ### Set up the configuration files
