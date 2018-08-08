@@ -24,11 +24,6 @@ return [
 	'forum_url' => 'http://forums.goonrathi.com/',
 
 	/**
-	 * Key used to create new users on the forums
-	 */
-	'forum_key' => env('GOONAUTH_FORUMKEY', 'fffffffffffffffff'),
-
-	/**
 	 * Sponsorship configuration.
 	 */
 	'sponsor' => [

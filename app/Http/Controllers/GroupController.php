@@ -222,10 +222,6 @@ class GroupController extends Controller
 					'message' => 'User accepted into group '.$group->GRName.'.',
 				));
 			}
-
-			// Connect to IPB to create the forum entry.
-			$forumkey = config('goonauth.forum_key');
-			@file_get_contents("https://forums.goonrathi.com/index.php?app=core&module=global&section=login&do=process&auth_key={$forumkey}&ips_username={$user->UGoonID}&ips_password={$password}");
 		}
 		else
 		{
