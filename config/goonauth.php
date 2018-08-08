@@ -2,7 +2,7 @@
 
 return [
 
-	'version' => '2.1.20170209',
+	'version' => '2.1.20180807',
 
 	/**
 	 * The default admin account for GoonAuth.
@@ -22,6 +22,11 @@ return [
 	 * URL to your forums
 	 */
 	'forum_url' => 'http://forums.goonrathi.com/',
+
+	/**
+	 * Key used to create new users on the forums
+	 */
+	'forum_key' => env('GOONAUTH_FORUMKEY', 'fffffffffffffffff'),
 
 	/**
 	 * Sponsorship configuration.

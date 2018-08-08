@@ -141,7 +141,7 @@ use App\Extensions\Modules\GameModule;
 			?>
 			<tr>
 				<td>{{ $gameuser->game->GName }}
-				<td>{{ $MOD->memberProfile($gameuser) }}</td>
+				<td>{{!! $MOD->memberProfile($gameuser) !!}}</td>
 				<td>{{ $orgs }}</td>
 			</tr>
 		@endforeach
