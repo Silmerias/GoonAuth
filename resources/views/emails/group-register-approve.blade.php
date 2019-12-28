@@ -14,5 +14,5 @@ Your password for all of our services is the same, so if you ever forget your pa
 Membership Rules: <a href="http://www.goonrathi.com/rules.html">http://www.goonrathi.com/rules.html</a><br>
 Auth Portal: <a href="http://goonauth.goonrathi.com/">http://goonauth.goonrathi.com/</a><br>
 Forum: <a href="http://forums.goonrathi.com/">http://forums.goonrathi.com/</a><br>
-Discord: <a href="https://discord.gg/BaMxeJS">https://discord.gg/BaMxeJS</a>
+Discord: <a href="https://discord.gg/q25QwWW">https://discord.gg/q25QwWW</a>
 </p>
