@@ -1,30 +1,33 @@
 # GoonAuth
 
 ## What is this?
-GoonAuth is the multi-game authentication system for the Eve Echoes goon alliance.  It provides a complete registration system including sponsorship and (currently) some basic admin functions.
+GoonAuth is the multi-game authentication system for goon games organizations.  It provides a complete registration system including sponsorship and (currently) some basic admin functions.
 
-GoonAuth was designed to verify users on the Something Awful forums and to register users to an LDAP system.  If you don't wish to verify users by their SA account, you must re-program the RegisterController.  In the future this will change to the module system that Games and Organizations use.
+GoonAuth was designed to verify users on the Something Awful forums and to register users to an LDAP system.  It also grant J4G to register and apply in non-SA organizations.
 
 GoonAuth was originally created by sct for the ArcheAge goons.  You can view the original project here:
-[https://github.com/sct/GoonAuth](https://github.com/sct/GoonAuth)
-
-And updated by Nalin from the Star Citizen goons.  You can view the original project here:
-[https://github.com/LoneBoco/GoonAuth](https://github.com/LoneBoco/GoonAuth)
+[https://github.com/sct/GoonAuth](https://github.com/sct/GoonAuth) and refactored by Nalin from the Star Citizen goons.  You can view the original project here: [https://github.com/LoneBoco/GoonAuth](https://github.com/LoneBoco/GoonAuth)
 
 ## The basics
 Each User is assigned to a single Group.
 Each User can have characters in multiple Games (called a GameUser).
 Each GameUser can belong to an Organization.
 
-## Modules
-The module system was developed to provide custom functionality for Games and Organizations.
+## Features
+GoonAuth comes with:
+
+* Discord authentication
+
+## Game Modules
+The game module system was developed to provide custom functionality for Games and Organizations.
 
 * modules/games
 * modules/organizations
 
 GoonAuth comes with modules for:
-* MechWarrior Online
+* Eve Echoes
 * Star Citizen
+* MechWarrior Online
 
 Modules can override views.  For game modules, this is the search path:
 
