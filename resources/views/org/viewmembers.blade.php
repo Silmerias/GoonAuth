@@ -31,7 +31,7 @@ use App\UserStatus;
 				<div class="panel-body">
 					<div class="row">
 						<div class="col-md-6">
-							<div class="col-md-3"><p>Goon ID</p></div>
+							<div class="col-md-3"><p>GoonID</p></div>
 							<div class="col-md-9">
 								<div class="input-group">
 									<div class="input-group-btn">
@@ -93,7 +93,7 @@ use App\UserStatus;
 	<table class="table">
 		<thead>
 			<th style="width: 100px;">Status</th>
-			<th style="width: 150px;">Goon ID</th>
+			<th style="width: 150px;">GoonID</th>
 			<th>Character Name</th>
 			<th style="width: 40px;"></th>
 			<th style="width: 150px;">Actions</th>

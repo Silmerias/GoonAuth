@@ -9,7 +9,7 @@
 <form class="form-register" role="form" action="{{ URL::action('RegisterController@postSponsored') }}" method="post">
 	{{ csrf_field() }}
 	<h2 class="form-register-heading">Fill out the following</h2>
-	<p>Your Goon ID is your login name. Your Display Name can be changed later, but remember that your Goon ID is always visible.</p>
+	<p>Your GoonID is your login name. Your Display Name can be changed later, but remember that your GoonID is always visible.</p>
 	<p>Make sure your e-mail is valid as you will receive your acceptance information through it.</p>
 	<p>If you don't have a sponsor code, you are doing this wrong.</p>
 
@@ -25,7 +25,7 @@
 	<div id="valid-email" class="alert alert-danger" style="display:none"></div>
 	<div id="valid-code" class="alert alert-danger" style="display:none"></div>
 
-	<input type="text" name="goonid" class="form-control" placeholder="Desired Goon ID" required="" autofocus="" onblur="validate(this)" data-type="goonid">
+	<input type="text" name="goonid" class="form-control" placeholder="Desired GoonID" required="" autofocus="" onblur="validate(this)" data-type="goonid">
 	<input type="email" name="email" class="form-control" placeholder="E-Mail Address" required="" autofocus="" onblur="validate(this)" data-type="email">
 	<input type="text" name="code" class="form-control" placeholder="Sponsor Code" required="" autofocus="" onblur="validate(this)" data-type="code">
 	<button class="btn btn-lg btn-primary btn-block" type="submit">Finish</button>

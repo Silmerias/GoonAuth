@@ -16,6 +16,10 @@ class UpdateLDAPGroups extends Migration {
 		DB::transaction(function ()
 		{
 			DB::table('Game')
+				->where('GAbbr', 'ee')
+				->update(array('GLDAPGroup' => 'EE'));
+
+			DB::table('Game')
 				->where('GAbbr', 'sc')
 				->update(array('GLDAPGroup' => 'SC'));
 
@@ -45,6 +49,10 @@ class UpdateLDAPGroups extends Migration {
 		// Remove the LDAP groups.
 		DB::transaction(function ()
 		{
+			DB::table('Game')
+				->where('GAbbr', 'ee')
+				->update(array('GLDAPGroup' => null));
+
 			DB::table('Game')
 				->where('GAbbr', 'sc')
 				->update(array('GLDAPGroup' => null));

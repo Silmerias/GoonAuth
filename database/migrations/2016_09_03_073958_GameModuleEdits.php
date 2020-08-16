@@ -20,12 +20,28 @@ class GameModuleEdits extends Migration
                 ->update(array('GModulePHP' => 'StarCitizen'));
 
             DB::table('Game')
+                ->where('GAbbr', 'ee')
+                ->update(array('GModulePHP' => 'EveEchoes'));
+
+            DB::table('Game')
+                ->where('GAbbr', 'sc')
+                ->update(array('GModulePHP' => 'StarCitizen'));
+
+            DB::table('Game')
                 ->where('GAbbr', 'mwo')
                 ->update(array('GModulePHP' => 'MWO'));
 
             DB::table('GameOrg')
-                ->where('GOAbbr', 'FLJK')
-                ->update(array('GOModulePHP' => 'FLJK'));
+                ->where('GOAbbr', 'GOON')
+                ->update(array('GOModulePHP' => 'GOON'));
+
+            DB::table('GameOrg')
+                ->where('GOAbbr', 'WAFFE')
+                ->update(array('GOModulePHP' => 'WAFFE'));
+
+            DB::table('GameOrg')
+                ->where('GOAbbr', 'KRMA')
+                ->update(array('GOModulePHP' => 'KRMA'));
         });
     }
 
@@ -47,9 +63,21 @@ class GameModuleEdits extends Migration
                 ->where('GAbbr', 'mwo')
                 ->update(array('GModulePHP' => 'MWOGame'));
 
+            DB::table('Game')
+                ->where('GAbbr', 'ee')
+                ->update(array('GModulePHP' => 'EveEchoesGame'));
+
             DB::table('GameOrg')
-                ->where('GOAbbr', 'FLJK')
-                ->update(array('GOModulePHP' => 'FLJKOrg'));
+                ->where('GOAbbr', 'GOON')
+                ->update(array('GOModulePHP' => 'GOONOrg'));
+
+            DB::table('GameOrg')
+                ->where('GOAbbr', 'WAFFE')
+                ->update(array('GOModulePHP' => 'WAFFEOrg'));
+
+            DB::table('GameOrg')
+                ->where('GOAbbr', 'KRMA')
+                ->update(array('GOModulePHP' => 'KRMAOrg'));
         });
     }
 }

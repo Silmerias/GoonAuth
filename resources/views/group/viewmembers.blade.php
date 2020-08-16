@@ -29,7 +29,7 @@ use App\UserStatus;
 				<div class="panel-body">
 					<div class="row">
 						<div class="col-md-6">
-							<div class="col-md-3"><p>Goon ID</p></div>
+							<div class="col-md-3"><p>GoonID</p></div>
 							<div class="col-md-9">
 								<div class="input-group">
 									<div class="input-group-btn">
@@ -91,7 +91,7 @@ use App\UserStatus;
 								<div class="input-group">
 									<div class="input-group-btn">
 										<select id="filter-orderby" class="selectpicker" data-container="body" data-width="100%">
-											<option value="goonid">Goon ID</option>
+											<option value="goonid">GoonID</option>
 											<option value="status">Status</option>
 											<option value="regdate">Reg Date</option>
 										</select>
@@ -122,7 +122,7 @@ use App\UserStatus;
 	<table class="table">
 		<thead>
 			<th style="width: 100px;">Status</th>
-			<th style="width: 150px;">Goon ID</th>
+			<th style="width: 150px;">GoonID</th>
 			<th>SA Name</th>
 			<th>Sponsor</th>
 			<th style="width: 125px;">SA Reg Date</th>

@@ -111,7 +111,7 @@ class GameController extends Controller
 		if (isset($success) && $success === false)
 		{
 			$user->delete();
-			return Redirect::back()->with('error', 'Linking error.  Contact Adeptus for assistance.');
+			return Redirect::back()->with('error', 'Linking error.  Contact Directors for assistance.');
 		}
 
 		$include = array('game' => $game);
@@ -179,7 +179,7 @@ class GameController extends Controller
 		if (isset($success) && $success === false)
 		{
 			$gameuser->delete();
-			return Redirect::back()->with('error', 'Linking error.  Contact Adeptus for assistance.');
+			return Redirect::back()->with('error', 'Linking error.  Contact Directors for assistance.');
 		}
 
 		// Get our OrgModule and sanity check it.
@@ -471,7 +471,7 @@ class GameController extends Controller
 			{
 				return Response::json(array(
 					'success' => false,
-					'message' => 'Could not finish authorization.  Contact Adeptus for assistance.'
+					'message' => 'Could not finish authorization.  Contact Directors for assistance.'
 				));
 			}
 			else
@@ -498,7 +498,7 @@ class GameController extends Controller
 				error_log("[ldap] Failed to add user to org group: {$org->GOLDAPGroup}.");
 				return Response::json(array(
 					'success' => false,
-					'message' => 'Unable to add user to organization group.  Contact Adeptus for assistance.'
+					'message' => 'Unable to add user to organization group.  Contact Directors for assistance.'
 				));
 			}
 		});
@@ -524,7 +524,7 @@ class GameController extends Controller
 			error_log('E-mail error: '.var_dump($e));
 			return Response::json(array(
 				'success' => false,
-				'message' => 'Unable to send e-mail.  Contact Adeptus for assistance.'
+				'message' => 'Unable to send e-mail.  Contact Directors for assistance.'
 			));
 		}
 
@@ -576,7 +576,7 @@ class GameController extends Controller
 			error_log('E-mail error: '.var_dump($e));
 			return Response::json(array(
 				'success' => false,
-				'message' => 'Unable to send e-mail.  Contact Adeptus for assistance.'
+				'message' => 'Unable to send e-mail.  Contact Directors for assistance.'
 			));
 		}
 

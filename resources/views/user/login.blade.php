@@ -6,7 +6,7 @@
 
 <form class="form-signin" role="form" action="{{ URL::to('login') }}" method="post">
 	{{ csrf_field() }}
-	<h2 class="form-signin-heading">Login using your Goon ID</h2>
+	<h2 class="form-signin-heading">Login using your GoonID</h2>
 	@if (Session::has('banned'))
 		<div class="alert alert-danger">
 			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
@@ -23,7 +23,7 @@
 	@endif
 
 	<input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
-	<input type="text" name="goonid" class="form-control" placeholder="Goon ID" required="" autofocus="">
+	<input type="text" name="goonid" class="form-control" placeholder="GoonID" required="" autofocus="">
 	<input type="password" name="password" class="form-control" placeholder="Password" required="">
 	<label class="persist"><input type="checkbox" name="persist">Remember me?</label>
 	<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>

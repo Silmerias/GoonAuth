@@ -22,6 +22,7 @@ class GameSeeder extends Seeder {
 		$admin = User::where('UGoonID', config('goonauth.admin'))->first();
 		$roll = Role::where('RName', 'Admin')->first();
 
+		// StarCitizen
 		$sc = Game::create(array(
 			'GAbbr' => 'sc',
 			'GName' => 'Star Citizen',
@@ -29,8 +30,8 @@ class GameSeeder extends Seeder {
 			'GEditProfileURL' => 'https://robertsspaceindustries.com/account/profile',
 			'GProfileURL' => 'https://robertsspaceindustries.com/citizens/%s',
 			'GModulePHP' => 'StarCitizen'
-		));
 
+		// MechWarrior
 		$mwo = Game::create(array(
 			'GAbbr' => 'mwo',
 			'GName' => 'MechWarrior Online',
@@ -38,27 +39,48 @@ class GameSeeder extends Seeder {
 			'GEditProfileURL' => 'http://mwomercs.com/forums/index.php?app=core&module=usercp&tab=core',
 			'GProfileURL' => 'http://mwomercs.com/forums/user/%d-%s',
 			'GModulePHP' => 'MWO'
+
+		// Eve Echoes
+		$ee = Game::create(array(
+			'GAbbr' => 'ee',
+			'GName' => 'Eve Echoes',
+			'GLDAPGroup' => 'GameEveEchoes',
+			'GEditProfileURL' => null,
+			'GProfileURL' => null,
+			'GModulePHP' => 'EveEchoes'
 		));
 
-		$fljk = GameOrg::create(array(
+		// GoonFleet (SA)
+		$goon = GameOrg::create(array(
 			'GOOwnerID' => $admin->UID,
-			'GOAbbr' => 'FLJK',
-			'GOName' => 'Goonrathi',
-			'GOLDAPGroup' => 'OrgFLJK',
-			'GOModulePHP' => 'FLJK'
+			'GOAbbr' => 'GOON',
+			'GOName' => 'GoonFleet',
+			'GOLDAPGroup' => 'OrgGOON',
+			'GOModulePHP' => 'GOON'
 		));
 
-		$wol = GameOrg::create(array(
+		// GoonFleet
+		$waffe = GameOrg::create(array(
 			'GOOwnerID' => $admin->UID,
-			'GOAbbr' => 'WoL',
-			'GOName' => 'Word of Lowtax',
-			'GOLDAPGroup' => 'OrgWOL'
+			'GOAbbr' => 'WAFFE',
+			'GOName' => 'GoonWaffe',
+			'GOLDAPGroup' => 'OrgWAFFE',
+			'GOModulePHP' => 'WAFFE'
 		));
 
-		$sc->orgs()->attach($fljk->GOID);
-		$mwo->orgs()->attach($wol->GOID);
+		// GoonFleet
+		$krma = GameOrg::create(array(
+			'GOOwnerID' => $admin->UID,
+			'GOAbbr' => 'KRMA',
+			'GOName' => 'KarmaFleet',
+			'GOLDAPGroup' => 'OrgKRMA',
+			'GOModulePHP' => 'KRMA'
+		));
 
-		$admin->gameorgroles()->attach($roll, array('GOID' => $sc->GID));
-		$admin->gameorgroles()->attach($roll, array('GOID' => $mwo->GID));
+		$ee->orgs()->attach($goon->GOID);
+		$ee->orgs()->attach($waffe->GOID);
+		$ee->orgs()->attach($krma->GOID);
+
+		$admin->gameorgroles()->attach($roll, array('GOID' => $ee->GID));
 	}
 }

@@ -29,7 +29,7 @@ use App\UserStatus;
 
 	<table class="table">
 		<thead>
-			<th style="width: 150px;">Goon ID</th>
+			<th style="width: 150px;">GoonID</th>
 			<th>Character Name</th>
 			<th style="width: 175px;">Reg Date</th>
 			<th style="width: 125px;">Post Count</th>

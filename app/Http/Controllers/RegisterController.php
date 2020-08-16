@@ -203,20 +203,20 @@ class RegisterController extends Controller
 			{
 				switch ($valid)
 				{
-					case -4: return Response::json(array('valid' => 'true', 'message' => 'Goon ID available for reapplication.'));
-					default: return Response::json(array('valid' => 'false', 'message' => 'Goon ID is not valid for reapplication.'));
+					case -4: return Response::json(array('valid' => 'true', 'message' => 'GoonID available for reapplication.'));
+					default: return Response::json(array('valid' => 'false', 'message' => 'GoonID is not valid for reapplication.'));
 				}
 			}
 
 			switch ($valid)
 			{
-				case 0: return Response::json(array('valid' => 'true', 'message' => 'Goon ID is available.'));
+				case 0: return Response::json(array('valid' => 'true', 'message' => 'GoonID is available.'));
 
 				default:
-				case -1: return Response::json(array('valid' => 'false', 'message' => 'Invalid Goon ID.'));
-				case -2: return Response::json(array('valid' => 'false', 'message' => 'Your Goon ID may only contain alpha-numeric, underscore, and hyphen characters.'));
-				case -3: return Response::json(array('valid' => 'false', 'message' => 'That Goon ID is already in use.'));
-				case -4: return Response::json(array('valid' => 'false', 'message' => 'That Goon ID is already in use. Are you trying to <a href="reapply">reapply</a>?'));
+				case -1: return Response::json(array('valid' => 'false', 'message' => 'Invalid GoonID.'));
+				case -2: return Response::json(array('valid' => 'false', 'message' => 'Your GoonID may only contain alpha-numeric, underscore, and hyphen characters.'));
+				case -3: return Response::json(array('valid' => 'false', 'message' => 'That GoonID is already in use.'));
+				case -4: return Response::json(array('valid' => 'false', 'message' => 'That GoonID is already in use. Are you trying to <a href="reapply">reapply</a>?'));
 			}
 		}
 
@@ -281,7 +281,7 @@ class RegisterController extends Controller
 
 		$user = $this->reapplyUser(Input::get('email'), Input::get('goonid'), null, null, null, null, Input::get('comment'));
 		if ($user === null)
-			return Redirect::back()->with('error', 'There was an unexpected error. Contact Adeptus for support.');
+			return Redirect::back()->with('error', 'There was an unexpected error. Contact Directors for support.');
 
 		return view('register.complete');
 	}
@@ -459,7 +459,7 @@ class RegisterController extends Controller
 		{
 			$maildata = [];
 			Mail::send('emails.register-complete', $maildata, function($msg) use($user) {
-				$msg->subject('Your Goonrathi / Word of Lowtax membership request has been submitted for review.');
+				$msg->subject('Your membership request has been submitted for review.');
 				$msg->to($user->UEmail);
 			});
 		}
@@ -531,7 +531,7 @@ class RegisterController extends Controller
 		{
 			$maildata = [];
 			Mail::send('emails.register-complete', $maildata, function($msg) use($user) {
-				$msg->subject('Your Goonrathi / Word of Lowtax reapplication request has been submitted for review.');
+				$msg->subject('Your reapplication request has been submitted for review.');
 				$msg->to($user->UEmail);
 			});
 		}

@@ -30,7 +30,7 @@ use App\UserStatus;
 
 	<table class="table">
 		<thead>
-			<th>Goon ID</th>
+			<th>GoonID</th>
 			<th>SA Name</th>
 			<th>Sponsor</th>
 			<th style="width: 175px;">SA Reg Date</th>

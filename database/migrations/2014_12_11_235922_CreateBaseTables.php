@@ -21,7 +21,7 @@ class CreateBaseTables extends Migration {
 			$t->string('UIPAddress', 24)->nullable();	// User IP Address
 
 			$t->string('UEmail', 100)->unique();	// User E-Mail.
-			$t->string('UGoonID', 100)->unique();	// User Goon ID.
+			$t->string('UGoonID', 100)->unique();	// User GoonID.
 
 			$t->integer('UGroup')->unsigned();	// Group the user belongs to
 			$t->text('ULDAPLogin')->nullable();	// LDAP login

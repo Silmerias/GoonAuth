@@ -1,12 +1,15 @@
 # GoonAuth
 
 ## What is this?
-GoonAuth is the multi-game authentication system for the FLJK Goonrathi.  It provides a complete registration system including sponsorship and (currently) some basic admin functions.
+GoonAuth is the multi-game authentication system for the Eve Echoes goon alliance.  It provides a complete registration system including sponsorship and (currently) some basic admin functions.
 
 GoonAuth was designed to verify users on the Something Awful forums and to register users to an LDAP system.  If you don't wish to verify users by their SA account, you must re-program the RegisterController.  In the future this will change to the module system that Games and Organizations use.
 
 GoonAuth was originally created by sct for the ArcheAge goons.  You can view the original project here:
 [https://github.com/sct/GoonAuth](https://github.com/sct/GoonAuth)
+
+And updated by Nalin from the Star Citizen goons.  You can view the original project here:
+[https://github.com/LoneBoco/GoonAuth](https://github.com/LoneBoco/GoonAuth)
 
 ## The basics
 Each User is assigned to a single Group.
@@ -63,7 +66,7 @@ sudo service apache2 restart
 `composer global require "laravel/installer"`
 
 ### Grab the GoonAuth code
-`git clone https://github.com/LoneBoco/GoonAuth.git`
+`git clone https://github.com/Silmerias/GoonAuth.git`
 
 ### Install the vendor projects
 ```

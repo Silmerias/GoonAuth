@@ -1,4 +1,4 @@
-<p>Your Goonrathi membership request was denied.</p>
+<p>Your membership request was denied.</p>
 
 <p>We're sorry, but our friendly authentication helper robot has determined
 that you do not meet the minimum system requirements to have the awesome

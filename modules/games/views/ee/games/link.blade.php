@@ -25,11 +25,10 @@ use App\Game;
 	<div class="col-md-12">
 
 @if ($game->GRequireValidation == true)
-		<p>Go <a href="{{ $game->GEditProfileURL }}" target="_blank">edit your game profile</a> and place the token below in any of the public fields. Once you've done that, enter your RSI Handle and click the Link button.</p>
-		<p>Your <strong>RSI Handle</strong> is NOT your RSI login ID.  You can view your handle in the OVERVIEW section of your account settings.</p>
+		<p>Go <a href="{{ $game->GEditProfileURL }}" target="_blank">edit your game profile</a> and place the token below in any of the public fields. Once you've done that, enter your Eve Echoes game character name and click the Link button.</p>
 		<p class="form-register-token"><strong>Verification Token</strong>: <kbd>{{ $token }}</kbd></p>
 @else
-		<p>Add your Eve Echoes game character name and cick the Link button.</p>
+		<p>Add your Eve Echoes game character name and click the Link button.</p>
 @endif
 		@if (Session::has('error'))
 		<div class="alert alert-danger">
@@ -39,7 +38,7 @@ use App\Game;
 
 		<div id="valid-user" class="alert alert-danger" style="display:none"></div>
 
-		<input type="text" name="username" class="form-control" placeholder="RSI Handle" required="" autofocus="" onblur="validateUser()">
+		<input type="text" name="username" class="form-control" placeholder="Character Name" required="" autofocus="" onblur="validateUser()">
 		<button class="btn btn-lg btn-primary btn-block" type="submit">Link</button>
 	</div>
 </form>

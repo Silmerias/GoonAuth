@@ -118,8 +118,7 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-md-12 footer">
-				GoonAuth originally created by {{ HTML::link('https://github.com/sct', 'sct', array('target' => '_blank')) }} - {{ HTML::link('https://github.com/sct/GoonAuth', 'GitHub', array('target' => '_blank')) }}<br>
-				FLJK v{{ config('goonauth.version') }} - Created by {{ HTML::link('https://github.com/LoneBoco', 'Nalin', array('target' => '_blank')) }} - {{ HTML::link('https://github.com/LoneBoco/GoonAuth', 'GitHub', array('target' => '_blank')) }}
+					GoonAuth v{{ config('goonauth.version') }} - {{ HTML::link('https://github.com/Silmerias/GoonAuth', 'GitHub', array('target' => '_blank')) }}
 				</div>
 			</div>
 		</div>

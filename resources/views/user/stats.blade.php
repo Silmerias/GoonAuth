@@ -19,7 +19,7 @@ use App\Extensions\Modules\GameModule;
 			<th>Value</th>
 		</thead>
 		<tr>
-			<td><span class="label label-default">Goon ID</span></td>
+			<td><span class="label label-default">GoonID</span></td>
 			<td>{{ e($user->UGoonID) }}</td>
 		</tr>		<tr>
 			<td><span class="label label-default">Group</span></td>
@@ -93,7 +93,7 @@ use App\Extensions\Modules\GameModule;
 	<table class="table">
 		<thead>
 			<th style="width: 75px;">Status</th>
-			<th>Goon ID</th>
+			<th>GoonID</th>
 		</thead>
 		<tbody>
 		@foreach ($sponsoring as $s)

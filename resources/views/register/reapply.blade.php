@@ -9,7 +9,7 @@
 <form class="form-register" role="form" action="{{ URL::action('RegisterController@postReapply') }}" method="post">
 	{{ csrf_field() }}
 	<h2 class="form-register-heading">Reapplication Form</h2>
-	<p>Use the same Goon ID as you used the first time you tried to apply.</p>
+	<p>Use the same GoonID as you used the first time you tried to apply.</p>
 	<p>Make sure your e-mail is valid as you will receive your acceptance information through it.</p>
 
 	@if (Session::has('error'))
@@ -23,7 +23,7 @@
 	<div id="valid-goonid" class="alert alert-danger" style="display:none"></div>
 	<div id="valid-email" class="alert alert-danger" style="display:none"></div>
 
-	<input type="text" name="goonid" class="form-control" placeholder="Goon ID" required="" autofocus="" onblur="validate(this)" data-type="goonid">
+	<input type="text" name="goonid" class="form-control" placeholder="GoonID" required="" autofocus="" onblur="validate(this)" data-type="goonid">
 	<input type="email" name="email" class="form-control" placeholder="E-Mail Address" required="" autofocus="" onblur="validate(this)" data-type="email">
 	<button class="btn btn-lg btn-primary btn-block" type="submit">Finish</button>
 </form>

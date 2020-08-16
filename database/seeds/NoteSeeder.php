@@ -19,12 +19,18 @@ class NoteSeeder extends Seeder {
 	{
 		DB::table('Note')->delete();
 
+		// Administration
 		$admin = User::where('UGoonID', config('goonauth.admin'))->first();
 		$roll = Role::where('RName', 'Admin')->first();
 
+		// Groups
 		$sa = Group::where('GRCode', 'SA')->first();
-		$fljk = GameOrg::where('GOAbbr', 'FLJK')->first();
-		$wol = GameOrg::where('GOAbbr', 'WoL')->first();
+		$sa = Group::where('GRCode', 'SA')->first();
+
+		// Organisations
+		$goon = GameOrg::where('GOAbbr', 'GOON')->first();
+		$waffe = GameOrg::where('GOAbbr', 'WAFFE')->first();
+		$krma = GameOrg::where('GOAbbr', 'KRMA')->first();
 
 		$system = NoteType::where('NTCode', 'SYS')->first();
 		$status = NoteType::where('NTCode', 'STAT')->first();
@@ -37,23 +43,26 @@ class NoteSeeder extends Seeder {
 			'NMessage' => 'User accepted into group Something Awful.'
 		));
 
-		$n_owner_fljk = Note::create(array(
+		// GoonFLeet (SA)
+		$n_owner_goon = Note::create(array(
 			'NTID' => $system->NTID,
 			'UID' => $admin->UID,
 			'NCreatedByUID' => null,
 			'NSubject' => 'Ownership Change',
-			'NMessage' => 'User has taken ownership of organization Goonrathi.'
+			'NMessage' => 'User has taken ownership of GoonFleet organization.'
 		));
 
-		$n_owner_wol = Note::create(array(
+		// GoonWaffe
+		$n_owner_waffe = Note::create(array(
 			'NTID' => $system->NTID,
 			'UID' => $admin->UID,
 			'NCreatedByUID' => null,
 			'NSubject' => 'Ownership Change',
-			'NMessage' => 'User has taken ownership of organization Word of Lowtax.'
+			'NMessage' => 'User has taken ownership of GoonWaffe organization.'
 		));
 
-		$n_join_wol = Note::create(array(
+		// KarmaFleet
+		$n_join_krma = Note::create(array(
 			'NTID' => $status->NTID,
 			'UID' => $admin->UID,
 			'NCreatedByUID' => null,
@@ -62,8 +71,8 @@ class NoteSeeder extends Seeder {
 		));
 
 		$sa->notes()->attach($n_join_sa);
-		$fljk->notes()->attach($n_owner_fljk);
-		$wol->notes()->attach($n_owner_wol);
-		$wol->notes()->attach($n_join_wol);
+		$goon->notes()->attach($n_owner_goon);
+		$waffe->notes()->attach($n_owner_waffe);
+		$krma->notes()->attach($n_join_krma);
 	}
 }

@@ -146,7 +146,7 @@ class GroupController extends Controller
 						error_log("[ldap] Failed to create user {$info['cn']}");
 						return Response::json(array(
 							'success' => false,
-							'message' => 'Unable to create user.  Contact Adeptus for assistance.'
+							'message' => 'Unable to create user.  Contact Directors for assistance.'
 						));
 					}
 				}
@@ -163,7 +163,7 @@ class GroupController extends Controller
 						error_log("[ldap] Failed to add user to the default group.");
 						return Response::json(array(
 							'success' => false,
-							'message' => 'Unable to add user to the default group.  Contact Adeptus for assistance.'
+							'message' => 'Unable to add user to the default group.  Contact Directors for assistance.'
 						));
 					}
 				}
@@ -182,7 +182,7 @@ class GroupController extends Controller
 						error_log("[ldap] Failed to add user to group: {$group->GRLDAPGroup}.");
 						return Response::json(array(
 							'success' => false,
-							'message' => 'Unable to add user to group.  Contact Adeptus for assistance.'
+							'message' => 'Unable to add user to group.  Contact Directors for assistance.'
 						));
 					}
 				}
@@ -197,7 +197,7 @@ class GroupController extends Controller
 				$maildata = array_add($maildata, 'password', $password);
 
 				Mail::send('emails.group-register-approve', $maildata, function($msg) use($user) {
-					$msg->subject('Your Goonrathi membership request was approved!');
+					$msg->subject('Your Goon membership request was approved!');
 					$msg->to($user->UEmail);
 				});
 			}
@@ -206,7 +206,7 @@ class GroupController extends Controller
 				error_log('E-mail error: '.var_dump($e));
 				return Response::json(array(
 					'success' => false,
-					'message' => 'Unable to send e-mail.  Contact Adeptus for assistance.'
+					'message' => 'Unable to send e-mail.  Contact Directors for assistance.'
 				));
 			}
 
@@ -234,7 +234,7 @@ class GroupController extends Controller
 				$maildata = array_add($maildata, 'reason', $reason);
 
 				Mail::send('emails.group-register-deny', $maildata, function($msg) use($user) {
-					$msg->subject('Your Goonrathi membership request was DENIED!');
+					$msg->subject('Your Goon membership request was DENIED!');
 					$msg->to($user->UEmail);
 				});
 			}
@@ -243,7 +243,7 @@ class GroupController extends Controller
 				error_log('E-mail error: '.var_dump($e));
 				return Response::json(array(
 					'success' => false,
-					'message' => 'Unable to send e-mail.  Contact Adeptus for assistance.'
+					'message' => 'Unable to send e-mail.  Contact Directors for assistance.'
 				));
 			}
 
