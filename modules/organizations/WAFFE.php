@@ -5,7 +5,7 @@ use App\Extensions\Modules\OrgModule;
 
 use App\GameUser;
 
-class GOON extends OrgModule
+class WAFFE extends OrgModule
 {
 	public function simpleRegistration()
 	{

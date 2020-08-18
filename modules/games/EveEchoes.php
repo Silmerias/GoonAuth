@@ -7,7 +7,7 @@ use Carbon\Carbon;
 
 use App\GameUser;
 
-class StarCitizen extends GameModule
+class EveEchoes extends GameModule
 {
 	public function memberAdded($gameuser)
 	{
