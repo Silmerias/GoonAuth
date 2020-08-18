@@ -47,8 +47,8 @@ class GameSeeder extends Seeder {
 			'GAbbr' => 'ee',
 			'GName' => 'Eve Echoes',
 			'GLDAPGroup' => 'GameEveEchoes',
-			'GEditProfileURL' => null,
-			'GProfileURL' => null,
+			'GEditProfileURL' => '',
+			'GProfileURL' => '',
 			'GModulePHP' => 'EveEchoes'
 		));
 
