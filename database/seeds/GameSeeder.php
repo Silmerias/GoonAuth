@@ -30,6 +30,7 @@ class GameSeeder extends Seeder {
 			'GEditProfileURL' => 'https://robertsspaceindustries.com/account/profile',
 			'GProfileURL' => 'https://robertsspaceindustries.com/citizens/%s',
 			'GModulePHP' => 'StarCitizen'
+		));
 
 		// MechWarrior
 		$mwo = Game::create(array(
@@ -39,6 +40,7 @@ class GameSeeder extends Seeder {
 			'GEditProfileURL' => 'http://mwomercs.com/forums/index.php?app=core&module=usercp&tab=core',
 			'GProfileURL' => 'http://mwomercs.com/forums/user/%d-%s',
 			'GModulePHP' => 'MWO'
+		));
 
 		// Eve Echoes
 		$ee = Game::create(array(
