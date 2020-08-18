@@ -13,15 +13,14 @@
         </a>
     </div>
     <div class="col-md-4">
-        <a href="{{ URL::to('register/sponsored') }}" class="register-choice">
-            Sponsored member<br><span>(a goon gave you a sponsor code)</span>
+        {{-- <a href="{{ URL::to('register/pubbie') }}" class="register-choice"> --}}
+        <a href="#" class="register-choice bg-notimplemented">
+            Pubbie<br><span>(you don't own an SA account)</span>
         </a>
     </div>
     <div class="col-md-4">
-        {{-- <a href="{{ URL::to('register/affiliate') }}" class="register-choice"> --}}
-        <a href="#" class="register-choice bg-notimplemented">
-            Affiliate<br><span>(a member of an affiliated organization)</span>
-            <br><span>(not yet implemented)</span>
+        <a href="{{ URL::to('register/sponsored') }}" class="register-choice">
+            Sponsored member<br><span>(a goon gave you a sponsor code)</span>
         </a>
     </div>
 </div>
