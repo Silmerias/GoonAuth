@@ -38,7 +38,7 @@ return [
 	/**
 	 * Discord auth_module.
 	 */
-	'starcitizen' => env('GAME_STARCITIZEN', false),
+	'discord' => env('DISCORD', false),
 
 	/**
 	 * Star Citizen game_module.
