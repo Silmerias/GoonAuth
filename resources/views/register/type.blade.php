@@ -13,8 +13,7 @@
         </a>
     </div>
     <div class="col-md-4">
-        {{-- <a href="{{ URL::to('register/pubbie') }}" class="register-choice"> --}}
-        <a href="#" class="register-choice bg-notimplemented">
+        <a href="{{ URL::to('register/pubbie') }}" class="register-choice">
             Pubbie<br><span>(you don't own an SA account)</span>
         </a>
     </div>
