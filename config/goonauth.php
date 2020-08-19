@@ -21,9 +21,9 @@ return [
 	/**
 	 * URLS
 	 */
-	'forum_url' => env('FORUM_URL', ''),
-	'rules_url' => env('RULES_URL', ''),
-	'wiki_url' => env('WIKI_URL', ''),
+	'forum_url' => env('APP_FORUM', ''),
+	'rules_url' => env('APP_RULES', ''),
+	'wiki_url' => env('APP_WIKI', ''),
 	'discord_api' => env('DISCORD_ENDAPI', ''),
 	'bot_api' => env('DISCORD_BOTAPI', ''),
 
