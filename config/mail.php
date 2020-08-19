@@ -55,7 +55,7 @@ return [
     |
     */
 
-    'from' => ['address' => null, 'name' => null],
+    'from' => ['address' => env('MAIL_ADDR', 'no-reply@domain.tld'), 'name' => env('MAIL_NAME', 'GoonAuth')],
 
     /*
     |--------------------------------------------------------------------------
