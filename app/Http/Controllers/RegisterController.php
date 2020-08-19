@@ -44,6 +44,11 @@ class RegisterController extends Controller
 		return view('register.goon');
 	}
 
+	public function getPubbie()
+	{
+		return view('register.pubbie');
+	}
+
 	public function getLink()
 	{
 		$token = uniqid('FART');
@@ -62,10 +67,10 @@ class RegisterController extends Controller
 		return view('register.sponsored');
 	}
 
-	public function getAffiliate()
-	{
-		return view('register.affiliate');
-	}
+	// public function getAffiliate()
+	// {
+	// 	return view('register.affiliate');
+	// }
 
 	private function verifyGoonID($goonid)
 	{
@@ -329,6 +334,14 @@ class RegisterController extends Controller
 		$sa_userid = null;
 		$sa_regdate = null;
 		$sa_postcount = null;
+
+		// If pubbie register then register.
+		if ($sa_name === 'no-sa') {
+			$comment = null;
+			$sa_userid = null;
+			$this->createUser($email, $goonid, $sa_userid, $sa_regdate, $sa_name, $sa_postcount, $comment);
+			return view('register.complete');
+		}
 
 		// Do verification.
 		$verified = !config('goonauth.sa.verify');
