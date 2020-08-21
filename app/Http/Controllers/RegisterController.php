@@ -339,6 +339,7 @@ class RegisterController extends Controller
 		if ($sa_name === 'no-sa') {
 			$comment = null;
 			$sa_userid = null;
+			$sa_name = null;
 			$this->createUser($email, $goonid, $sa_userid, $sa_regdate, $sa_name, $sa_postcount, $comment);
 			return view('register.complete');
 		}
